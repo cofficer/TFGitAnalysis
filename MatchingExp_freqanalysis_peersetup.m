@@ -31,7 +31,7 @@ for iana=1:length(runcfg.freq.analysistype) %high low
             cfg.keeptrials  = 'yes'; % needed for fourier-output
 %             cfg.keeptapers = 'yes'; % idem
             cfg.foi = 3:35;
-            cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.4;
+            cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.4; %400ms time window?
             cfg.tapsmofrq = ones(length(cfg.foi),1) .* 4.5;
         case 'full'
             cfg.taper = 'dpss'; % high frequency-optimized analysis (smooth)
