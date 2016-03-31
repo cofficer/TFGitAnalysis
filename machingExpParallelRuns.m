@@ -10,7 +10,7 @@ cfg.output = 'pow';
 % cfg.output = 'fourier';
 cfg.channel = 'MEG';
 cfg.keeptapers  = 'no';
-cfg.pad = 7;
+cfg.pad = 10; %Is here a problem with a padding too high?
 cfg.method = 'mtmconvol';
 cfg.runMIBmegcfg = runcfg;
 
