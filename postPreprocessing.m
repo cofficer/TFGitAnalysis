@@ -187,7 +187,7 @@ cfg.layout          = 'CTF151.lay';
 cfg.baseline        = [-2 -1.7];
 cfg.baselinetype    = 'relchange';
 cfg.zlim            = 'maxabs';
-ft_multiplotTFR(cfg, freqLC);
+ft_multiplotTFR(cfg, freq);
 
 
 %%
@@ -207,12 +207,12 @@ d2M=squeeze(diff(1,1,1,200,:,:));
 
 cfg  = [];
 cfg.xlim = [-0.2 0.2];
-cfg.ylim = [12 36];
-cfg.zlim = [-1e-27 1e-27];
+cfg.ylim = [36 150];
+%cfg.zlim = [-1e-27 1e-27];
 cfg.baseline = [-2 -1.7];
 cfg.baselinetype = 'absolute';
 cfg.layout = 'CTF151.lay';
-figure; ft_topoplotTFR(cfg,freqRC)
+figure; ft_topoplotTFR(cfg,freq)
 
 
 

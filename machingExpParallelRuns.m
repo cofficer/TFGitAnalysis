@@ -30,14 +30,14 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             cfg.taper = 'dpss'; % high frequency-optimized analysis (smooth)
             cfg.keeptrials  = 'no';
             cfg.foi = 36:2:150;
-            cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.4;
+            cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.25; %0.4
             cfg.tapsmofrq = ones(length(cfg.foi),1) .* 8;
         case 'low'
             cfg.taper = 'hanning'; % low frequency-optimized analysis
             %cfg.keeptrials  = 'yes'; % needed for fourier-output
             %             cfg.keeptapers = 'yes'; % idem
-            %cfg.foi = 3:35;
-            cfg.foi = linspace(12,36,25);
+            cfg.foi = 3:35;
+            %cfg.foi = linspace(12,36,25); %Same as postPreprocessing.
             cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.25;
             %cfg.tapsmofrq = ones(length(cfg.foi),1) .* 4.5;
         case 'full'
@@ -102,9 +102,10 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                     switch cfg.trigger
                         case {'resp' 'stim' 'flickerresp' 'flickerstim'}
                             for itype = typeSession % 1=ATM, 2=PLA  Atomoxetine/placebo (Different conditions). Not sure, probably more reasonably different uncertainty levels.
-                                for ievent = 1:1%2 % Stands for left vs right (Different events) where 1 == Left. 
+                                for ievent = 2:2%2 % Stands for left vs right (Different events) where 1 == Left. 
                                     trialDirection = ismember(preprocinfo.trl(:,10),eventLR(ievent,:)); 
                                     cfg.trials = find(trialDirection); %Get indices of all trials of certain direction stimuli
+                                    cfg.eventLR=eventLR(ievent,:); %The real trial selection happens in freqanalysis.
                                     %cfg.trials = find(preprocinfo.trl(:,10) == eventLR(ievent,1));
                                     if cfg.trials
                                         cfg.itype = itype; %Atomextine or placebo condition
