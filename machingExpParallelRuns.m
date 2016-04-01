@@ -10,7 +10,7 @@ cfg.output = 'pow';
 % cfg.output = 'fourier';
 cfg.channel = 'MEG';
 cfg.keeptapers  = 'no';
-cfg.pad = 10; %Is here a problem with a padding too high?
+cfg.pad = 5; 
 cfg.method = 'mtmconvol';
 cfg.runMIBmegcfg = runcfg;
 
@@ -34,11 +34,12 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             cfg.tapsmofrq = ones(length(cfg.foi),1) .* 8;
         case 'low'
             cfg.taper = 'hanning'; % low frequency-optimized analysis
-            cfg.keeptrials  = 'yes'; % needed for fourier-output
+            %cfg.keeptrials  = 'yes'; % needed for fourier-output
             %             cfg.keeptapers = 'yes'; % idem
-            cfg.foi = 3:35;
-            cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.4;
-            cfg.tapsmofrq = ones(length(cfg.foi),1) .* 4.5;
+            %cfg.foi = 3:35;
+            cfg.foi = linspace(12,36,25);
+            cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.25;
+            %cfg.tapsmofrq = ones(length(cfg.foi),1) .* 4.5;
         case 'full'
             cfg.taper = 'dpss'; % high frequency-optimized analysis (smooth)
             cfg.keeptrials  = 'yes';
@@ -55,11 +56,12 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             case 'baseline'
                 cfg.toi = 0:0.025:2;
             case 'resp'
-                cfg.toi = -1.5:0.025:1.5;
+                cfg.toi = -2:0.025:1;
             otherwise %Sort of reduntant
                 cfg.toi = -1.5:0.025:1.5; % 3 sec TFR's
         end
         
+        %Instead of trialsmib, should later concatenate all matching data.
         for i = 1:length(runcfg.batchlists)
             batch=[];
             eval(runcfg.batchlists{i}); %load in batchlist file, batch, PRE come out
@@ -100,12 +102,12 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                     switch cfg.trigger
                         case {'resp' 'stim' 'flickerresp' 'flickerstim'}
                             for itype = typeSession % 1=ATM, 2=PLA  Atomoxetine/placebo (Different conditions). Not sure, probably more reasonably different uncertainty levels.
-                                for ievent = 1:1%2 % Could for now be left vs right (Different events)
-                                    trialDirection = ismember(preprocinfo.trl(:,10),eventLR(ievent,:));
+                                for ievent = 1:1%2 % Stands for left vs right (Different events) where 1 == Left. 
+                                    trialDirection = ismember(preprocinfo.trl(:,10),eventLR(ievent,:)); 
                                     cfg.trials = find(trialDirection); %Get indices of all trials of certain direction stimuli
                                     %cfg.trials = find(preprocinfo.trl(:,10) == eventLR(ievent,1));
                                     if cfg.trials
-                                        cfg.itype = itype; %MIBexp variables
+                                        cfg.itype = itype; %Atomextine or placebo condition
                                         cfg.ievent = ievent;
                                        
                                         outfile = sprintf('%s%s_%s_%d_type%devent%d_%s_freq.mat', PREOUT, batch(i).subj, batch(i).type, ...

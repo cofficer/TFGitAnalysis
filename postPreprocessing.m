@@ -37,8 +37,8 @@ fprintf('\n\n---Data around buttonpress selected---\n\n\n')
 
 %%
 %Remove trials with NaNs. No longe applicable
-
-data                = removeNans(data);
+% 
+% data                = removeNans(data);
 
 
 %%
@@ -173,10 +173,10 @@ freqLC                = ft_combineplanar(cfg, freqL);
 
 %%
 %Baseline normalization fo rtime-frequency
-cfg                 = [];
-cfg.baseline        = [-0.8 -0.3]; %begin and end
-
-freq=ft_freqbaseline(cfg,freq);
+% cfg                 = [];
+% cfg.baseline        = [-0.8 -0.3]; %begin and end
+% 
+% freqLC=ft_freqbaseline(cfg,freqLC);
 
 
 %%
