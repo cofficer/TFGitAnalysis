@@ -31,7 +31,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             cfg.keeptrials  = 'no';
             cfg.foi = 36:2:150;
             cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.25; %0.4
-            cfg.tapsmofrq = ones(length(cfg.foi),1) .* 8;
+            cfg.tapsmofrq = ones(length(cfg.foi),1) .*8;
         case 'low'
             cfg.taper = 'hanning'; % low frequency-optimized analysis
             %cfg.keeptrials  = 'yes'; % needed for fourier-output
@@ -62,7 +62,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
         end
         
         %Instead of trialsmib, should later concatenate all matching data.
-        for i = 1:length(runcfg.batchlists)
+        for i = 1:1%length(runcfg.batchlists)
             batch=[];
             eval(runcfg.batchlists{i}); %load in batchlist file, batch, PRE come out
             switch cfg.phaselocktype
@@ -90,19 +90,19 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             blocksPreproc=blocksPreproc([blocksPreproc.bytes]>60000);
             
             
-            for bind = 1:1%length(blocksPreproc) %for each datafile per subject. Should loop over blocks instead.
+            for bind = 1:length(blocksPreproc) %for each datafile per subject. Should loop over blocks instead.
                 
                 PREOUT = ['/home/chrisgahn/Documents/MATLAB/freq/' cfg.freqanalysistype filesep PRE cfg.trigger filesep];
                 
-                infile=sprintf('%s%s_%s_%s_block%s', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(1).name(end-5:end-4));
-                preprocinfofile = sprintf('%s%s_%s_%s_preprocinfo_block%s.mat', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(1).name(end-5:end-4));
+                infile=sprintf('%s%s_%s_%s_block%s', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(bind).name(end-5:end-4));
+                preprocinfofile = sprintf('%s%s_%s_%s_preprocinfo_block%s.mat', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(bind).name(end-5:end-4));
                 infile = [infile '.mat' ];
                 
                 try load(preprocinfofile)
                     switch cfg.trigger
                         case {'resp' 'stim' 'flickerresp' 'flickerstim'}
                             for itype = typeSession % 1=ATM, 2=PLA  Atomoxetine/placebo (Different conditions). Not sure, probably more reasonably different uncertainty levels.
-                                for ievent = 2:2%2 % Stands for left vs right (Different events) where 1 == Left. 
+                                for ievent = 1:2%2 % Stands for left vs right (Different events) where 1 == Left. 
                                     trialDirection = ismember(preprocinfo.trl(:,10),eventLR(ievent,:)); 
                                     cfg.trials = find(trialDirection); %Get indices of all trials of certain direction stimuli
                                     cfg.eventLR=eventLR(ievent,:); %The real trial selection happens in freqanalysis.
@@ -111,8 +111,8 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                                         cfg.itype = itype; %Atomextine or placebo condition
                                         cfg.ievent = ievent;
                                        
-                                        outfile = sprintf('%s%s_%s_%d_type%devent%d_%s_freq.mat', PREOUT, batch(i).subj, batch(i).type, ...
-                                        cfg.t_ftimwin(1)*1000, itype, ievent,cfg.phaselocktype );
+                                        outfile = sprintf('%s%s_%s_%d_type%devent%d_%s_freq%s.mat', PREOUT, batch(i).subj, batch(i).type, ...
+                                        cfg.t_ftimwin(1)*1000, itype, ievent,cfg.phaselocktype,blocksPreproc(bind).name(end-5:end-4));
                                         cfg.Outfilename=outfile;
                                         if (~exist(outfile, 'file') && ~isempty(batch(i).dataset)) %Removed "|| overwrite"%% % add to the joblist if outf does not exist and not commented out in batch
                                             ctr = ctr + 1;
@@ -156,19 +156,19 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
     %         ntest=20; % for testing with qsub
     %         inputfile=inputfile(1:ntest);
     %         outputfile=outputfile(1:ntest); cfg2=cfg2(1:ntest); cfg1=cfg1(1:ntest);
-    %cd('D:\SurpriseReplay_MEG\MEG_data\')
-    switch 'local'%runcfg.freq.compile
+    cd('~/Documents/MATLAB/code/analysis/TFGitAnlysis/')
+    switch runcfg.freq.compile
         
         case 'local'
             MatchingExp_freqanalysis(cfg1{1}, cfg2{1}, inputfile{1}, outputfile{1})
-   %         cellfun(@MIBexp_freqanalysis, cfg1, cfg2, inputfile, outputfile);
+   %         cellfun(@MatchingExp_freqanalysis, cfg1, cfg2, inputfile, outputfile);
         case 'no'
             nnodes = 1;%64; % how many licenses?
             stack = 1;%round(length(cfg1)/nnodes);
-            qsubcellfun(@MIBexp_freqanalysis, cfg1, cfg2, inputfile, outputfile, 'compile', 'no', ...
+            qsubcellfun(@MatchingExp_freqanalysis, cfg1, cfg2, inputfile, outputfile, 'compile', 'no', ...
                 'memreq', 1024^3, 'timreq', cfg.timreq*60, 'stack', stack, 'StopOnError', false, 'backend', runcfg.freq.parallel);
         case 'yes'
-            compiledfun = qsubcompile(@MIBexp_freqanalysis, 'toolbox', {'signal', 'stats'});
+            compiledfun = qsubcompile(@MatchingExp_freqanalysis, 'toolbox', {'signal', 'stats'});
             qsubcellfun(compiledfun, cfg1, cfg2, inputfile, outputfile, ...
                 'memreq', 1024^3, 'timreq', cfg.timreq*60,'stack', 1, 'StopOnError', false, 'backend', runcfg.freq.parallel);
     end
