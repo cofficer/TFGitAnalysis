@@ -187,7 +187,7 @@ cfg.layout          = 'CTF151.lay';
 cfg.baseline        = [-2 -1.7];
 cfg.baselinetype    = 'relchange';
 cfg.zlim            = 'maxabs';
-ft_multiplotTFR(cfg, freq);
+ft_multiplotTFR(cfg, freqAll);
 
 
 %%
@@ -212,7 +212,8 @@ cfg.ylim = [36 140];
 cfg.baseline = [-2 -1.7];
 cfg.baselinetype = 'absolute';
 cfg.layout = 'CTF151.lay';
-figure; ft_topoplotTFR(cfg,freqAll)
+subplot(10,1,allBlocks)
+figure; ft_topoplotTFR(cfg,freq)
 
 
 
@@ -224,24 +225,49 @@ data = ft_appenddata(cfg, data_left, data_right);
 
 %% Put together data from different blocks of one session. 
 
+addpath(genpath('/home/chrisgahn/Documents/MATLAB/fieldtrip/'))
 PREIN = ['/mnt/homes/home020/chrisgahn/Documents/MATLAB/freq/high/JRu/20150819/resp' ];
 PREIN2 = ['/mnt/homes/home020/chrisgahn/Documents/MATLAB/freq/high/JRi/20150828/resp' ];
-
-cd(PREIN)
-
+PREIN3 = ['/mnt/homes/home020/chrisgahn/Documents/MATLAB/freq/high/FSr/20151003/resp' ];
+cd(PREIN2)
+%%
 namesDir=sprintf('JRi_d01_250_type1event1*.mat');
 
+%For JRu, I could not create topolots for 5, 8 and 10 I believe. Griddata
+%error. Inputs must be a scalar and a square matrix. 
+%FOr right JRu, two 7 and 9 did not work
 blocksFreq=dir(namesDir);
 
 freqMatrix=zeros(268,58,121,10);
-
 for allBlocks =1:length(blocksFreq)
 
 
 load(blocksFreq(allBlocks).name)
 
 
-freqMatrix(:,:,:,allBlocks)=freq.powspctrm;
+figure(allBlocks);
+
+% cfg  = [];
+% cfg.xlim = [-0.2 0.2];
+% %cfg.ylim = [36 140];
+% cfg.ylim = [64 100];
+% %cfg.zlim = [-1e-27 1e-27];
+% cfg.baseline = [-2 -1.7];
+% cfg.baselinetype = 'absolute';
+% cfg.layout = 'CTF151.lay';
+% ft_topoplotTFR(cfg,freq)
+
+cfg                 = [];
+cfg.interactive     = 'yes';
+cfg.showoutline     = 'yes';
+cfg.layout          = 'CTF151.lay';
+cfg.baseline        = [-2 -1.7];
+cfg.baselinetype    = 'relchange';
+cfg.zlim            = 'maxabs';
+ft_multiplotTFR(cfg, freq);
+
+
+%freqMatrix(:,:,:,allBlocks)=freq.powspctrm;
 
 end
 
@@ -250,10 +276,10 @@ meanFreq=nanmean(freqMatrix,4);
 freqAll=freq;
 
 freqAll.powspctrm=meanFreq;
-sprintf('Took the mean of all blocks from: %s',blocksFreq(end).name)
+sprintf('Took the mean of all blocks from: %s',blocksFreq(1).name)
 
 
 %% Save figure
 cd('/mnt/homes/home020/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('sensorRightTopoDIPOLE2','-dpdf')
+print('sensorLeftTopoFSr','-dpdf')
 

@@ -35,12 +35,12 @@ runcfg.batchlists = {
 %     'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions
 %     'batchSurpriseMatchingexp_NSh_250815' %#Success4.
 %     'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
-     'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
+%     'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
 %     'batchSurpriseMatchingexp_LMe_260815' %#Missing triggers. Missing ETtrigger from event
 %     'batchSurpriseMatchingexp_HEn_280815' %#Strange error. Missing triggers dataset2?
 %     'batchSurpriseMatchingexp_ROr_270815' %#Success4, but high blink rate.
 %     'batchSurpriseMatchingexp_DWe_031015' #Success2, (corrected 17nov)
-%     'batchSurpriseMatchingexp_FSr_031015' %#Success4,
+     'batchSurpriseMatchingexp_FSr_031015' %#Success4,
 %     'batchSurpriseMatchingexp_JNe_041015' %#Success4
 %     'batchSurpriseMatchingexp_RWi_031015' %#Almost preprocessed. Issue with missing value of data.time{19} for last block, 
 %     'batchSurpriseMatchingexp_EIv_031015' %Data set error. #Lst trial is 0
