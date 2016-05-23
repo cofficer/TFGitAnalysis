@@ -1,4 +1,4 @@
-function [ data ] = triggerDataSelection( begsample, endsample, trigger, data)
+function [ data ] = triggerDataSelection( begsample, endsample, trigger, data, trialSampleStart)
 %select data based around a trigger. Redefine data subsequently. 
 
 
@@ -7,7 +7,7 @@ function [ data ] = triggerDataSelection( begsample, endsample, trigger, data)
 
 
 
-trialStartSample = zeros(1,length(data.time));%Vector with sample time
+trialStartSample = zeros(1,length(data.time)); % Vector with sample time
 
 for i=1:length(data.time)
     
