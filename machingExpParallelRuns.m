@@ -34,7 +34,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             cfg.tapsmofrq = ones(length(cfg.foi),1) .*8;
         case 'low'
             cfg.taper = 'hanning'; % low frequency-optimized analysis
-            %cfg.keeptrials  = 'yes'; % needed for fourier-output
+            cfg.keeptrials  = 'yes'; % needed for fourier-output
             %             cfg.keeptapers = 'yes'; % idem
             cfg.foi = 3:35;
             %cfg.foi = linspace(12,36,25); %Same as postPreprocessing.

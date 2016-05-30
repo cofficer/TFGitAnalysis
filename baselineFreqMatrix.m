@@ -6,7 +6,9 @@ function [low] = baselineFreqMatrix(~)
 clear all
 dbstop if error
 %%
-cd('/Users/Christoffer/Documents/MATLAB/matchingData/JRuHigh20150819/')
+%cd('/Users/Christoffer/Documents/MATLAB/matchingData/JRuHigh20150819/')
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/SBa/20151006/resp')
+
 
 highFreq    = dir('*_high*.mat');
 lowFreq     = dir('*_low*.mat');
