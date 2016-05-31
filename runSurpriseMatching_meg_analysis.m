@@ -2,9 +2,9 @@
 % run preproc and freqanalysis 
 clear all; close all;
 %cd('/home/chrisgahn/Documents/MATLAB/code/batch')
-addpath(genpath('/home/chrisgahn/Documents/MATLAB/code/'))
-addpath(genpath('/home/chrisgahn/Documents/MATLAB/fieldtrip/'))
-cd('/home/meindertsmat/data/Matching/MEG/raw/')
+addpath(genpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/'))
+addpath(genpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip/'))
+cd('/mnt/homes/home024/meindertsmat/data/Matching/MEG/raw/')
 %Peters home directory
 %cd('/home/pmurphy/meg_data/')
 
@@ -33,7 +33,7 @@ runcfg.batchlists = {
 %     'batchSurpriseMatchingexp_MTo_250815' %#Succes (first part). Missing triggers
 %     'batchSurpriseMatchingexp_DLa_260815' %#REDO, doesnt exist
 %     'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions
-%     'batchSurpriseMatchingexp_NSh_250815' %#Success4.
+     'batchSurpriseMatchingexp_NSh_250815' %#Success4.%Suppoed to be 25???
 %     'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
 %     'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
 %     'batchSurpriseMatchingexp_LMe_260815' %#Missing triggers. Missing ETtrigger from event
@@ -139,7 +139,6 @@ runcfg.trigger = {
 
 %% Peersetup freq scripts
 %Change folder to git repository analysis
-dbstop if error
 warning off
 %dbclear all
 cd('/home/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/')

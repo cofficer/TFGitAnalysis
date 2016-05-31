@@ -28,7 +28,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
     switch cfg.freqanalysistype
         case 'high'
             cfg.taper = 'dpss'; % high frequency-optimized analysis (smooth)
-            cfg.keeptrials  = 'no';
+            cfg.keeptrials  = 'yes';
             cfg.foi = 36:2:150;
             cfg.t_ftimwin = ones(length(cfg.foi),1) .* 0.25; %0.4
             cfg.tapsmofrq = ones(length(cfg.foi),1) .*8;
@@ -80,7 +80,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             
             
             %Find the number seperate preprocessed .mat files. 
-            PREIN = ['/home/chrisgahn/Documents/MATLAB/preprocessed/' PRE];
+            PREIN = ['/mnt/homes/home024/chrisgahn/Documents/MATLAB/preprocessed/' PRE];
             cd(PREIN)
             
             namesDir=sprintf('%s*.mat',batch(1).subj);
@@ -92,7 +92,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
             
             for bind = 1:length(blocksPreproc) %for each datafile per subject. Should loop over blocks instead.
                 
-                PREOUT = ['/home/chrisgahn/Documents/MATLAB/freq/' cfg.freqanalysistype filesep PRE cfg.trigger filesep];
+                PREOUT = ['/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/' cfg.freqanalysistype filesep PRE cfg.trigger filesep];
                 
                 infile=sprintf('%s%s_%s_%s_block%s', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(bind).name(end-5:end-4));
                 preprocinfofile = sprintf('%s%s_%s_%s_preprocinfo_block%s.mat', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(bind).name(end-5:end-4));

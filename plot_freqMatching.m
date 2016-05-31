@@ -29,10 +29,10 @@ ft_multiplotTFR(cfg,freq);
 %reasonable
 
 %load data:
-load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/SBa/20151006/resp/SBa_d01_250_type1event2_totalpow_freq11')
+load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/SBa/20151006/resp/SBa_d01_250_type1event1_totalpow_freq11')
+load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/NSh/20150825/resp/NSh_d01_250_type1event2_totalpow_freq11')
 
 
-freqDataMatrix      = freq.powspctrm;
 
 cfg                 = [];
 cfg.baselinetype    = 'relchange';
@@ -46,6 +46,8 @@ cfg                 = [];
 %cfg.zlim            = [-100 100];
 cfg.showlabels      = 'yes';
 cfg.ylim            = [10 35];
+%cfg.ylim            = [64 95];
+
 ft_multiplotTFR(cfg,baseFreq);
 
 
