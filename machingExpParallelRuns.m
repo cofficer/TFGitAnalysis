@@ -54,7 +54,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
         cfg.trigger=runcfg.trigger{itrg};
         switch cfg.trigger %Is the logic to do one trigger at a time?
             case 'baseline'
-                cfg.toi = 0:0.025:2;
+                cfg.toi = -1:0.025:2.5;
             case 'resp'
                 cfg.toi = -2:0.025:1;
             otherwise %Sort of reduntant
@@ -94,13 +94,13 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                 
                 PREOUT = ['/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/' cfg.freqanalysistype filesep PRE cfg.trigger filesep];
                 
-                infile=sprintf('%s%s_%s_%s_block%s', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(bind).name(end-5:end-4));
-                preprocinfofile = sprintf('%s%s_%s_%s_preprocinfo_block%s.mat', PREIN, batch(i).subj, batch(i).type, cfg.trigger,blocksPreproc(bind).name(end-5:end-4));
+                infile=sprintf('%s%s_%s_resp_block%s', PREIN, batch(i).subj, batch(i).type,blocksPreproc(bind).name(end-5:end-4)); %Removed cfg.trigger
+                preprocinfofile = sprintf('%s%s_%s_resp_preprocinfo_block%s.mat', PREIN, batch(i).subj, batch(i).type,blocksPreproc(bind).name(end-5:end-4)); %removed baseline
                 infile = [infile '.mat' ];
                 
                 try load(preprocinfofile)
                     switch cfg.trigger
-                        case {'resp' 'stim' 'flickerresp' 'flickerstim'}
+                        case {'resp' 'baseline' 'stim' 'flickerresp' 'flickerstim'}
                             for itype = typeSession % 1=ATM, 2=PLA  Atomoxetine/placebo (Different conditions). Not sure, probably more reasonably different uncertainty levels.
                                 for ievent = 1:2%2 % Stands for left vs right (Different events) where 1 == Left. 
                                     trialDirection = ismember(preprocinfo.trl(:,10),eventLR(ievent,:)); 

@@ -1,5 +1,5 @@
 
-function [low] = baselineFreqMatrix(~)
+function [allFreq] = baselineFreqMatrix(lowhigh)
 
 %Script for baselining the data using percentage change. 
 %%
@@ -7,33 +7,47 @@ clear all
 dbstop if error
 %%
 %cd('/Users/Christoffer/Documents/MATLAB/matchingData/JRuHigh20150819/')
-cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/SBa/20151006/resp')
 
+lowhigh             = 'low';   
 
-highFreq    = dir('*_high*.mat');
-lowFreq     = dir('*_low*.mat');
+basePath            = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/SBa/20151006/baseline/';
+
+freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/SBa/20151006/resp/',lowhigh);
+
+cd(freqPath)
+
+allNames            = dir('*.mat');
 
 %Define the duration of the baseline. 
 start       = -0.5;
 stop        = 0;
-figure(1),clf
-hold on
-for iresp   = 1:length(lowFreq)/2
+%figure(1),clf
+%hold on
 
-   %high     =load(highFreq(iresp+1).name); 
-   low      =load(lowFreq(iresp+1).name); 
-   baseline =load(lowFreq(iresp).name);
+%Create matrix for all the blocks.
+
+
+for iresp   = 1:length(allNames)/2
+
+    
+   
+   freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
+   freqBase     = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the baseline
+   
+
+   
+   
    
    %Baseline trial by trial by taking the relative change.
-   for itrial = 1:size(baseline.freq.powspctrm,1);
-       for ifreq = 1:size(baseline.freq.powspctrm,3);
+   for itrial = 1:size(freqBase.freq.powspctrm,1);
+       for ifreq = 1:size(freqBase.freq.powspctrm,3);
            
            %Get the indices for the timeperiod of interest to baseline
-           startInd    = find(baseline.freq.time==start);
-           stopInd     = find(baseline.freq.time==stop);
+           startInd    = find(freqBase.freq.time==start);
+           stopInd     = find(freqBase.freq.time==stop);
 
            %Get the baseline per TF datapoint for all timepoints 
-           currFreq     =  baseline.freq.powspctrm(itrial,:,ifreq,startInd:stopInd);
+           currFreq     =  freqBase.freq.powspctrm(itrial,:,ifreq,startInd:stopInd);
           
            %Get the mean over all the timepoints for current TF datapoint
            avgTOI       = nanmean(currFreq,4);
@@ -46,17 +60,22 @@ for iresp   = 1:length(lowFreq)/2
 %            end
            %Repeat the mean over the range of timepoints for the range of
            %interest. 
-           avgTOI       = repmat(avgTOI',1,size(low.freq.powspctrm,4));
+           avgTOI       = repmat(avgTOI',1,size(freqInt.freq.powspctrm,4));
            
            %Calculate the percentage change in relation to baseline. 
-           low.freq.powspctrm(itrial,:,ifreq,:) = ((squeeze(low.freq.powspctrm(itrial,:,ifreq,:))-avgTOI)./avgTOI)*100;
+           freqInt.freq.powspctrm(itrial,:,ifreq,:) = ((squeeze(freqInt.freq.powspctrm(itrial,:,ifreq,:))-avgTOI)./avgTOI)*100;
            
            
            
        end
    end
     
-    
+%Add to total frequency matrix
+if iresp==1
+allFreq.freq=freqInt.freq;
+else
+    allFreq.freq.powspctrm=cat(1,allFreq.freq.powspctrm,freqInt.freq.powspctrm);
+end
 end
 
 %save the baselined data in 

@@ -36,29 +36,56 @@ load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/NSh/20150825/resp/N
 
 cfg                 = [];
 cfg.baselinetype    = 'relchange';
-cfg.baseline        = [-2 -1.5];
+cfg.baseline        = [-0.5 0];
 baseFreq            = ft_freqbaseline(cfg,freq);
 
 
 %%
 %Different multiplotTFR settings
 cfg                 = [];
-%cfg.zlim            = [-100 100];
+cfg.zlim            = [-100 100];
 cfg.showlabels      = 'yes';
 cfg.ylim            = [10 35];
+cfg.xlim            = [-0.3 0.8];
 %cfg.ylim            = [64 95];
 
-ft_multiplotTFR(cfg,baseFreq);
+ft_multiplotTFR(cfg,freqInt.freq);
+
+%%
+%average freq. 
+cfg = [];
+avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
 
 
+cfg                 = [];
+%cfg.zlim            = [-20 200];
+cfg.showlabels      = 'yes';
+cfg.ylim            = [10 35];
+cfg.xlim            = [-1 0.8];
+%cfg.ylim            = [64 95];
+
+ft_multiplotTFR(cfg,avgFreq);
 
 
+%%
+%Choose sensors:
+
+sensR = {'MRC13','MRC14','MRC15','MRC16','MRC22','MRC23','MRC24','MRF65'};
+sensL = {'MLC13','MLC14','MLC15','MLC16','MLC22','MLC23','MLC24','MLF65'};
+
+[label,idxR]=intersect(avgFreq.grad.label,sensR);
+
+[label,idxL]=intersect(avgFreq.grad.label,sensL);
 
 
+data=squeeze(nanmean(avgFreq.powspctrm(idxR,8:end,20:end-80)));
+x = avgFreq.time(20:end-80);
+y = avgFreq.freq(8:end);
 
+imagesc(x,y,data)
 
+set(gca,'YDir','normal')
 
-
-
+%imagesc(squeeze(nanmean(avgFreq.powspctrm(idxR,8:end,:))))
 
 

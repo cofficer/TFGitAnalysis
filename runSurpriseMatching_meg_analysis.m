@@ -33,7 +33,7 @@ runcfg.batchlists = {
 %     'batchSurpriseMatchingexp_MTo_250815' %#Succes (first part). Missing triggers
 %     'batchSurpriseMatchingexp_DLa_260815' %#REDO, doesnt exist
 %     'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions
-     'batchSurpriseMatchingexp_NSh_250815' %#Success4.%Suppoed to be 25???
+%     'batchSurpriseMatchingexp_NSh_250815' %#Success4.%Suppoed to be 25???
 %     'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
 %     'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
 %     'batchSurpriseMatchingexp_LMe_260815' %#Missing triggers. Missing ETtrigger from event
@@ -44,7 +44,7 @@ runcfg.batchlists = {
 %     'batchSurpriseMatchingexp_JNe_041015' %#Success4
 %     'batchSurpriseMatchingexp_RWi_031015' %#Almost preprocessed. Issue with missing value of data.time{19} for last block, 
 %     'batchSurpriseMatchingexp_EIv_031015' %Data set error. #Lst trial is 0
-%     'batchSurpriseMatchingexp_SBa_061015' %Succes4
+     'batchSurpriseMatchingexp_SBa_061015' %Succes4
 %     'batchSurpriseMatchingexp_HJu_041015' % Success4 Way too many EYE artifacts
 %     'batchSurpriseMatchingexp_JHo_041015' %#Success4
 %     'batchSurpriseMatchingexp_FRa_071015' %Eror cannot read data.  
@@ -99,10 +99,10 @@ runcfg.batchlists = {
 };
 
 runcfg.trigger = {
-        'resp'
+%        'resp'
 %         'stim'
 % 'trialsmib's
-%         'baseline'
+         'baseline'
 % 'flickerresp'
 %% 
 % 'flickerstim'
@@ -148,8 +148,8 @@ runcfg.overwrite = 1;
 sourceloc = 0;
 
 runcfg.freq.analysistype = {
-%    'low'
-     'high'
+    'low'
+%     'high'
 %     'full'
     };
 
