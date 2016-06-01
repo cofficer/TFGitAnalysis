@@ -1,4 +1,4 @@
-function [ data ] = triggerDataSelection( begsample, endsample, trigger, data, trialSampleStart)
+function [ data ] = triggerDataSelection( begsample, endsample, trigger, data, trialStartSample)
 %select data based around a trigger. Redefine data subsequently. 
 
 
@@ -6,15 +6,15 @@ function [ data ] = triggerDataSelection( begsample, endsample, trigger, data, t
 %Find the beginsamples of all trials
 
 
-
-trialStartSample = zeros(1,length(data.time)); % Vector with sample time
-
-for i=1:length(data.time)
-    
-    %The sample number of when each trial started 
-    trialStartSample(i) = data.time{i}(1)*1200; %trialinfo is based on the original fsample.
-
-end
+%No longer need to recreate the original samples based on time. 
+% trialStartSample = zeros(1,length(data.time)); % Vector with sample time
+% 
+% for i=1:length(data.time)
+%     
+%     %The sample number of when each trial started 
+%     trialStartSample(i) = data.time{i}(1)*1200; %trialinfo is based on the original fsample.
+% 
+% end
 
 
 cfg=[];
@@ -24,7 +24,7 @@ cfg=[];
 
 buttonpressSample = data.trialinfo(:,trigger);
 
-trigButtonOffsetOldSample = buttonpressSample-(trialStartSample'); %Number of samples from start of trial to trigger in original sample rate
+trigButtonOffsetOldSample = buttonpressSample-(trialStartSample); %Number of samples from start of trial to trigger in original sample rate
 
 trigButtonOffsetTime      = trigButtonOffsetOldSample/1200; %Time in s until trigger from trialstart
 

@@ -280,6 +280,6 @@ sprintf('Took the mean of all blocks from: %s',blocksFreq(1).name)
 
 
 %% Save figure
-cd('/mnt/homes/home020/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('sensorLeftTopoFSr','-dpdf')
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
+print('sensorLeftTopoSBaStimOnset','-dpdf')
 

@@ -62,7 +62,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
         end
         
         %Instead of trialsmib, should later concatenate all matching data.
-        for i = 1:1%length(runcfg.batchlists)
+        for i = 1:length(runcfg.batchlists);
             batch=[];
             eval(runcfg.batchlists{i}); %load in batchlist file, batch, PRE come out
             switch cfg.phaselocktype
@@ -103,9 +103,10 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                         case {'resp' 'baseline' 'stim' 'flickerresp' 'flickerstim'}
                             for itype = typeSession % 1=ATM, 2=PLA  Atomoxetine/placebo (Different conditions). Not sure, probably more reasonably different uncertainty levels.
                                 for ievent = 1:2%2 % Stands for left vs right (Different events) where 1 == Left. 
-                                    trialDirection = ismember(preprocinfo.trl(:,10),eventLR(ievent,:)); 
-                                    cfg.trials = find(trialDirection); %Get indices of all trials of certain direction stimuli
-                                    cfg.eventLR=eventLR(ievent,:); %The real trial selection happens in freqanalysis.
+                                    trialDirection          = ismember(preprocinfo.trl(:,10),eventLR(ievent,:)); 
+                                    cfg.trials              = find(trialDirection); %Get indices of all trials of certain direction stimuli
+                                    cfg.eventLR             = eventLR(ievent,:); %The real trial selection happens in freqanalysis.
+                                    cfg.trialSampleStart    = preprocinfo.trl(:,1:2);
                                     %cfg.trials = find(preprocinfo.trl(:,10) == eventLR(ievent,1));
                                     if cfg.trials
                                         cfg.itype = itype; %Atomextine or placebo condition

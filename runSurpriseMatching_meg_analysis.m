@@ -1,9 +1,12 @@
 % runSurprieMatching_meg_analysis.m
 % run preproc and freqanalysis 
 clear all; close all;
+%%
 %cd('/home/chrisgahn/Documents/MATLAB/code/batch')
 addpath(genpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/'))
-addpath(genpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip/'))
+addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip/')
+addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip/qsub')
+ft_defaults
 cd('/mnt/homes/home024/meindertsmat/data/Matching/MEG/raw/')
 %Peters home directory
 %cd('/home/pmurphy/meg_data/')
@@ -44,7 +47,7 @@ runcfg.batchlists = {
 %     'batchSurpriseMatchingexp_JNe_041015' %#Success4
 %     'batchSurpriseMatchingexp_RWi_031015' %#Almost preprocessed. Issue with missing value of data.time{19} for last block, 
 %     'batchSurpriseMatchingexp_EIv_031015' %Data set error. #Lst trial is 0
-     'batchSurpriseMatchingexp_SBa_061015' %Succes4
+%     'batchSurpriseMatchingexp_SBa_061015' %Succes4
 %     'batchSurpriseMatchingexp_HJu_041015' % Success4 Way too many EYE artifacts
 %     'batchSurpriseMatchingexp_JHo_041015' %#Success4
 %     'batchSurpriseMatchingexp_FRa_071015' %Eror cannot read data.  
@@ -54,10 +57,10 @@ runcfg.batchlists = {
 %     'batchSurpriseMatchingexp_LJa_061015' %Success4
 %     'batchSurpriseMatchingexp_AMe_081015' %Success4
 %    %'batchSurpriseMatchingexp_DJu_091015' #Incomplete sessions. No batch.
-%     'batchSurpriseMatchingexp_SKo_111015' %Success4
+     'batchSurpriseMatchingexp_SKo_111015' %Success4
 %    'batchSurpriseMatchingexp_BFu_101015' % Error with 3rd.ds file.
 %    Otherwise success
-%     'batchSurpriseMatchingexp_JBo_111015' %Success4
+     'batchSurpriseMatchingexp_JBo_111015' %Success4
 %     
 %     
 %    %#Atomoxetine batch files

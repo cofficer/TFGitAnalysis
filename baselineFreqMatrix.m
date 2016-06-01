@@ -1,20 +1,24 @@
 
-function [allFreq] = baselineFreqMatrix(lowhigh)
+function [allFreq] = baselineFreqMatrix(partDate,LR)
 
 %Script for baselining the data using percentage change. 
-%%
-clear all
-dbstop if error
-%%
+
+
 %cd('/Users/Christoffer/Documents/MATLAB/matchingData/JRuHigh20150819/')
 
 lowhigh             = 'low';   
+%load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/SBa/20151006/baseline/SBa_d01_250_type1event1_totalpow_freq11.mat')
 
-basePath            = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/SBa/20151006/baseline/';
+ basePath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/baseline/',lowhigh,partDate);
+% 
+ freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/resp/',lowhigh,partDate);
 
-freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/SBa/20151006/resp/',lowhigh);
 
-cd(freqPath)
+%basePath            = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/JHo/20151004/baseline/';
+
+%freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/JHo/20151004/resp/',lowhigh);
+
+cd(basePath)
 
 allNames            = dir('*.mat');
 
@@ -24,7 +28,12 @@ stop        = 0;
 %figure(1),clf
 %hold on
 
-%Create matrix for all the blocks.
+%Choose to baseline left or right trials. left==1. 
+if LR==1
+    allNames = allNames(1:10);
+else
+    allNames = allNames(11:20);
+end
 
 
 for iresp   = 1:length(allNames)/2

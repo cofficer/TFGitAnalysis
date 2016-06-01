@@ -61,8 +61,10 @@ cfg                 = [];
 %cfg.zlim            = [-20 200];
 cfg.showlabels      = 'yes';
 cfg.ylim            = [10 35];
-cfg.xlim            = [-1 0.8];
+cfg.xlim            = [-0.5 2];
 %cfg.ylim            = [64 95];
+
+avgFreq.powspctrm = fullMatrix(1,1,:,:,:);
 
 ft_multiplotTFR(cfg,avgFreq);
 
@@ -70,22 +72,48 @@ ft_multiplotTFR(cfg,avgFreq);
 %%
 %Choose sensors:
 
-sensR = {'MRC13','MRC14','MRC15','MRC16','MRC22','MRC23','MRC24','MRF65'};
-sensL = {'MLC13','MLC14','MLC15','MLC16','MLC22','MLC23','MLC24','MLF65'};
+sensR = {'MRC13','MRC14','MRC15','MRC16','MRC22','MRC23','MRC24','MRC31','MRC41','MRF64','MRF65'};
+sensL = {'MLC13','MLC14','MLC15','MLC16','MLC22','MLC23','MLC24','MLC31','MLC41','MLF64','MLF65'};
 
-[label,idxR]=intersect(avgFreq.grad.label,sensR);
+[label,idxR]=intersect(freq.grad.label,sensR);
 
-[label,idxL]=intersect(avgFreq.grad.label,sensL);
+[label,idxL]=intersect(freq.grad.label,sensL);
 
+%avFM=squeeze(nanmean(fullMatrix,1));
 
-data=squeeze(nanmean(avgFreq.powspctrm(idxR,8:end,20:end-80)));
-x = avgFreq.time(20:end-80);
-y = avgFreq.freq(8:end);
+%%
 
-imagesc(x,y,data)
+figure(1),clf
 
-set(gca,'YDir','normal')
+currPlot=1;
 
+for iplotP =1:size(fullMatrix,1)
+    for iplotS=1:size(fullMatrix,2)
+        
+        
+        subplot(8,2,currPlot)
+        
+        
+        data=squeeze(nanmean(fullMatrix(iplotP,iplotS,idxL,8:end,20:end-40),3));
+        x = freq.time(20:end-40);
+        y = freq.freq(8:end);
+        
+        imagesc(x,y,data)
+        
+        set(gca,'YDir','normal')
+        colorbar
+        
+        currPlot=currPlot+1;
+        
+    end
+end
 %imagesc(squeeze(nanmean(avgFreq.powspctrm(idxR,8:end,:))))
+
+
+
+
+
+
+
 
 
