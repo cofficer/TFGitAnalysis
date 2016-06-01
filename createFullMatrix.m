@@ -21,8 +21,8 @@ cfg = [];
 added=0;
 
 %Initialize matrix
-fullMatrix = zeros(numPart,2,269,33,141);
-
+fullMatrix.powsptrcm = zeros(numPart,2,269,33,141);
+fullMatrix.participants = partDate269;
 for ipart = 1:numPart
     for LR = 1:2
         
@@ -30,10 +30,17 @@ for ipart = 1:numPart
         [allFreq] = baselineFreqMatrix(pd,LR);
         avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
         
-        fullMatrix(ipart,LR,:,:,:) = avgFreq.powspctrm;
+        fullMatrix.powsptrcm(ipart,LR,:,:,:) = avgFreq.powspctrm;
         clear allFreq
         
         
         added=added+1;
     end
 end
+
+
+
+
+
+
+

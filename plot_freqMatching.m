@@ -53,8 +53,8 @@ ft_multiplotTFR(cfg,freqInt.freq);
 
 %%
 %average freq. 
-cfg = [];
-avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
+%cfg = [];
+%avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
 
 
 cfg                 = [];
@@ -64,7 +64,7 @@ cfg.ylim            = [10 35];
 cfg.xlim            = [-0.5 2];
 %cfg.ylim            = [64 95];
 
-avgFreq.powspctrm = fullMatrix(1,1,:,:,:);
+avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(2,1,:,:,:));
 
 ft_multiplotTFR(cfg,avgFreq);
 
@@ -79,23 +79,27 @@ sensL = {'MLC13','MLC14','MLC15','MLC16','MLC22','MLC23','MLC24','MLC31','MLC41'
 
 [label,idxL]=intersect(freq.grad.label,sensL);
 
+idxLR = [idxL idxR];
+
 %avFM=squeeze(nanmean(fullMatrix,1));
 
 %%
 
-figure(1),clf
+figure(2),clf
 
 currPlot=1;
 
-for iplotP =1:size(fullMatrix,1)
-    for iplotS=1:size(fullMatrix,2)
+for iplotP =1:size(fullMatrix.powsptrcm,1) %Loop over participants
+    
+    
+    for iplotS=1:size(fullMatrix.powsptrcm,2); %Left and right button presses
         
         
-        subplot(8,2,currPlot)
+        subplot(size(fullMatrix.powsptrcm,1),size(fullMatrix.powsptrcm,2),currPlot)
+       
         
-        
-        data=squeeze(nanmean(fullMatrix(iplotP,iplotS,idxL,8:end,20:end-40),3));
-        x = freq.time(20:end-40);
+        data=squeeze(nanmean(fullMatrix.powsptrcm(iplotP,iplotS,idxL,8:end,20:end-30),3));
+        x = freq.time(20:end-30);
         y = freq.freq(8:end);
         
         imagesc(x,y,data)
@@ -104,16 +108,67 @@ for iplotP =1:size(fullMatrix,1)
         colorbar
         
         currPlot=currPlot+1;
-        
+        %title(sprintf('%s L/R: %d',fullMatrix.participants{iplotP},iplotS))
     end
 end
 %imagesc(squeeze(nanmean(avgFreq.powspctrm(idxR,8:end,:))))
 
+%%
+%Plot the average for each sensor group and for each button press. 
+
+plotT={'Left motor sensor group, Left button press','Left motor sensor group, Right button press';'Right motor sensor group, Left button press','Right motor sensor group, Right button press'};
+
+xplot=1;
+
+for isensG=1:2
+    
+    for ibutG=1:2
+        
+        subplot(4,1,xplot)
+        
+        data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,20:end-40),3));
+        
+        x = freq.time(20:end-40);
+        y = freq.freq(8:end);
+        
+        imagesc(x,y,squeeze(nanmean(data,1)))
+        
+        set(gca,'YDir','normal')
+        colorbar
+        
+        title(plotT(isensG,ibutG))
+        
+        xplot=xplot+1;
+        
+    end
+end
+
+
+%%
+%Plot topoplots
+
+
+cfg                 = [];
+%cfg.zlim            = [-20 200];
+cfg.showlabels      = 'yes';
+cfg.ylim            = [15 25];
+cfg.xlim            = [1 1.5];
+
+
+avgFreq.powspctrm = squeeze(nanmean(fullMatrix.powsptrcm(:,1,:,:,:),1));
+%avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(1,2,:,:,:));
+
+
+ft_topoplotTFR(cfg,avgFreq);
 
 
 
 
+%% Save figure
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
+print('average7participantsStimOnset','-dpdf')
 
+print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/average7participantsStimOnset')
 
 
 
