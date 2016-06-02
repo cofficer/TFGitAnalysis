@@ -13,6 +13,9 @@ clear all
 partDate269            = {'AWi/20151007','SBa/20151006','JHo/20151004','JFo/20151007','AMe/20151008','SKo/20151011','JBo/20151011'};%
 partDate268            = {'JRi/20150828'}; %One channel less.
 
+%solo participant
+partDate269            = {'SBa/20151006'};
+
 numPart = length(partDate269);
 
 cfg = [];

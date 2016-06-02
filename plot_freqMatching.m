@@ -43,13 +43,13 @@ baseFreq            = ft_freqbaseline(cfg,freq);
 %%
 %Different multiplotTFR settings
 cfg                 = [];
-cfg.zlim            = [-100 100];
+%cfg.zlim            = [-100 100];
 cfg.showlabels      = 'yes';
 cfg.ylim            = [10 35];
 cfg.xlim            = [-0.3 0.8];
 %cfg.ylim            = [64 95];
 
-ft_multiplotTFR(cfg,freqInt.freq);
+ft_multiplotTFR(cfg,freq);
 
 %%
 %average freq. 
@@ -64,7 +64,7 @@ cfg.ylim            = [10 35];
 cfg.xlim            = [-0.5 2];
 %cfg.ylim            = [64 95];
 
-avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(2,1,:,:,:));
+avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(1,1,:,:,:));
 
 ft_multiplotTFR(cfg,avgFreq);
 
@@ -98,8 +98,8 @@ for iplotP =1:size(fullMatrix.powsptrcm,1) %Loop over participants
         subplot(size(fullMatrix.powsptrcm,1),size(fullMatrix.powsptrcm,2),currPlot)
        
         
-        data=squeeze(nanmean(fullMatrix.powsptrcm(iplotP,iplotS,idxL,8:end,20:end-30),3));
-        x = freq.time(20:end-30);
+        data=squeeze(nanmean(fullMatrix.powsptrcm(iplotP,iplotS,idxL,8:end,20:end-40),3));
+        x = freq.time(20:end-40);
         y = freq.freq(8:end);
         
         imagesc(x,y,data)
