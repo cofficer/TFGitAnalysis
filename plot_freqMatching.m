@@ -54,7 +54,7 @@ ft_multiplotTFR(cfg,freq);
 %%
 %average freq. 
 %cfg = [];
-%avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
+%avgFreq = ft_freqdescriptives(cfg,freq);
 
 
 cfg                 = [];
@@ -66,7 +66,7 @@ cfg.xlim            = [-0.5 2];
 
 avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(1,1,:,:,:));
 
-ft_multiplotTFR(cfg,avgFreq);
+ft_multiplotTFR(cfg,freq);
 
 
 %%
@@ -150,25 +150,47 @@ end
 
 cfg                 = [];
 %cfg.zlim            = [-20 200];
-cfg.showlabels      = 'yes';
+cfg.showlabels      = 'no';
+cfg.marker          = 'off';
+cfg.comment         = 'no';
 cfg.ylim            = [15 25];
-cfg.xlim            = [1 1.5];
+cfg.xlim            = [1 1.2];
+%cfg.layout          = 'CTF275.lay';
 
+LR={'Left button press','Right button pess'};
 
-avgFreq.powspctrm = squeeze(nanmean(fullMatrix.powsptrcm(:,1,:,:,:),1));
-%avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(1,2,:,:,:));
+currPlot=1;
 
-
-ft_topoplotTFR(cfg,avgFreq);
+for iplotP =1:2%size(fullMatrix.powsptrcm,1) %Loop over participants
+    
+    
+   % for iplotS=1:size(fullMatrix.powsptrcm,2); %Left and right button presses
+        
+        
+        subplot(1,2,currPlot)
+        
+        
+        avgFreq.powspctrm = squeeze(nanmean(fullMatrix.powsptrcm(:,iplotP,:,:,:),1));
+        %avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(1,2,:,:,:));
+        
+        
+        ft_topoplotTFR(cfg,avgFreq);
+        title(sprintf('%s',LR{iplotP}))
+        
+        %5title(sprintf('%s ',fullMatrix.participants{currPlot}))
+        
+        currPlot=currPlot+1;
+    %end
+end
 
 
 
 
 %% Save figure
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('average7participantsStimOnset','-dpdf')
+print('avgTotal7partTopo','-dpdf')
 
-print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/average7participantsStimOnset')
+print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/avg7partTopoStimOnset1-1.2sRightBP')
 
 
 

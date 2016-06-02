@@ -26,28 +26,31 @@ runcfg.batchlists = {
 %    %#Placebo batch files
 %    %'batchSurpriseMatchingexp_TLa_170815' #Incomplete sessions. No batch.
 %     'batchSurpriseMatchingexp_MAm_250815' %#Missing triggers both
-%                                           sessions. Also party missing ETrigger after restoration.
+%                                           sessions. Also party missing
+%                                           ETrigger after restoration.
+%                                           MAm_ETrun4_MEGfile3_event.mat
+%                                           doesnt have ETtrigger field. 
 %     'batchSurpriseMatchingexp_MAb_160815' %Can't even read event #Missing triggers placebo
-%     'batchSurpriseMatchingexp_MGo_150815' %Succes3, (maybe few files)#Missing triggers??
-%     'batchSurpriseMatchingexp_HRi_160815' %Succes3 #Missing triggers placebo
-%     'batchSurpriseMatchingexp_AZi_180815' Success3 %#Missing trigger 2nd datafile.
+%     'batchSurpriseMatchingexp_MGo_150815' %Succes4, (maybe few files)#Missing triggers??
+%     'batchSurpriseMatchingexp_HRi_160815' %Succes3 Only missing one block...#Missing triggers placebo
+%     'batchSurpriseMatchingexp_AZi_180815' %Success3 %#Missing trigger 2nd datafile.
 %    %'batchSurpriseMatchingexp_JNi_250815' #Incomplete sessions. No batch.
-%     'batchSurpriseMatchingexp_MSo_200815' %Success4  #Last trial 193, missing trig.
-%     'batchSurpriseMatchingexp_MTo_250815' %#Succes (first part). Missing triggers
-%     'batchSurpriseMatchingexp_DLa_260815' %#REDO, doesnt exist
-%     'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions
+%     'batchSurpriseMatchingexp_MSo_200815' %Success4 Only process the first dataset?? #Last trial 193, missing trig.
+%     'batchSurpriseMatchingexp_MTo_250815' %#Success, (first part). Missing triggers
+%     'batchSurpriseMatchingexp_DLa_260815' %Success4 #REDO, doesnt exist
+%     'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions Missing two blocks
 %     'batchSurpriseMatchingexp_NSh_250815' %#Success4.%Suppoed to be 25???
 %     'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
 %     'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
 %     'batchSurpriseMatchingexp_LMe_260815' %#Missing triggers. Missing ETtrigger from event
 %     'batchSurpriseMatchingexp_HEn_280815' %#Strange error. Missing triggers dataset2?
 %     'batchSurpriseMatchingexp_ROr_270815' %#Success4, but high blink rate.
-%     'batchSurpriseMatchingexp_DWe_031015' #Success2, (corrected 17nov)
+%     'batchSurpriseMatchingexp_DWe_031015' %#Success2, (corrected 17nov)
 %     'batchSurpriseMatchingexp_FSr_031015' %#Success4,
 %     'batchSurpriseMatchingexp_JNe_041015' %#Success4
 %     'batchSurpriseMatchingexp_RWi_031015' %#Almost preprocessed. Issue with missing value of data.time{19} for last block, 
 %     'batchSurpriseMatchingexp_EIv_031015' %Data set error. #Lst trial is 0
-     'batchSurpriseMatchingexp_SBa_061015' %Succes4
+%     'batchSurpriseMatchingexp_SBa_061015' %Succes4
 %     'batchSurpriseMatchingexp_HJu_041015' % Success4 Way too many EYE artifacts
 %     'batchSurpriseMatchingexp_JHo_041015' %#Success4
 %     'batchSurpriseMatchingexp_FRa_071015' %Eror cannot read data.  
@@ -136,7 +139,7 @@ runcfg.trigger = {
 % 
 % warning off
 % % 
-% MIBexp_preproc_peersetup
+%  MIBexp_preproc_peersetup
 
 % MIBexp_plotpie_artifacts
 

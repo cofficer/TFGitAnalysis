@@ -94,8 +94,8 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                 
                 PREOUT = ['/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/' cfg.freqanalysistype filesep PRE cfg.trigger filesep];
                 
-                infile=sprintf('%s%s_%s_resp_block%s', PREIN, batch(i).subj, batch(i).type,blocksPreproc(bind).name(end-5:end-4)); %Removed cfg.trigger
-                preprocinfofile = sprintf('%s%s_%s_resp_preprocinfo_block%s.mat', PREIN, batch(i).subj, batch(i).type,blocksPreproc(bind).name(end-5:end-4)); %removed baseline
+                infile=sprintf('%s%s_%s_resp_block%s', PREIN, batch(1).subj, batch(1).type,blocksPreproc(bind).name(end-5:end-4)); %Removed cfg.trigger
+                preprocinfofile = sprintf('%s%s_%s_resp_preprocinfo_block%s.mat', PREIN, batch(1).subj, batch(1).type,blocksPreproc(bind).name(end-5:end-4)); %removed baseline
                 infile = [infile '.mat' ];
                 
                 try load(preprocinfofile)
