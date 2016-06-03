@@ -30,9 +30,9 @@ stop        = 0;
 
 %Choose to baseline left or right trials. left==1. 
 if LR==1
-    allNames = allNames(1:10);
+    allNames = allNames(1:end/2);
 else
-    allNames = allNames(11:20);
+    allNames = allNames((end/2)+1:end);
 end
 
 
