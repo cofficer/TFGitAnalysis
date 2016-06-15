@@ -19,7 +19,7 @@ cfg.baseline        = [-1.8 -1.5];
 cfg.baselinetype    = 'absolute';
 cfg.ylim            = [10 35];
 cfg.zlim            = 'maxabs';
-ft_multiplotTFR(cfg,freq);
+ft_multiplotTFR(cfg,freqBase.freq);
 
 
 
@@ -61,19 +61,20 @@ cfg                 = [];
 %cfg.zlim            = [-20 200];
 cfg.showlabels      = 'yes';
 cfg.ylim            = [10 35];
-cfg.xlim            = [-0.5 2];
+cfg.xlim            = [-0.5 0.8];
 %cfg.ylim            = [64 95];
+cfg.layout          = 'CTF275.lay';
 
-avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(1,1,:,:,:));
+%avgFreq.powspctrm = squeeze(nanmean(fullMatrix.powsptrcm(:,2,:,:,:),1));
 
-ft_multiplotTFR(cfg,freq);
+ft_multiplotTFR(cfg,grandavg);
 
 
 %%
 %Choose sensors:
 
-sensR = {'MRC13','MRC14','MRC15','MRC16','MRC22','MRC23','MRC24','MRC31','MRC41','MRF64','MRF65'};
-sensL = {'MLC13','MLC14','MLC15','MLC16','MLC22','MLC23','MLC24','MLC31','MLC41','MLF64','MLF65'};
+sensR = {'MRC13','MRC14','MRC15','MRC16','MRC22','MRC23','MRC24','MRC31','MRC41','MRF64','MRF65','MRF63','MRF54','MRF55','MRF56','MRF66','MRF46'};
+sensL = {'MLC13','MLC14','MLC15','MLC16','MLC22','MLC23','MLC24','MLC31','MLC41','MLF64','MLF65','MLF63','MLF54','MLF55','MLF56','MLF66','MLF46'};
 
 [label,idxR]=intersect(freq.grad.label,sensR);
 
@@ -98,8 +99,8 @@ for iplotP =1:size(fullMatrix.powsptrcm,1) %Loop over participants
         subplot(size(fullMatrix.powsptrcm,1),size(fullMatrix.powsptrcm,2),currPlot)
        
         
-        data=squeeze(nanmean(fullMatrix.powsptrcm(iplotP,iplotS,idxL,8:end,20:end-40),3));
-        x = freq.time(20:end-40);
+        data=squeeze(nanmean(fullMatrix.powsptrcm(iplotP,iplotS,idxL,8:end,20:end-60),3));
+        x = freq.time(20:end-60);
         y = freq.freq(8:end);
         
         imagesc(x,y,data)
@@ -126,12 +127,17 @@ for isensG=1:2
         
         subplot(4,1,xplot)
         
-        data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,20:end-40),3));
+        data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,20:end-70),3));
         
-        x = freq.time(20:end-40);
+        x = freq.time(20:end-70);
         y = freq.freq(8:end);
         
-        imagesc(x,y,squeeze(nanmean(data,1)))
+        %plot contra vs ipsi:
+        
+        %clims=[-5 30];
+        
+        
+        imagesc(x,y,squeeze(nanmean(data,1)),[-20 20]) %insert clims
         
         set(gca,'YDir','normal')
         colorbar
@@ -154,8 +160,8 @@ cfg.showlabels      = 'no';
 cfg.marker          = 'off';
 cfg.comment         = 'no';
 cfg.ylim            = [15 25];
-cfg.xlim            = [1 1.2];
-%cfg.layout          = 'CTF275.lay';
+cfg.xlim            = [0.6 0.8];
+cfg.layout          = 'CTF275.lay';
 
 LR={'Left button press','Right button pess'};
 
@@ -170,25 +176,74 @@ for iplotP =1:2%size(fullMatrix.powsptrcm,1) %Loop over participants
         subplot(1,2,currPlot)
         
         
-        avgFreq.powspctrm = squeeze(nanmean(fullMatrix.powsptrcm(:,iplotP,:,:,:),1));
+        grandavg.powspctrm = squeeze(nanmean(fullMatrix.powsptrcm(:,iplotP,:,:,:),1));
         %avgFreq.powspctrm = squeeze(fullMatrix.powsptrcm(1,2,:,:,:));
         
         
-        ft_topoplotTFR(cfg,avgFreq);
+        ft_topoplotTFR(cfg,grandavg);
         title(sprintf('%s',LR{iplotP}))
         
         %5title(sprintf('%s ',fullMatrix.participants{currPlot}))
+        
+        
+        
+        
         
         currPlot=currPlot+1;
     %end
 end
 
+%%
+%Figure 2b. Buildup of choice-predictive...
 
+
+plotT={'Left motor sensor group, Left button press','Left motor sensor group, Right button press';'Right motor sensor group, Left button press','Right motor sensor group, Right button press'};
+
+% xplot=1;
+% 
+% for isensG=1:2
+%     
+%     for ibutG=1:2
+%         
+%         subplot(4,1,xplot)
+        
+        data11=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),8:end,20:end-45),3));
+        data21=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,1),8:end,20:end-45),3));
+        data12=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,2),8:end,20:end-45),3));
+        data22=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,2),8:end,20:end-45),3));
+
+        x = freq.time(20:end-45);
+        y = freq.freq(8:end);
+        
+        %plot contra vs ipsi:
+        
+        
+        
+        
+
+%         
+%     end
+%     
+%     
+%     
+% end
+        dataL=data21-data11;
+        dataR=data12-data22;
+        
+    
+        imagesc(x,y,squeeze(nanmean(dataR,1)),[-40 40])
+        
+        set(gca,'YDir','normal')
+        colorbar
+        
+        title('Contra vs. Ipsi')
+        
+        xplot=xplot+1;
 
 
 %% Save figure
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('avgTotal7partTopo','-dpdf')
+print('MotorGroupsLRBPLR','-dpdf')
 
 print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/avg7partTopoStimOnset1-1.2sRightBP')
 

@@ -1,5 +1,5 @@
 
-function [allFreq] = baselineFreqMatrix(partDate,LR)
+function [allFreq] = baselineFreqMatrix(partDate,LR,MEGsensors)
 
 %Script for baselining the data using percentage change. 
 
@@ -18,8 +18,10 @@ lowhigh             = 'low';
 
 %freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/JHo/20151004/resp/',lowhigh);
 
+%Change directory to path where the baseline freq is located
 cd(basePath)
 
+%Store all the filename. 
 allNames            = dir('*.mat');
 
 %Define the duration of the baseline. 
@@ -36,16 +38,19 @@ else
 end
 
 
-for iresp   = 1:length(allNames)/2
+
+for iresp   = 1:length(allNames)
 
     
    
-   freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
+   %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
    freqBase     = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the baseline
    
-
+   %Get the index of the sensors which are present in all freq data. 
+   sensorsIdx=ismember(freqBase.freq.label,MEGsensors);
    
-   
+   %Create matrix to fill with the baselined freq data. 
+   baselinedMatrix=zeros(size(freqBase.freq.powspctrm(:,sensorsIdx,:,:)));
    
    %Baseline trial by trial by taking the relative change.
    for itrial = 1:size(freqBase.freq.powspctrm,1);
@@ -56,10 +61,10 @@ for iresp   = 1:length(allNames)/2
            stopInd     = find(freqBase.freq.time==stop);
 
            %Get the baseline per TF datapoint for all timepoints 
-           currFreq     =  freqBase.freq.powspctrm(itrial,:,ifreq,startInd:stopInd);
+           currFreq     =  freqBase.freq.powspctrm(itrial,sensorsIdx,ifreq,startInd:stopInd);
           
            %Get the mean over all the timepoints for current TF datapoint
-           avgTOI       = nanmean(currFreq,4);
+           avgTOI       = nanmean(squeeze(currFreq),2);
            
            %For each trial plot the average baseline and average resp
 %            %activity
@@ -69,22 +74,23 @@ for iresp   = 1:length(allNames)/2
 %            end
            %Repeat the mean over the range of timepoints for the range of
            %interest. 
-           avgTOI       = repmat(avgTOI',1,size(freqInt.freq.powspctrm,4));
+           avgTOI       = repmat(avgTOI,1,size(freqBase.freq.powspctrm,4));
            
            %Calculate the percentage change in relation to baseline. 
-           freqInt.freq.powspctrm(itrial,:,ifreq,:) = ((squeeze(freqInt.freq.powspctrm(itrial,:,ifreq,:))-avgTOI)./avgTOI)*100;
+           baselinedMatrix(itrial,:,ifreq,:) = ((squeeze(freqBase.freq.powspctrm(itrial,sensorsIdx,ifreq,:))-avgTOI)./avgTOI)*100;
            
            
            
        end
    end
     
-%Add to total frequency matrix
-if iresp==1
-allFreq.freq=freqInt.freq;
-else
-    allFreq.freq.powspctrm=cat(1,allFreq.freq.powspctrm,freqInt.freq.powspctrm);
-end
+   %Add to total frequency matrix
+   if iresp==1
+       allFreq.freq=freqBase.freq;
+       allFreq.freq.powspctrm=baselinedMatrix;
+   else
+       allFreq.freq.powspctrm=cat(1,allFreq.freq.powspctrm,baselinedMatrix);
+   end
 end
 
 %save the baselined data in 
