@@ -10,6 +10,9 @@ dbstop if error
 %%
 %Participants:
 
+%Add to 269 or 268
+toAdd = {'MSo/20150820','NSh/20150825','JRu/20150819'};
+
 newPart={'AWi/20151007','SBa/20151006','JHo/20151004','JFo/20151007','AMe/20151008','SKo/20151011'};
 
 partDate269            = {'AWi/20151007','SBa/20151006','JHo/20151004','JFo/20151007'... 

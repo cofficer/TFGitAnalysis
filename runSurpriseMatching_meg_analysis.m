@@ -1,5 +1,6 @@
 % runSurprieMatching_meg_analysis.m
 % run preproc and freqanalysis 
+
 clear all; close all;
 %%
 %cd('/home/chrisgahn/Documents/MATLAB/code/batch')
@@ -19,7 +20,8 @@ runcfg.batchlists = {
 %       'batchTimeScalexp_EIv_20160204'   
 %       'batchTimeScalexp_JRu_20160205'
        
-       
+       %Needs to be fixed in placebo sessions: 
+       %MAm -rePre , MAb - rePre, LMe - rePre, EIv, FRa, JHa, BFu
 
 %    'batchSurpriseMatchingexp_MAb_test' %Only temporary testing batch. 
 %     
@@ -39,17 +41,17 @@ runcfg.batchlists = {
 %     'batchSurpriseMatchingexp_MTo_250815' %#Success, (first part). Missing triggers
 %     'batchSurpriseMatchingexp_DLa_260815' %Success4 #REDO, doesnt exist
 %     'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions Missing two blocks
-%     'batchSurpriseMatchingexp_NSh_250815' %#Success4.%Suppoed to be 25???
-%     'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
+%     'batchSurpriseMatchingexp_NSh_250815' %#Success4.%Supposed to be 25???
+%    'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
 %     'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
 %     'batchSurpriseMatchingexp_LMe_260815' %#Missing triggers. Missing ETtrigger from event
-%     'batchSurpriseMatchingexp_HEn_280815' %#Strange error. Missing triggers dataset2?
+%     'batchSurpriseMatchingexp_HEn_280815' %Succes4 % restarted the task. 
 %     'batchSurpriseMatchingexp_ROr_270815' %#Success4, but high blink rate.
 %     'batchSurpriseMatchingexp_DWe_031015' %#Success2, (corrected 17nov)
 %     'batchSurpriseMatchingexp_FSr_031015' %#Success4,
 %     'batchSurpriseMatchingexp_JNe_041015' %#Success4
 %     'batchSurpriseMatchingexp_RWi_031015' %#Almost preprocessed. Issue with missing value of data.time{19} for last block, 
-%     'batchSurpriseMatchingexp_EIv_031015' %Data set error. #Lst trial is 0
+%     'batchSurpriseMatchingexp_EIv_031015' %Data set error. #Lst trial is0
 %     'batchSurpriseMatchingexp_SBa_061015' %Succes4
 %     'batchSurpriseMatchingexp_HJu_041015' % Success4 Way too many EYE artifacts
 %     'batchSurpriseMatchingexp_JHo_041015' %#Success4
@@ -105,10 +107,10 @@ runcfg.batchlists = {
 };
 
 runcfg.trigger = {
-%        'resp'
+        'resp'
 %         'stim'
 % 'trialsmib's
-         'baseline'
+%         'baseline'
 % 'flickerresp'
 %% 
 % 'flickerstim'
@@ -116,76 +118,76 @@ runcfg.trigger = {
         };
 
 %% Peersetup preproc scripts
-% dbstop if error
-% runcfg.overwrite =1;
-% runcfg.append_et = 1;
-% runcfg.sourceloc = 'no';
+dbstop if error
+runcfg.overwrite =1;
+runcfg.append_et = 1;
+runcfg.sourceloc = 'no';
+
+% % preproc runanalysis settings
+runcfg.preproc.loaddata = 'no'; %load in data to do visual muscle rejection
+runcfg.preproc.loaddatapath = '/home/chrisgahn/Documents/MATLAB/preprocessed/';
+
+runcfg.preproc.artf_rejection = 'yes';
+runcfg.preproc.artf_feedback = 'no';
+runcfg.preproc.loadartf = 'no';
+
+runcfg.preproc.parallel = 'local'; %torque peer local qsublocal
+runcfg.preproc.compile = 'no';
+
+runcfg.preproc.prunemibfromrep = 'no'; % yes
+
+fprintf('Running MIBmeg preproc analysis . . .\n\n')
+disp(runcfg.preproc.parallel); disp(runcfg.batchlists); disp(runcfg);
+
+warning off
 % 
-% % % preproc runanalysis settings
-% runcfg.preproc.loaddata = 'no'; %load in data to do visual muscle rejection
-% runcfg.preproc.loaddatapath = '/home/chrisgahn/Documents/MATLAB/preprocessed/';
-% 
-% runcfg.preproc.artf_rejection = 'yes';
-% runcfg.preproc.artf_feedback = 'no';
-% runcfg.preproc.loadartf = 'no';
-% 
-% runcfg.preproc.parallel = 'local'; %torque peer local qsublocal
-% runcfg.preproc.compile = 'no';
-% 
-% runcfg.preproc.prunemibfromrep = 'no'; % yes
-% 
-% fprintf('Running MIBmeg preproc analysis . . .\n\n')
-% disp(runcfg.preproc.parallel); disp(runcfg.batchlists); disp(runcfg);
-% 
-% warning off
-% % 
-%  MIBexp_preproc_peersetup
+ MIBexp_preproc_peersetup
 
 % MIBexp_plotpie_artifacts
 
 %% Peersetup freq scripts
 %Change folder to git repository analysis
-warning off
-%dbclear all
-cd('/home/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/')
-
-
-runcfg.overwrite = 1;
-sourceloc = 0;
-
-runcfg.freq.analysistype = {
-    'low'
-%     'high'
-%     'full'
-    };
-
-runcfg.freq.phaselocktype = {
-    'totalpow'
-    %'induced'
-%     'evoked'
-    };
-
-% runcfg.freq.timreq = [25 50]; % high low in minutes
-runcfg.freq.timreq = 40; % 
-
-runcfg.freq.parallel = 'torque'; %torque peer local 
-runcfg.freq.compile = 'no'; % yes no
-% 
-fprintf('Running Matching MEG freq analysis . . .\n\n')
-%disp(runcfg.freq.parallel); disp(runcfg.batchlists); disp(runcfg);
-disp(runcfg.freq.parallel); disp(runcfg);
-
-typeSession = 1; %1 = ATM, 2 = PLACEBO. 
-eventLR     = [21,20;22,23];
-
-
 % warning off
-%MatchingExp_freqanalysis_peersetup
-machingExpParallelRuns
+% %dbclear all
+% cd('/home/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/')
 % 
+% 
+% runcfg.overwrite = 1;
+% sourceloc = 0;
+% 
+% runcfg.freq.analysistype = {
+%     'low'
+% %     'high'
+% %     'full'
+%     };
+% 
+% runcfg.freq.phaselocktype = {
+%     'totalpow'
+%     %'induced'
+% %     'evoked'
+%     };
+% 
+% % runcfg.freq.timreq = [25 50]; % high low in minutes
+% runcfg.freq.timreq = 40; % 
+% 
+% runcfg.freq.parallel = 'torque'; %torque peer local 
+% runcfg.freq.compile = 'no'; % yes no
+% % 
+% fprintf('Running Matching MEG freq analysis . . .\n\n')
+% %disp(runcfg.freq.parallel); disp(runcfg.batchlists); disp(runcfg);
+% disp(runcfg.freq.parallel); disp(runcfg);
+% 
+% typeSession = 1; %1 = ATM, 2 = PLACEBO. 
+% eventLR     = [21,20;22,23];
+% 
+% 
+% % warning off
+% %MatchingExp_freqanalysis_peersetup
+% machingExpParallelRuns
+
 
 %clear all; close all;
-% 
+
 
 
 % % 
