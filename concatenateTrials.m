@@ -26,7 +26,7 @@ end
 
 
 %Loop over all blocks to load and concatenate the trials.
-for iblock = 1: length(load_dir)
+for iblock = 1: 1%length(load_dir)
     fprintf('Currently on block number %d out of %d\n\n' ,iblock, length(load_dir))
     %Need to be treated differetly depending on the freq or pre data.
     switch preFreq

@@ -1,5 +1,5 @@
 
-function [allFreq] = baselineFreqMatrix(partDate,LR,MEGsensors,start,stop,trialAverage)
+function [totalFreq] = baselineFreqMatrix(partDate,LR,MEGsensors,start,stop,trialAverage)
 %partDate = particant/date session. LR = 2D-vector with trigger numbers
 %MEGsensors, index for sensors that are common for all participants. 
 %Start, stop = the timepoints of the baseline period. 
@@ -85,7 +85,7 @@ for iresp   = 1:length(allNames)
            stopInd     = find(freqBase.freq.time==stop);
            
            %for the trial case avgTOI is calculated here
-           switch trialAverge
+           switch trialAverage
                case 'trial'
                    %Get the baseline per TF datapoint for all timepoints 
                    currFreq     =  freqBase.freq.powspctrm(itrial,sensorsIdx,ifreq,startInd:stopInd);
@@ -116,10 +116,10 @@ for iresp   = 1:length(allNames)
     
    %Add to total frequency matrix
    if iresp==1
-       allFreq.freq=freqBase.freq;
-       allFreq.freq.powspctrm=baselinedMatrix;
+       totalFreq.freq=freqBase.freq;
+       totalFreq.freq.powspctrm=baselinedMatrix;
    else
-       allFreq.freq.powspctrm=cat(1,allFreq.freq.powspctrm,baselinedMatrix);
+       totalFreq.freq.powspctrm=cat(1,totalFreq.freq.powspctrm,baselinedMatrix);
    end
 end
 
