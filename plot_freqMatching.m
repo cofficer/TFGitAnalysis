@@ -116,7 +116,7 @@ end
 
 %%
 %Plot the average for each sensor group and for each button press. 
-
+figure(2)
 plotT={'Left motor sensor group, Left button press','Left motor sensor group, Right button press';'Right motor sensor group, Left button press','Right motor sensor group, Right button press'};
 
 xplot=1;
@@ -127,7 +127,9 @@ for isensG=1:2
         
         subplot(4,1,xplot)
         
-        data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,20:end-70),3));
+        %Squeezing removes both 1-dimensions. Keep in mind if looking at 1
+        %participants. 
+        data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,21:end-41),3)); 
         
         x = freq.time(20:end-70);
         y = freq.freq(8:end);
@@ -136,8 +138,11 @@ for isensG=1:2
         
         %clims=[-5 30];
         
+        load('MGo_d01_250_type1event2_totalpow_freq21.mat')
+        imagesc(x,y,squeeze(nanmean(data,1))) %insert clims
         
-        imagesc(x,y,squeeze(nanmean(data,1)),[-20 20]) %insert clims
+        %Comment out for more than one participant. 
+        %imagesc(x,y,((data)),[-40 40]) %testing removing mean
         
         set(gca,'YDir','normal')
         colorbar
@@ -160,10 +165,10 @@ cfg.showlabels      = 'no';
 cfg.marker          = 'off';
 cfg.comment         = 'no';
 cfg.ylim            = [15 25];
-cfg.xlim            = [0.6 0.8];
+cfg.xlim            = [0.9 1];
 cfg.layout          = 'CTF275.lay';
 
-LR={'Left button press','Right button pess'};
+LR={'Left button press','Right button press'};
 
 currPlot=1;
 
@@ -196,7 +201,7 @@ end
 %%
 %Figure 2b. Buildup of choice-predictive...
 
-
+figure(3)
 plotT={'Left motor sensor group, Left button press','Left motor sensor group, Right button press';'Right motor sensor group, Left button press','Right motor sensor group, Right button press'};
 
 % xplot=1;
@@ -207,12 +212,12 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
 %         
 %         subplot(4,1,xplot)
         
-        data11=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),8:end,20:end-45),3));
-        data21=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,1),8:end,20:end-45),3));
-        data12=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,2),8:end,20:end-45),3));
-        data22=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,2),8:end,20:end-45),3));
+        data11=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),8:end,20:end-60),3));
+        data21=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,1),8:end,20:end-60),3));
+        data12=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,2),8:end,20:end-60),3));
+        data22=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,2),8:end,20:end-60),3));
 
-        x = freq.time(20:end-45);
+        x = freq.time(20:end-60);
         y = freq.freq(8:end);
         
         %plot contra vs ipsi:
@@ -231,7 +236,9 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
         dataR=data12-data22;
         
     
-        imagesc(x,y,squeeze(nanmean(dataR,1)),[-40 40])
+        imagesc(x,y,squeeze(nanmean(dataR,1)),[-25 25])
+       
+
         
         set(gca,'YDir','normal')
         colorbar
@@ -243,9 +250,27 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
 
 %% Save figure
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('MotorGroupsLRBPLR','-dpdf')
+print('MotorGroupsUntil08s','-dpdf')
 
 print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/avg7partTopoStimOnset1-1.2sRightBP')
 
+
+%%
+
+%Plot single trial TFR.
+        %load('MGo_d01_250_type1event2_totalpow_freq21.mat')
+        
+
+       x = freq.time( find(freq.time==-0.5):find(freq.time==0));%(20:end-60);
+        y = freq.freq(10:end);
+        
+        dat=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),10:end,:),1));
+        
+        imagesc(x,y,squeeze(nanmean(dat,1)))
+       
+    
+        
+        set(gca,'YDir','normal')
+        colorbar
 
 

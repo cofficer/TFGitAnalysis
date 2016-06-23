@@ -9,28 +9,28 @@ dbstop if error
 %clear all
 %%
 %Participants:
-
-%Add to 269 or 268
-toAdd = {'MSo/20150820','NSh/20150825','JRu/20150819'};
-
-newPart={'AWi/20151007','SBa/20151006','JHo/20151004','JFo/20151007','AMe/20151008','SKo/20151011'};
+warning off
 
 partDate269            = {'AWi/20151007','SBa/20151006','JHo/20151004','JFo/20151007'... 
-                         'AMe/20151008','SKo/20151011','JBo/20151011'...
-                         'DWe/20151003','FSr/20151003'...
-                         'JNe/20151004','RWi/20151003','HJu/20151004','LJa/20151006'};%
-partDate268            = {'MGo/20150815','JRi/20150828','HRi/20150816','AZi/20150818','MTo/20150825'...
-                          'DLa/20150826','BPe/20150826','ROr/20150827'}; %One channel less.
+                          'AMe/20151008','SKo/20151011','JBo/20151011','DWe/20151003'...
+                          'FSr/20151003','JNe/20151004','RWi/20151003','HJu/20151004'...
+                          'LJa/20151006','BFu/20151010','EIv/20151003'};
+partDate268            = {'MGo/20150815','JRi/20150828','HRi/20150816','AZi/20150818'...
+                          'MTo/20150825','DLa/20150826','BPe/20150826','ROr/20150827'...
+                          'HEn/20150828','MSo/20150820'}; %One channel less.
 
-partDateAll            = [partDate268 partDate269];
+partDateAll            = [partDate269 partDate268]; %insert partDate269
 
-%partDateAll=newPart;
-%solo participant
-%partDate269            = {'SBa/20151006'};
+partDateAll            = {'AWi/20151007'};
 
 numPart = length(partDateAll);
 
 cfg = [];
+
+%Define length of baseline and if trial-by-trial or average.
+start   = -0.5;
+stop    = 1;
+trialAverage = 'average';
 
 %Load all the meg sensors that are present in all sessions:
 load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/MEGsensors.mat');
@@ -39,13 +39,13 @@ load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/MEGsensors.m
 added=0;
 
 %Initialize matrix
-fullMatrix.powsptrcm = zeros(numPart,2,267,33,141);
+fullMatrix.powsptrcm = zeros(numPart,2,267,33,141); 
 fullMatrix.participants = partDateAll;
 for ipart = 1:numPart
     for LR = 1:2%2 %change back to 1:2, this is only while saving the data. LR buttonpress
         
         pd = partDateAll{ipart};
-        [allFreq] = baselineFreqMatrix(pd,LR,MEGsensors);
+        [allFreq] = baselineFreqMatrix(pd,LR,MEGsensors,start,stop,trialAverage);
         avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
         
         %Dont save this data again. Contstrut the full data matrix instead.
@@ -71,21 +71,21 @@ fprintf('\n\n\n\n-------Matrix containing the chosen participants has been creat
 %%
 %Get the grand average
 
-cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq');
-
-allFreqs        = dir('*BP2*.mat');
-
-
-for ifreq = 1:length(allFreqs)
-    
-    allAvg.(allFreqs(ifreq).name(1:3)) = load(allFreqs(ifreq).name);
-    
-    
-    
-end
-
-cfg      = [];
-grandavg = ft_freqgrandaverage(cfg, allAvg.AMe.avgFreq,allAvg.AWi.avgFreq,allAvg.AZi.avgFreq,allAvg.BPe.avgFreq,allAvg.DLa.avgFreq,allAvg.DWe.avgFreq,allAvg.FSr.avgFreq,allAvg.HJu.avgFreq,allAvg.HRi.avgFreq,allAvg.JBo.avgFreq,allAvg.JFo.avgFreq,allAvg.JHo.avgFreq,allAvg.JNe.avgFreq,allAvg.JRi.avgFreq,allAvg.LJa.avgFreq,allAvg.MGo.avgFreq,allAvg.MTo.avgFreq,allAvg.ROr.avgFreq,allAvg.RWi.avgFreq,allAvg.SBa.avgFreq,allAvg.SKo.avgFreq) ;
+% cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq');
+% 
+% allFreqs        = dir('*BP2*.mat');
+% 
+% 
+% for ifreq = 1:length(allFreqs)
+%     
+%     allAvg.(allFreqs(ifreq).name(1:3)) = load(allFreqs(ifreq).name);
+%     
+%     
+%     
+% end
+% 
+% cfg      = [];
+% grandavg = ft_freqgrandaverage(cfg, allAvg.AMe.avgFreq,allAvg.AWi.avgFreq,allAvg.AZi.avgFreq,allAvg.BPe.avgFreq,allAvg.DLa.avgFreq,allAvg.DWe.avgFreq,allAvg.FSr.avgFreq,allAvg.HJu.avgFreq,allAvg.HRi.avgFreq,allAvg.JBo.avgFreq,allAvg.JFo.avgFreq,allAvg.JHo.avgFreq,allAvg.JNe.avgFreq,allAvg.JRi.avgFreq,allAvg.LJa.avgFreq,allAvg.MGo.avgFreq,allAvg.MTo.avgFreq,allAvg.ROr.avgFreq,allAvg.RWi.avgFreq,allAvg.SBa.avgFreq,allAvg.SKo.avgFreq) ;
 
 
 
