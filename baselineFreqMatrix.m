@@ -1,5 +1,5 @@
 
-function [totalFreq] = baselineFreqMatrix(partDate,LR,MEGsensors,start,stop,trialAverage)
+function [totalFreq] = baselineFreqMatrix(partDate,LR,MEGsensors,start,stop,trialAverage,conTrials)
 %partDate = particant/date session. LR = 2D-vector with trigger numbers
 %MEGsensors, index for sensors that are common for all participants. 
 %Start, stop = the timepoints of the baseline period. 
@@ -27,20 +27,19 @@ allNames            = dir('*.mat');
 %stop                = -0.5;
 
 
-
+if LR==1
+    allNames = allNames(1:end/2);
+else
+    allNames = allNames((end/2)+1:end);
+    
+end
 
 %Choose to baseline left or right trials. left==1. Ie which blocks to load.
 %if average call concatenateTrials to get overall average baseline.
 switch trialAverage
-    case 'trial' 
-        if LR==1
-            allNames = allNames(1:end/2);
-        else
-            allNames = allNames((end/2)+1:end);
-            
-        end
+
     case 'average'
-        [ conTrials ] = concatenateTrials( partDate, 'freq' );
+        
         %Returns all trials, then take average of the baseline period
         
         %First get the indices for the timeperiod of interest to baseline

@@ -17,19 +17,20 @@ partDate269            = {'AWi/20151007','SBa/20151006','JHo/20151004','JFo/2015
                           'LJa/20151006','BFu/20151010','EIv/20151003'};
 partDate268            = {'MGo/20150815','JRi/20150828','HRi/20150816','AZi/20150818'...
                           'MTo/20150825','DLa/20150826','BPe/20150826','ROr/20150827'...
-                          'HEn/20150828','MSo/20150820'}; %One channel less.
+                          'HEn/20150828','MSo/20150820','NSh/20150825','JRu/20150819'}; %One channel less.
 
 partDateAll            = [partDate269 partDate268]; %insert partDate269
 
-partDateAll            = {'AWi/20151007'};
+%partDateAll            = {'AWi/20151007','SBa/20151006'};
 
 numPart = length(partDateAll);
 
 cfg = [];
 
-%Define length of baseline and if trial-by-trial or average.
+%Define length of baseline and if trial-by-trial or average. And if basline
+%separately for left and right button presses. 
 start   = -0.5;
-stop    = 1;
+stop    = 0;
 trialAverage = 'average';
 
 %Load all the meg sensors that are present in all sessions:
@@ -42,10 +43,11 @@ added=0;
 fullMatrix.powsptrcm = zeros(numPart,2,267,33,141); 
 fullMatrix.participants = partDateAll;
 for ipart = 1:numPart
+    [ conTrials ] = concatenateTrials( partDateAll{ipart} , 'freq');
     for LR = 1:2%2 %change back to 1:2, this is only while saving the data. LR buttonpress
         
         pd = partDateAll{ipart};
-        [allFreq] = baselineFreqMatrix(pd,LR,MEGsensors,start,stop,trialAverage);
+        [allFreq] = baselineFreqMatrix(pd,LR,MEGsensors,start,stop,trialAverage,conTrials);
         avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
         
         %Dont save this data again. Contstrut the full data matrix instead.

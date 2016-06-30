@@ -3,7 +3,6 @@ function [ conTrials ] = concatenateTrials( participantID, preFreq )
 %which has been preproceed or TF analysed. Loop over blocks and trials. 
 
 %Use participant ID and data of session to change to correct directory. 
-participantID='JNe/20151004';
 
 
 %Move to path for either preprocessed or frequency data. 
@@ -13,7 +12,9 @@ switch preFreq
         path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/%s/baseline/',participantID);
         cd(path)
         %Store name of block file. 
-        load_dir  = dir('*.mat');
+        load_dir  = dir('*.mat');%Think its better to baseline on everything.
+        
+        
         
     case 'pre'
         path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/preprocessed/%s/',participantID);
@@ -26,8 +27,9 @@ end
 
 
 %Loop over all blocks to load and concatenate the trials.
-for iblock = 1: 1%length(load_dir)
-    fprintf('Currently on block number %d out of %d\n\n' ,iblock, length(load_dir))
+for iblock = 1: length(load_dir)
+    mesB   = sprintf('Currently concatenating trials from block %d out of %d\n\n' ,iblock, length(load_dir));
+    disp(mesB)  
     %Need to be treated differetly depending on the freq or pre data.
     switch preFreq
         case 'pre'

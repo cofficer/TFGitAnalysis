@@ -131,15 +131,15 @@ for isensG=1:2
         %participants. 
         data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,21:end-41),3)); 
         
-        x = freq.time(20:end-70);
+        x = freq.time(21:end-41);
         y = freq.freq(8:end);
         
         %plot contra vs ipsi:
         
-        %clims=[-5 30];
+        clims=[-15 15];
         
-        load('MGo_d01_250_type1event2_totalpow_freq21.mat')
-        imagesc(x,y,squeeze(nanmean(data,1))) %insert clims
+        
+        imagesc(x,y,squeeze(nanmean(data,1)),clims) %insert clims
         
         %Comment out for more than one participant. 
         %imagesc(x,y,((data)),[-40 40]) %testing removing mean
@@ -212,13 +212,13 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
 %         
 %         subplot(4,1,xplot)
         
-        data11=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),8:end,20:end-60),3));
-        data21=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,1),8:end,20:end-60),3));
-        data12=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,2),8:end,20:end-60),3));
-        data22=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,2),8:end,20:end-60),3));
+        data11=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),10:end,21:end-50),3));
+        data21=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,1),10:end,21:end-50),3));
+        data12=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,2),10:end,21:end-50),3));
+        data22=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,2),10:end,21:end-50),3));
 
-        x = freq.time(20:end-60);
-        y = freq.freq(8:end);
+        x = freq.time(21:end-50);
+        y = freq.freq(10:end);
         
         %plot contra vs ipsi:
         
@@ -235,8 +235,10 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
         dataL=data21-data11;
         dataR=data12-data22;
         
+        avgData=dataR+dataL;
+       
     
-        imagesc(x,y,squeeze(nanmean(dataR,1)),[-25 25])
+        imagesc(x,y,squeeze(nanmean(avgData./2,1)),[-15 15])
        
 
         
@@ -250,7 +252,7 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
 
 %% Save figure
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('MotorGroupsUntil08s','-dpdf')
+print('contraVSipsi','-dpdf')
 
 print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/avg7partTopoStimOnset1-1.2sRightBP')
 
