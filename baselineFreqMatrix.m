@@ -1,6 +1,6 @@
 
-function [totalFreq] = baselineFreqMatrix(partDate,LR,MEGsensors,start,stop,trialAverage,conTrials)
-%partDate = particant/date session. LR = 2D-vector with trigger numbers
+function [totalFreq] = baselineFreqMatrix(cfg1,LR,conTrials)
+%partDate = particant/date session. LR = 2D-Matrix with trigger numbers
 %MEGsensors, index for sensors that are common for all participants. 
 %Start, stop = the timepoints of the baseline period. 
 %trialAverage, shoudl denote if the baseline it to be computed on the
@@ -8,13 +8,11 @@ function [totalFreq] = baselineFreqMatrix(partDate,LR,MEGsensors,start,stop,tria
 %Script for baselining the data using percentage change. 
 
 
+basePath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/baseline/',cfg1.lowhigh,cfg1.session);
 
-lowhigh             = 'low';
+freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/resp/',cfg1.lowhigh,cfg1.session);
 
-basePath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/baseline/',lowhigh,partDate);
-
-freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/resp/',lowhigh,partDate);
-
+load(cfg1.megsenspath);
 
 %Change directory to path where the baseline freq is located
 cd(basePath)
@@ -22,11 +20,7 @@ cd(basePath)
 %Store all the filename. 
 allNames            = dir('*.mat');
 
-%Define the duration of the baseline. 
-%start               = -1;
-%stop                = -0.5;
-
-
+%Maybe there should be more of a security check to make sure its L/R.
 if LR==1
     allNames = allNames(1:end/2);
 else
@@ -36,15 +30,15 @@ end
 
 %Choose to baseline left or right trials. left==1. Ie which blocks to load.
 %if average call concatenateTrials to get overall average baseline.
-switch trialAverage
+switch cfg1.trialAverage
 
     case 'average'
         
         %Returns all trials, then take average of the baseline period
         
         %First get the indices for the timeperiod of interest to baseline
-        startInd    = find(conTrials.time==start);
-        stopInd     = find(conTrials.time==stop);
+        startInd    = find(conTrials.time==cfg1.start);
+        stopInd     = find(conTrials.time==cfg1.stop);
         %Get the baseline per TF datapoint for all timepoints
         allFreq     =  conTrials.powspctrm(:,ismember(conTrials.label,MEGsensors),:,startInd:stopInd);
         
@@ -65,9 +59,16 @@ end
 
 for iresp   = 1:length(allNames)
 
+    if strcmp(cfg1.stimResp,'resp')
+        
+        %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
+        freqBase         = load(sprintf('%s%s',freqPath,allNames(iresp).name)); %load the baseline
+    elseif strcmp(cfg1.stimResp,'stim')
+        
+        %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
+        freqBase         = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the baseline
+    end
 
-   %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
-   freqBase         = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the baseline
    
    %Get the index of the sensors which are present in all freq data. 
    sensorsIdx       =ismember(freqBase.freq.label,MEGsensors);
@@ -80,11 +81,11 @@ for iresp   = 1:length(allNames)
        for ifreq = 1:size(freqBase.freq.powspctrm,3);
            
            %Get the indices for the timeperiod of interest to baseline
-           startInd    = find(freqBase.freq.time==start);
-           stopInd     = find(freqBase.freq.time==stop);
+           startInd    = find(freqBase.freq.time==cfg1.start);
+           stopInd     = find(freqBase.freq.time==cfg1.stop);
            
            %for the trial case avgTOI is calculated here
-           switch trialAverage
+           switch cfg1.trialAverage
                case 'trial'
                    %Get the baseline per TF datapoint for all timepoints 
                    currFreq     =  freqBase.freq.powspctrm(itrial,sensorsIdx,ifreq,startInd:stopInd);

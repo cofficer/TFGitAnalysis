@@ -19,7 +19,7 @@ cfg1={}; cfg2={}; inputfile={}; outputfile={}; ctr = 0; %make cells for each sub
 
 
 
-for iana=1:1%length(runcfg.freq.analysistype) %high low
+for iana=1:length(runcfg.freq.analysistype) %high low
     cfg.freqanalysistype = runcfg.freq.analysistype{iana};
     cfg.phaselocktype = runcfg.freq.phaselocktype{iana};
     cfg.timreq = runcfg.freq.timreq;
@@ -112,10 +112,10 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                                         cfg.itype = itype; %Atomextine or placebo condition
                                         cfg.ievent = ievent;
                                        
-                                        outfile = sprintf('%s%s_%s_%d_type%devent%d_%s_freq%s.mat', PREOUT, batch(i).subj, batch(i).type, ...
+                                        outfile = sprintf('%s%s_%s_%d_type%devent%d_%s_freq%s.mat', PREOUT, batch(1).subj, batch(1).type, ...
                                         cfg.t_ftimwin(1)*1000, itype, ievent,cfg.phaselocktype,blocksPreproc(bind).name(end-5:end-4));
                                         cfg.Outfilename=outfile;
-                                        if (~exist(outfile, 'file') && ~isempty(batch(i).dataset)) %Removed "|| overwrite"%% % add to the joblist if outf does not exist and not commented out in batch
+                                        if (~exist(outfile, 'file') && ~isempty(batch(1).dataset)) %Removed "|| overwrite"%% % add to the joblist if outf does not exist and not commented out in batch
                                             ctr = ctr + 1;
                                             cfg1{ctr}=cfg;
                                             cfg2{ctr}.vartrllength = 2; % for var trial length data, nans etc
@@ -131,7 +131,7 @@ for iana=1:1%length(runcfg.freq.analysistype) %high low
                                 end
                             end %itype
                         otherwise % baseline or trialsmib
-                            outfile = sprintf('%s%s_%s%d_%d_%s_%s_%s_freq.mat', PREOUT, batch(bind).subj, batch(bind).type, ...
+                            outfile = sprintf('%s%s_%s%d_%d_%s_%s_%s_freq.mat', PREOUT, batch(1).subj, batch(1).type, ...
                                 batch(bind).exp,cfg.t_ftimwin(1)*1000, cfg.trigger, batch(bind).filter,cfg.phaselocktype );
                             if ~exist(outfile, 'file') && ~isempty(batch(bind).dataset) || overwrite % add to the joblist if outf does not exist and not commented out in batch
                                 cfg.trials = 'all';

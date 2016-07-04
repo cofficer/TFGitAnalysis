@@ -1,15 +1,15 @@
-function [ conTrials ] = concatenateTrials( participantID, preFreq )
+function [ conTrials ] = concatenateTrials( cfg1 )
 %Combine all trials from a single sessions per particpant. Either data
 %which has been preproceed or TF analysed. Loop over blocks and trials. 
-
+%Choose either resp or base to concatenate.
 %Use participant ID and data of session to change to correct directory. 
 
 
 %Move to path for either preprocessed or frequency data. 
 
-switch preFreq 
+switch cfg1.preprocFreq 
     case 'freq' 
-        path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/%s/baseline/',participantID);
+        path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/%s/baseline/',cfg1.session);
         cd(path)
         %Store name of block file. 
         load_dir  = dir('*.mat');%Think its better to baseline on everything.
@@ -17,7 +17,7 @@ switch preFreq
         
         
     case 'pre'
-        path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/preprocessed/%s/',participantID);
+        path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/preprocessed/%s/',cfg1.session);
         cd(path)
         %Store name of block file. 
         load_dir  = dir('*resp_b*.mat');
@@ -27,11 +27,19 @@ end
 
 
 %Loop over all blocks to load and concatenate the trials.
-for iblock = 1: length(load_dir)
-    mesB   = sprintf('Currently concatenating trials from block %d out of %d\n\n' ,iblock, length(load_dir));
-    disp(mesB)  
+for iblock = 1: 2%length(load_dir)
+    
+    
+    if iblock==1;
+        fprintf('\n\nCurrently concatenating trials from a total number of %d blocks', length(load_dir));
+    else
+        fprintf('.')
+    end
+    
+    %fprintf('Currently concatenating trials from block %d out of %d\n\n' ,iblock, length(load_dir));
+    %disp(mesB)  
     %Need to be treated differetly depending on the freq or pre data.
-    switch preFreq
+    switch cfg1.preprocFreq 
         case 'pre'
             
             data      = load(load_dir(iblock).name);
@@ -68,7 +76,7 @@ for iblock = 1: length(load_dir)
     end
 end
 
-switch preFreq
+switch cfg1.preprocFreq 
     case 'freq'
         conTrials = freqAll;
     case 'pre' 

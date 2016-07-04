@@ -252,9 +252,9 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
 
 %% Save figure
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('contraVSipsi','-dpdf')
+print('MotorGroupsUntilResponse32','-dpdf')
 
-print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/avg7partTopoStimOnset1-1.2sRightBP')
+%print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/avg7partTopoStimOnset1-1.2sRightBP')
 
 
 %%

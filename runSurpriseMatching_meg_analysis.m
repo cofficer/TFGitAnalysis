@@ -24,13 +24,12 @@ runcfg.batchlists = {
        %MAm - error with third dataset, LMe - same error second dataset, 
        %FRa - error field, JHa, change batch?, BFu 6 blocks. 
 
-%    'batchSurpriseMatchingexp_MAb_test' %Only temporary testing batch. 
      
 %    %#Placebo batch files
 %    %'batchSurpriseMatchingexp_TLa_170815' #Incomplete sessions. No batch.
-%RE     'batchSurpriseMatchingexp_MAm_250815' %The third dataset first trial
+%        'batchSurpriseMatchingexp_MAm_250815' %Success4- The third dataset first trial
 %        has negative samplestart. First two datasets preprocessed. 
-%RE     'batchSurpriseMatchingexp_MAb_160815' %Can't even read event #Missing triggers placebo
+     'batchSurpriseMatchingexp_MAb_160815' %Can't even read event #Missing triggers placebo
 %         'batchSurpriseMatchingexp_MGo_150815' %Succes4, (maybe few files)#Missing triggers??
 %         'batchSurpriseMatchingexp_HRi_160815' %Succes3 Only missing one block...#Missing triggers placebo
 %         'batchSurpriseMatchingexp_AZi_180815' %Success3 %#Missing trigger 2nd datafile.
@@ -39,25 +38,25 @@ runcfg.batchlists = {
 %         'batchSurpriseMatchingexp_MTo_250815' %#Success, (first part). Missing triggers
 %         'batchSurpriseMatchingexp_DLa_260815' %Success4 #REDO, doesnt exist
 %         'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions Missing two blocks
-%RE     'batchSurpriseMatchingexp_NSh_250815' %#Success4.%Supposed to be
+%         'batchSurpriseMatchingexp_NSh_250815' %#Success4.Might re freq%Supposed to be
 %     25??? Excluded because of noise in data. 
 %         'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
-%RE     'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
-%RE     'batchSurpriseMatchingexp_LMe_260815' %#Missing triggers. Missing ETtrigger from event
+%         'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
+%         'batchSurpriseMatchingexp_LMe_260815' %Success4, but not much recorded. 4 blocks. #Missing triggers. Missing ETtrigger from event
 %         'batchSurpriseMatchingexp_HEn_280815' %Succes4 % restarted the task. 
 %         'batchSurpriseMatchingexp_ROr_270815' %#Success4, but high blink rate.
 %         'batchSurpriseMatchingexp_DWe_031015' %#Success2, (corrected 17nov)
 %         'batchSurpriseMatchingexp_FSr_031015' %#Success4,
-%         'batchSurpriseMatchingexp_JNe_041015' %#Success4
+%        'batchSurpriseMatchingexp_JNe_041015' %#Success4
 %         'batchSurpriseMatchingexp_RWi_031015' %#Almost preprocessed. Issue with missing value of data.time{19} for last block, 
 %         'batchSurpriseMatchingexp_EIv_031015' %Succes, Data set error. #Lst trial is0
-%         'batchSurpriseMatchingexp_SBa_061015' %Succes4
+%        'batchSurpriseMatchingexp_SBa_061015' %Succes4
 %         'batchSurpriseMatchingexp_HJu_041015' % Success4 Way too many EYE artifacts
 %         'batchSurpriseMatchingexp_JHo_041015' %#Success4
-%RE     'batchSurpriseMatchingexp_FRa_071015' %Skipping first dataset- Error last datast.  
+%     'batchSurpriseMatchingexp_FRa_071015' %Skipping first dataset- Error last datast.  
 %         'batchSurpriseMatchingexp_JFo_071015' %Success4
 %         'batchSurpriseMatchingexp_AWi_071015' %Success4
-%RE     'batchSurpriseMatchingexp_JHa_101015' %JHa and JHa2, strange.
+%         'batchSurpriseMatchingexp_JHa_101015' %Succes4 JHa and JHa2, strange. 
 %         'batchSurpriseMatchingexp_LJa_061015' %Success4
 %         'batchSurpriseMatchingexp_AMe_081015' %Success4
 %    %'batchSurpriseMatchingexp_DJu_091015' #Incomplete sessions. No batch.
@@ -106,7 +105,7 @@ runcfg.batchlists = {
 };
 
 runcfg.trigger = {
-%        'resp'
+        'resp'
 %         'stim'
 % 'trialsmib's
          'baseline'
