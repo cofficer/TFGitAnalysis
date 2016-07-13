@@ -10,11 +10,11 @@ function [totalFreq] = baselineFreqMatrix(cfg1,LR,conTrials)
 
 basePath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/baseline/',cfg1.lowhigh,cfg1.session);
 
-freqPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/resp/',cfg1.lowhigh,cfg1.session);
+respPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/resp/',cfg1.lowhigh,cfg1.session);
 
 load(cfg1.megsenspath);
 
-%Change directory to path where the baseline freq is located
+%Change directory to path where the relevant freq is located
 cd(basePath)
 
 %Store all the filename. 
@@ -62,7 +62,7 @@ for iresp   = 1:length(allNames)
     if strcmp(cfg1.stimResp,'resp')
         
         %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
-        freqBase         = load(sprintf('%s%s',freqPath,allNames(iresp).name)); %load the baseline
+        freqBase         = load(sprintf('%s%s',respPath,allNames(iresp).name)); %load the baseline
     elseif strcmp(cfg1.stimResp,'stim')
         
         %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
@@ -80,7 +80,8 @@ for iresp   = 1:length(allNames)
    for itrial = 1:size(freqBase.freq.powspctrm,1);
        for ifreq = 1:size(freqBase.freq.powspctrm,3);
            
-           %Get the indices for the timeperiod of interest to baseline
+           %Get the indices for the timeperiod of interest to baseline,
+           %irrelevant for average
            startInd    = find(freqBase.freq.time==cfg1.start);
            stopInd     = find(freqBase.freq.time==cfg1.stop);
            

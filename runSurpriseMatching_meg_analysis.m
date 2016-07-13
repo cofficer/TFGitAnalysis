@@ -1,7 +1,7 @@
 % runSurprieMatching_meg_analysis.m
 % run preproc and freqanalysis 
 
-clear all; close all;
+clear ;
 %%
 %cd('/home/chrisgahn/Documents/MATLAB/code/batch')
 addpath(genpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/'))
@@ -108,7 +108,7 @@ runcfg.trigger = {
         'resp'
 %         'stim'
 % 'trialsmib's
-         'baseline'
+%         'baseline'
 % 'flickerresp'
 %% 
 % 'flickerstim'
@@ -168,8 +168,8 @@ runcfg.freq.phaselocktype = {
 % runcfg.freq.timreq = [25 50]; % high low in minutes
 runcfg.freq.timreq = 40; % 
 
-runcfg.freq.parallel = 'torque'; %torque peer local 
-runcfg.freq.compile = 'no'; % yes no
+runcfg.freq.parallel = 'local'; %torque peer local 
+runcfg.freq.compile = 'local'; % yes no local
 % 
 fprintf('Running Matching MEG freq analysis . . .\n\n')
 %disp(runcfg.freq.parallel); disp(runcfg.batchlists); disp(runcfg);

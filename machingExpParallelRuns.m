@@ -92,7 +92,7 @@ for iana=1:length(runcfg.freq.analysistype) %high low
             
             for bind = 1:length(blocksPreproc) %for each datafile per subject. Should loop over blocks instead.
                 
-                PREOUT = ['/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/' cfg.freqanalysistype filesep PRE cfg.trigger filesep];
+                PREOUT = ['/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/test/' cfg.freqanalysistype filesep PRE cfg.trigger filesep];
                 
                 infile=sprintf('%s%s_%s_resp_block%s', PREIN, batch(1).subj, batch(1).type,blocksPreproc(bind).name(end-5:end-4)); %Removed cfg.trigger
                 preprocinfofile = sprintf('%s%s_%s_resp_preprocinfo_block%s.mat', PREIN, batch(1).subj, batch(1).type,blocksPreproc(bind).name(end-5:end-4)); %removed baseline

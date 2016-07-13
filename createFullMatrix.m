@@ -23,7 +23,7 @@ cfg = []; %Just for freqdescriptives argument
 added=0;
 
 %Initialize matrix
-partMatrix.powsptrcm = zeros(2,267,33,121); %Different if stimulus or resp locked.
+partMatrix.powsptrcm = zeros(2,267,33,141); %Different if stimulus or resp locked.
 % fullMatrix.participants = partDateAll;
 % for ipart = 1:numPart
     [ conTrials ] = concatenateTrials( cfg1);

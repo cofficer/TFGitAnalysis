@@ -116,7 +116,7 @@ end
 
 %%
 %Plot the average for each sensor group and for each button press. 
-figure(2)
+figure(1)
 plotT={'Left motor sensor group, Left button press','Left motor sensor group, Right button press';'Right motor sensor group, Left button press','Right motor sensor group, Right button press'};
 
 xplot=1;
@@ -129,14 +129,14 @@ for isensG=1:2
         
         %Squeezing removes both 1-dimensions. Keep in mind if looking at 1
         %participants. 
-        data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,21:end-41),3)); 
+        data=squeeze(nanmean(fullMatrix.powsptrcm(:,ibutG,idxLR(:,isensG),8:end,25:90),3)); 
         
-        x = freq.time(21:end-41);
+        x = freq.time(25:90);%21:end-42
         y = freq.freq(8:end);
         
         %plot contra vs ipsi:
         
-        clims=[-15 15];
+        clims=[-60 60];
         
         
         imagesc(x,y,squeeze(nanmean(data,1)),clims) %insert clims
@@ -212,12 +212,16 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
 %         
 %         subplot(4,1,xplot)
         
-        data11=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),10:end,21:end-50),3));
-        data21=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,1),10:end,21:end-50),3));
-        data12=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,2),10:end,21:end-50),3));
-        data22=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,2),10:end,21:end-50),3));
+        %timeperiodStimulus = [21:end-50];
+        startT=1;
+        stopT =90;
 
-        x = freq.time(21:end-50);
+        data11=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,1),10:end,startT:stopT),3));
+        data21=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,1),10:end,startT:stopT),3));
+        data12=squeeze(nanmean(fullMatrix.powsptrcm(:,1,idxLR(:,2),10:end,startT:stopT),3));
+        data22=squeeze(nanmean(fullMatrix.powsptrcm(:,2,idxLR(:,2),10:end,startT:stopT),3));
+
+        x = freq.time(startT:stopT);
         y = freq.freq(10:end);
         
         %plot contra vs ipsi:
@@ -238,7 +242,7 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
         avgData=dataR+dataL;
        
     
-        imagesc(x,y,squeeze(nanmean(avgData./2,1)),[-15 15])
+        imagesc(x,y,squeeze(nanmean(avgData./2,1)),[-6 6])
        
 
         
@@ -252,7 +256,7 @@ plotT={'Left motor sensor group, Left button press','Left motor sensor group, Ri
 
 %% Save figure
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('MotorGroupsUntilResponse32','-dpdf')
+print('motorGroups32responseLowClims','-depsc2')
 
 %print('-depsc','-tiff','/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures/avg7partTopoStimOnset1-1.2sRightBP')
 

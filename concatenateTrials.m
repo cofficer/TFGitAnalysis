@@ -27,7 +27,7 @@ end
 
 
 %Loop over all blocks to load and concatenate the trials.
-for iblock = 1: 2%length(load_dir)
+for iblock = 1: length(load_dir)
     
     
     if iblock==1;
