@@ -18,43 +18,43 @@ clear;
 runcfg.partlist = {
                              %269 channels
                            'AWi/20151007'
- %                          'SBa/20151006'
-%                           'JHo/20151004'
-%                           'JFo/20151007'
-%                           'AMe/20151008'
-%                           'SKo/20151011'
-%                           'JBo/20151011'
-%                           'DWe/20151003'
-%                           'FSr/20151003'
-%                           'JNe/20151004'
-%                            'RWi/20151003'
-%                            'HJu/20151004'
-%                            'LJa/20151006'
-%                            'BFu/20151010'
-%                            'EIv/20151003'
-%                            'JHa/20151010'
-%                            'FRa/20151007'
-%                            %268 channels
-%                            'MGo/20150815'
-%                            'JRi/20150828'
-%                            'HRi/20150816'
-%                           'AZi/20150818' 
-%                           'MTo/20150825'
-%                           'DLa/20150826'
-%                           'BPe/20150826'
-%                           'ROr/20150827'
-%                           'HEn/20150828'
-%                           'MSo/20150820'
-%                           'NSh/20150825'
-%                           'JRu/20150819'
-%                           'LMe/20150826'
-% %   %                        'MAm/20150825' %Avoid for behavior analysis
-%                            'MAb/20150816'
+                          'SBa/20151006'
+                          'JHo/20151004'
+                          'JFo/20151007'
+                          'AMe/20151008'
+                          'SKo/20151011'
+                          'JBo/20151011'
+                          'DWe/20151003'
+                          'FSr/20151003'
+                          'JNe/20151004'
+                           'RWi/20151003'
+                           'HJu/20151004'
+                           'LJa/20151006'
+                           'BFu/20151010'
+                           'EIv/20151003'
+                           'JHa/20151010'
+                           'FRa/20151007'
+                           %268 channels
+                           'MGo/20150815'
+                           'JRi/20150828'
+                           'HRi/20150816'
+                          'AZi/20150818' 
+                          'MTo/20150825'
+                          'DLa/20150826'
+                          'BPe/20150826'
+                          'ROr/20150827'
+                          'HEn/20150828'
+                          'MSo/20150820'
+                          'NSh/20150825'
+                          'JRu/20150819'
+                          'LMe/20150826'
+% % %   %                        'MAm/20150825' %Avoid for behavior analysis
+                             'MAb/20150816'
   }; 
                       
                       
-runcfg.baseline.compile         = 'no';                                  
-runcfg.baseline.parallel        = 'torque'; 
+runcfg.baseline.compile         = 'no';      %No                            
+runcfg.baseline.parallel        = 'torque';      %Torque
 runcfg.baseline.timreq          = 500; % 
 runcfg.dataAnalysisType         = 'behavior'; %Behavior or MEG 
 
@@ -73,9 +73,9 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
     
     for ipart = 1:length(runcfg.partlist)
         
-        cfg1{ipart}.tau          = linspace(2,10,20);
-        cfg1{ipart}.beta         = linspace(0,2,20);
-        cfg1{ipart}.runs         = 200;
+        cfg1{ipart}.tau          = linspace(1,25,50);
+        cfg1{ipart}.beta         = linspace(0.01,3,50);
+        cfg1{ipart}.runs         = 1;
         cfg1{ipart}.session      = runcfg.partlist{ipart};
         cfg1{ipart}.ATMpath  = sprintf('%s%s',bhpath,ATM{ipart});
         cfg1{ipart}.PLApath  = sprintf('%s%s',bhpath,PLA{ipart});
