@@ -71,6 +71,7 @@ for iblock = 1: length(load_dir)
             else
                 freqAll.powspctrm = cat(1,freqAll.powspctrm,...
                                     freq.powspctrm);
+                freqAll.trialinfo = cat(1,freqAll.trialinfo,freq.trialinfo);
             end
             
     end

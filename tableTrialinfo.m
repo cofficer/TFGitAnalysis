@@ -1,0 +1,65 @@
+function [ T ] = tableTrialinfo( path )
+%create a table with all the variables for all the sessions and
+%participants, for each trial. 
+
+
+
+%Load the local fractional income for each trial
+
+%Match up trial number from trialinfo with the LFI, 
+
+load(path);
+
+
+
+trialinfo = freq.cfg.previous.previous.previous.previous.previous.previous.previous.previous.trl;
+
+sample_start = trialinfo(:,1); %Minus 2 seconds, guessing before stim?
+
+sample_end   = trialinfo(:,2); %Feedback + 2s
+
+start_fix    = trialinfo(:,3); %Fixation point, at start of trial
+
+cue_trigger  = trialinfo(:,4);
+
+stim_onset   = trialinfo(:,5);
+
+stim_orient  = trialinfo(:,6);
+
+goQ_sample   = trialinfo(:,7); %Response go cue
+
+goQ_trigger  = trialinfo(:,8);
+
+resp_sample  = trialinfo(:,9);
+
+resp_type    = trialinfo(:,10);
+
+feedb_sample = trialinfo(:,11);
+
+feedb_type   = trialinfo(:,12);
+
+new_block    = trialinfo(:,13);
+
+trialN       = trialinfo(:,14);
+
+ID           = cell(1,length(sample_start));
+
+dataSet      = cell(1,length(sample_start));
+
+for nt       = 1:length(sample_start)
+ID{nt}       = path(1:3);
+dataSet{nt}  = path(end-5:end-4);
+end
+
+ID      = char(ID');
+dataSet = char(dataSet');
+
+T = table(sample_start,sample_end,start_fix,cue_trigger,stim_onset,...
+    stim_orient,goQ_sample,goQ_trigger,resp_sample,resp_type,...
+    feedb_sample,feedb_type,new_block,trialN,dataSet,ID);
+
+
+
+
+end
+

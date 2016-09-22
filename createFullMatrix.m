@@ -31,7 +31,22 @@ partMatrix.powsptrcm = zeros(2,267,33,141); %Different if stimulus or resp locke
         
         
         [allFreq] = baselineFreqMatrix(cfg1,LR,conTrials);%pd,LR,MEGsensors,start,stop,trialAverag
-        avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
+        
+        if LR == 1
+            allFreqLeft = allFreq.freq;
+            
+             path=strcat( outputfile.path(1:end-4),'Left.mat');
+            
+            save('-v7.3',path,'-struct','allFreqLeft')
+        elseif LR == 2
+            allFreqRight = allFreq.freq;
+            
+            path=strcat( outputfile.path(1:end-4),'Right.mat');
+            
+            save('-v7.3',path,'-struct','allFreqRight')
+        end
+        
+        %avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
         
         %Dont save this data again. Contstrut the full data matrix instead.
         %saveFile = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/%s_BP%d_%s.mat',partDateAll{ipart}(1:3),LR,partDateAll{numPart}(5:end));
@@ -43,7 +58,7 @@ partMatrix.powsptrcm = zeros(2,267,33,141); %Different if stimulus or resp locke
         
         %Store the loaded average freq data of current participant and L/R
         %in data matrix. 
-        partMatrix.powsptrcm(LR,:,:,:) = avgFreq.powspctrm;
+        %partMatrix.powsptrcm(LR,:,:,:) = avgFreq.powspctrm;
         
  
         
@@ -54,7 +69,7 @@ partMatrix.powsptrcm = zeros(2,267,33,141); %Different if stimulus or resp locke
     end
 % end
        %Need to save avgFreq somehow here. 
-        save(outputfile.path,'partMatrix')
+        %save(outputfile.path,'partMatrix')
 
 fprintf('\n\n\n\n-------Matrix containing the chosen participants has been created------\n\n\n\n-');
 

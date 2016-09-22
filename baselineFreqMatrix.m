@@ -119,8 +119,11 @@ for iresp   = 1:length(allNames)
    if iresp==1
        totalFreq.freq=freqBase.freq;
        totalFreq.freq.powspctrm=baselinedMatrix;
+       totalFreq.freq.trialinfo = freqBase.freq.trialinfo;
    else
        totalFreq.freq.powspctrm=cat(1,totalFreq.freq.powspctrm,baselinedMatrix);
+       totalFreq.freq.trialinfo = cat(1,totalFreq.freq.trialinfo,freqBase.freq.trialinfo);
+       
    end
 end
 
