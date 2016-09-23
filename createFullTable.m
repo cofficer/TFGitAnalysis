@@ -145,9 +145,20 @@ f = load(session.name);
 %this needs to be matched up with the equivalent table.
 f.trialinfo
 
+ID = ceilLFI.ID;
+ID = cellstr(ID);
+
+cmID = strncmp(ID,'AWi',3);
+
+posID = find(cmID == 1);
+
+trials = ceilLFI.trialN(posID);
 
 
-
+f.powspctrm(trials,:,:,:)
+%It is the trials if they were in order which they arent. They are sorted
+%based on the same button press. 
+trials
 
 %%
 %select trials
