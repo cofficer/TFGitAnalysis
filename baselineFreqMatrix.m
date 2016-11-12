@@ -7,10 +7,16 @@ function [totalFreq] = baselineFreqMatrix(cfg1,LR,conTrials)
 %average of all trials or on a trial by trial basis. 
 %Script for baselining the data using percentage change. 
 
+basePath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/%s/%s/baseline/',cfg1.lowhigh,cfg1.session);
 
-basePath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/baseline/',cfg1.lowhigh,cfg1.session);
+if strcmp(cfg1.stimResp,'stim')
+    respPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/%s/%s/stim/',cfg1.lowhigh,cfg1.session);
 
-respPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/%s/%s/resp/',cfg1.lowhigh,cfg1.session);
+elseif strcmp(cfg1.stimResp,'resp')
+    respPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/%s/%s/resp/',cfg1.lowhigh,cfg1.session);
+elseif strcmp(cfg1.stimResp,'cue')
+    respPath            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/%s/%s/cue/',cfg1.lowhigh,cfg1.session);
+end
 
 load(cfg1.megsenspath);
 
@@ -18,7 +24,7 @@ load(cfg1.megsenspath);
 cd(basePath)
 
 %Store all the filename. 
-allNames            = dir('*.mat');
+allNames            = dir('*260*.mat');
 
 %Maybe there should be more of a security check to make sure its L/R.
 if LR==1
@@ -63,10 +69,15 @@ for iresp   = 1:length(allNames)
         
         %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
         freqBase         = load(sprintf('%s%s',respPath,allNames(iresp).name)); %load the baseline
+        
+    elseif strcmp(cfg1.stimResp,'cue')
+        
+        %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
+        freqBase         = load(sprintf('%s%s',respPath,allNames(iresp).name)); %load the baseline
     elseif strcmp(cfg1.stimResp,'stim')
         
         %freqInt      = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the TF data. Change back to freqPath
-        freqBase         = load(sprintf('%s%s',basePath,allNames(iresp).name)); %load the baseline
+        freqBase         = load(sprintf('%s%s',respPath,allNames(iresp).name)); %load the baseline
     end
 
    

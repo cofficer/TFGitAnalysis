@@ -2,7 +2,7 @@
 %Plot collapsed beta suppression over time, binned by local fractional
 %income. 
 
-squeeze(mean(data,1))
+squeeze(mean(data,1));
 
 collapsedBeta = (mean(squeeze(mean(data,1))));
 

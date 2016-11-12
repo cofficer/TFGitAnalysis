@@ -1,4 +1,4 @@
-function [ T ] = tableTrialinfo( path )
+function [ T ] = tableTrialinfo( pathA )
 %create a table with all the variables for all the sessions and
 %participants, for each trial. 
 
@@ -8,10 +8,10 @@ function [ T ] = tableTrialinfo( path )
 
 %Match up trial number from trialinfo with the LFI, 
 
-load(path);
+load(pathA);
 
 
-
+%take the old trialinfo that contains all of the trials that were presented
 trialinfo = freq.cfg.previous.previous.previous.previous.previous.previous.previous.previous.trl;
 
 sample_start = trialinfo(:,1); %Minus 2 seconds, guessing before stim?
@@ -38,17 +38,22 @@ feedb_sample = trialinfo(:,11);
 
 feedb_type   = trialinfo(:,12);
 
-new_block    = trialinfo(:,13);
-
-trialN       = trialinfo(:,14);
-
+if strcmp(pathA(1:3),'DWe')
+    new_block    = trialinfo(:,14);
+    
+    trialN       = trialinfo(:,15);
+else
+    new_block    = trialinfo(:,13);
+    
+    trialN       = trialinfo(:,14);
+end
 ID           = cell(1,length(sample_start));
 
 dataSet      = cell(1,length(sample_start));
 
 for nt       = 1:length(sample_start)
-ID{nt}       = path(1:3);
-dataSet{nt}  = path(end-5:end-4);
+ID{nt}       = pathA(1:3);
+dataSet{nt}  = pathA(end-5:end-4);
 end
 
 ID      = char(ID');

@@ -5,6 +5,8 @@ function createFullMatrix(cfg1, outputfile) %Decide what to put in argument
 
 %partDateAll            = cfg1.partlist;
 
+%save the average of the trials. 
+saveAvg = 1;
 
 %numPart = length(partDateAll);
 
@@ -22,54 +24,73 @@ cfg = []; %Just for freqdescriptives argument
 %Keep track of all the additions to the full matrix of data. 
 added=0;
 
-%Initialize matrix
-partMatrix.powsptrcm = zeros(2,267,33,141); %Different if stimulus or resp locked.
 % fullMatrix.participants = partDateAll;
 % for ipart = 1:numPart
-    [ conTrials ] = concatenateTrials( cfg1);
-    for LR = 1:2%2 %change back to 1:2, this is only while saving the data. LR buttonpress
+[ conTrials ] = concatenateTrials( cfg1);
+
+%Initialize matrix
+if strcmp(cfg1.stimResp,'resp')
+partMatrix.powsptrcm = zeros(2,267,33,length(conTrials.time)+10); %Different if stimulus or resp locked.
+else
+    partMatrix.powsptrcm = zeros(2,267,33,length(conTrials.time)); %Different if stimulus or resp locked.
+end
+for LR = 1:2%2 %change back to 1:2, this is only while saving the data. LR buttonpress
+    
+    
+    [allFreq] = baselineFreqMatrix(cfg1,LR,conTrials);%pd,LR,MEGsensors,start,stop,trialAverag
+    
+    if LR == 1
+        allFreqLeft = allFreq.freq;
         
+        path=strcat( outputfile.path(1:end-4),'Left.mat');
         
-        [allFreq] = baselineFreqMatrix(cfg1,LR,conTrials);%pd,LR,MEGsensors,start,stop,trialAverag
+        save('-v7.3',path,'-struct','allFreqLeft')
         
-        if LR == 1
-            allFreqLeft = allFreq.freq;
+        if saveAvg == 1
+            avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
             
-             path=strcat( outputfile.path(1:end-4),'Left.mat');
-            
-            save('-v7.3',path,'-struct','allFreqLeft')
-        elseif LR == 2
-            allFreqRight = allFreq.freq;
-            
-            path=strcat( outputfile.path(1:end-4),'Right.mat');
-            
-            save('-v7.3',path,'-struct','allFreqRight')
+            %Dont save this data again. Contstrut the full data matrix instead.
+            %saveFile = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/baselinedCue/%s_BP%d_%s.mat',cfg1.session(1:3),LR,cfg1.session(5:end));
+            %save(saveFile,'avgFreq')
         end
         
-        %avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
         
-        %Dont save this data again. Contstrut the full data matrix instead.
-        %saveFile = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/%s_BP%d_%s.mat',partDateAll{ipart}(1:3),LR,partDateAll{numPart}(5:end));
-        %save(saveFile,'avgFreq')
+    elseif LR == 2
+        allFreqRight = allFreq.freq;
         
+        path=strcat( outputfile.path(1:end-4),'Right.mat');
         
+        save('-v7.3',path,'-struct','allFreqRight')
+        if saveAvg == 1
+            avgFreq = ft_freqdescriptives(cfg,allFreq.freq);
+            
+            %Dont save this data again. Contstrut the full data matrix instead.
+           % saveFile = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/baselinedCue/%s_BP%d_%s.mat',cfg1.session(1:3),LR,cfg1.session(5:end));
+           % save(saveFile,'avgFreq')
+        end
         
-        fprintf('%s average freq trial data has been saved', cfg1.session)
-        
-        %Store the loaded average freq data of current participant and L/R
-        %in data matrix. 
-        %partMatrix.powsptrcm(LR,:,:,:) = avgFreq.powspctrm;
-        
- 
-        
-        clear allFreq
-        
-        
-        added=added+1;
     end
+    
+    
+    
+    
+    
+    fprintf('%s average freq trial data has been saved', cfg1.session)
+    
+    %Store the loaded average freq data of current participant and L/R
+    %in data matrix.
+    partMatrix.powsptrcm(LR,:,:,:) = avgFreq.powspctrm;
+    
+    
+    
+    
+    
+    added=added+1;
+end
 % end
-       %Need to save avgFreq somehow here. 
-        %save(outputfile.path,'partMatrix')
+%Need to save avgFreq somehow here.
+saveFile = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/avgLowFreq/baselinedResp/%s_%s',cfg1.session(1:3),cfg1.session(5:end));
+save(saveFile,'partMatrix')
 
 fprintf('\n\n\n\n-------Matrix containing the chosen participants has been created------\n\n\n\n-');
 

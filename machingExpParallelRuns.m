@@ -53,8 +53,10 @@ for iana=1:length(runcfg.freq.analysistype) %high low
     for itrg = 1:length(runcfg.trigger) %resp stim
         cfg.trigger=runcfg.trigger{itrg};
         switch cfg.trigger %Is the logic to do one trigger at a time?
-            case 'baseline'
+            case 'baseline' %baseline means stimulus-locked
                 cfg.toi = -1:0.025:2.5;
+            case 'cue'
+                cfg.toi = -1:0.025:2.5; %might as well use the same toi
             case 'resp'
                 cfg.toi = -2:0.025:1;
             otherwise %Sort of reduntant
@@ -100,7 +102,7 @@ for iana=1:length(runcfg.freq.analysistype) %high low
                 
                 try load(preprocinfofile)
                     switch cfg.trigger
-                        case {'resp' 'baseline' 'stim' 'flickerresp' 'flickerstim'}
+                        case {'resp' 'baseline' 'cue' 'stim' 'flickerresp' 'flickerstim'}
                             for itype = typeSession % 1=ATM, 2=PLA  Atomoxetine/placebo (Different conditions). Not sure, probably more reasonably different uncertainty levels.
                                 for ievent = 1:2%2 % Stands for left vs right (Different events) where 1 == Left. 
                                     trialDirection          = ismember(preprocinfo.trl(:,10),eventLR(ievent,:)); 

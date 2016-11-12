@@ -2,16 +2,18 @@
 
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel')
 
-load('fullTable.mat')
+
+load('fullTabe4thOct.mat')
 load('allFracIncome.mat')
+load('AllprobChoice2.mat')
 
 %%
-%loop participants
+%loop participants to create a table based on trialinfos
 
 [PLA,ATM] = loadSessions;
 
 
-folder = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/';
+folder = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/';
 
 for nPart = 1:length(PLA)
     
@@ -21,22 +23,22 @@ for nPart = 1:length(PLA)
     
     cd(folderP)
     
+    %name of the date folder inside of each participant. 
     aD=dir;
-    
     aD=aD(3).name;
     
     folderP = sprintf('%s%s/resp',folderP,aD);
     
     cd(folderP)
     
-    sessions = dir('*_type1event1*.mat');
+    sessions = dir('*260_type1event1*.mat');
     
     
     for blocks = 1:length(sessions)
         
-        path = sessions(blocks).name;
+        pathA = sessions(blocks).name;
         
-        [ T ] = tableTrialinfo( path );
+        [ T ] = tableTrialinfo( pathA );
         
         if blocks == 1
             TAll = T;
@@ -61,120 +63,475 @@ for nPart = 1:length(PLA)
 end
 
 %%
-%Figure out if there is a match between the model trials and table
+%Figure out if there is a match between the model trials and table.
+%Adding the probability of choice (LFI) to the precise positions in the
+%table. 
 ID = Ttotal.ID;
 ID = cellstr(ID);
 
 %Store all lfi value to be inserted
-LocalFractionalIncome = zeros(1,length(Ttotal.cue_trigger));
+LocalProbChoice = zeros(1,length(Ttotal.cue_trigger));
 
 correct=1;
-for nPart = 1:length(allFracIncome.order)
-cmpID=strncmp(allFracIncome.order{nPart}(1:3),ID,3);
 
-[posID,~] = find(cmpID==1);
+%skip JRu, part 20, and MGo 24
+lenParts = 1:length(AllprobChoice.order);
+lenParts(20)=[]; 
+lenParts(23)=[];
 
-sum(Ttotal.resp_type(posID)<20);
 
+%Loop over participants.
+for nPart = lenParts
 
+ %Find the position of the current participant  
+ if nPart ==22
+     cmpID=strncmp('LME',ID,3);
+ else
+     cmpID=strncmp(AllprobChoice.order{nPart}(1:3),ID,3);
+ end
+     [posID,~] = find(cmpID==1);
+
+%TF trialinfo
+ta = Ttotal(posID,:);
+%Model trialinfo
+%AllprobChoice.BFu
+%trial number TF data reset by new dataset
+%ta.totalTrials
+
+%Compare choices
+behavChoices = AllprobChoice.(AllprobChoice.order{nPart}(1:3));
+behavChoices = behavChoices(:,7);
+behavChoices = behavChoices(behavChoices>0);
+
+%Change left to 1 and right to 2. 
+TFChoices     = ta.resp_type(ta.resp_type>19);
+
+%1 is horizontal choice, 2 is vertical choice
+indL = find(TFChoices==21);
+TFChoices(indL) = 1;
+indL = find(TFChoices==23);
+TFChoices(indL) = 1;
+indR = find(TFChoices==20);
+TFChoices(indR) = 2;
+indR = find(TFChoices==22);
+TFChoices(indR) = 2;
+% 
+% figure(1),clf
+% hold on;
+% plot(TFChoices-0.5,'r')
+% plot(behavChoices,'k')
+% ylim([-2 3])
+% pause
+%Storing the length of trial, which is not relevant.
 tableT = length(posID);
-modelT =length(allFracIncome.LFI{nPart});
+modelT =length(AllprobChoice.LFI{nPart});
 
 %subtract the number of incorrect buttonpresses from the number of trials.
 tableT = tableT-sum(Ttotal.resp_type(posID)<20);
 
-[p,a]=find(Ttotal.resp_type(posID)>=20);
-[pN,a]=find(Ttotal.resp_type(posID)<20);
+%Find the position of all the button presses for current participant.
+[p,a]  =find(Ttotal.resp_type(posID)>=20);
+[pN,a] =find(Ttotal.resp_type(posID)<20);
 
 
 
 %compare if the number of trials in trialinfo overlaps with model
 if tableT == modelT
-    sprintf('Correct trials for: %s',allFracIncome.order{nPart}(1:3))
+    sprintf('Correct trials for: %s',AllprobChoice.order{nPart}(1:3))
     correct=correct+1;
     
     %insert LFI
-    LocalFractionalIncome(posID(p))     = allFracIncome.LFI{nPart}';
-    LocalFractionalIncome(posID(pN))    = NaN;
+    LocalProbChoice(posID(p))     = AllprobChoice.LFI{nPart}';
+    LocalProbChoice(posID(pN))    = NaN;
     
 else
     sprintf('Wrong number of trials for: %s, modelT=%d, tableT=%d',...
-    allFracIncome.order{nPart}(1:3),modelT,tableT)
+        AllprobChoice.order{nPart}(1:3),modelT,tableT)
+    
+    
+    if ta.trialN(1) ~=1 && ta.trialN(1) ~=7 %The 7 is only for HEn
+        %Extend TFChoices so that it is the same length as all behav choices.
+        
+        if strcmp(AllprobChoice.order{nPart}(1:3),'JHa');
+        pad0 = zeros(1,ta.trialN(1)+16)';
+        else
+            pad0 = zeros(1,ta.trialN(1)-1)';
+        end
+        %find peaks to see if more padding is necessary
+        [pks,loc] = findpeaks(ta.trialN');
+        
+        %Only set for one peak
+        if length(loc)>0
+            
+            %Complicated, tuned for nPart = 5.
+            pad1 = zeros(1,ta.trialN(loc+1)-2)';
+            
+            TFChoices = [pad0;TFChoices(1:loc);pad1;TFChoices(loc+1:end)];
+            
+            %Store all LFIs
+            localFI = AllprobChoice.LFI{nPart}';
+            
+            %Exctract only the lfi where the two choice sets overlap.
+            localFI(TFChoices==0) = NaN;
+            
+            %Now add the relevant fractional income to the full vector
+            LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+            LocalProbChoice(posID(pN))    = NaN;
+
+            
+        else
+            
+            TFChoices = [pad0;TFChoices];
+        end
+    elseif strcmp(AllprobChoice.order{nPart}(1:3),'HEn'); %Only for participant HEn
+        
+        [pks,loc] = findpeaks(ta.trialN');
+        
+        pad0 = zeros(1,ta.trialN(loc+1)-1)';
+        
+        TFChoices=[TFChoices(1:loc);pad0;TFChoices(loc+1:end)];
+        
+        %Store all LFIs
+        localFI = AllprobChoice.LFI{nPart}';
+        
+        %Exctract only the lfi where the two choice sets overlap.
+        localFI(TFChoices==0) = NaN;
+        
+        %Now add the relevant fractional income to the full vector
+        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        LocalProbChoice(posID(pN))    = NaN;
+        
+        
+    else
+        %Extend TFChoices so that it is the same length as all behav choices.
+        TFChoices(length(TFChoices)+1:length(behavChoices))=0;
+        
+        
+        %Store all LFIs
+        localFI = AllprobChoice.LFI{nPart}';
+        
+        %Exctract only the lfi where the two choice sets overlap.
+        localFI(TFChoices==0) = NaN;
+        
+        %localFI has all the relevant values
+        
+        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        LocalProbChoice(posID(pN))    = NaN;
+
+        
+        
+    end
+    %Find indices where both vectors are the same. Currently it could be
+    %only by coincidence.
+    %indOverlap = find(TFChoices==behavChoices);
+    
+    %Find the deviating positions
+    
     
     %In sessons without matching trials just place NaNs for now
-    LocalFractionalIncome(posID)        = NaN;
+    %LocalFractionalIncome(posID)        = NaN;
+end
+% 
+% figure(1),clf
+% hold on;
+% plot(TFChoices-0.5,'r')
+% plot(behavChoices,'k')
+% ylim([-2 3])
+% pause
 end
 
-end
-
-Ttotal.LocalFractionalIncome = LocalFractionalIncome';
+Ttotal.LocalProbChoice = LocalProbChoice';
 
 
 %Issue with LME session. 
-a=find(Ttotal.LocalFractionalIncome==0);
-Ttotal.LocalFractionalIncome(a,:) = NaN;
+a=find(Ttotal.LocalProbChoice==0);
+Ttotal.LocalProbChoice(a,:) = NaN;
 
 
 
 %%
 %Find out the different local fractional income bins from table
+%Start finding equal bin of LFI
+
+LFIs  = Ttotal.LocalProbChoice(~isnan(Ttotal.LocalProbChoice'));
+
+histfit(LFIs) %plots the distribution of local fractional incomes
+
+%partitions the LFI in four equal parts.
+y=quantile(LFIs,[0 0.25 0.5 0.75 1]);
 
 
-ceilLFI = Ttotal(Ttotal.LocalFractionalIncome>=0.75,:);
+ceilLFI = Ttotal(Ttotal.LocalProbChoice>=y(4),:);
 
-highLFI = Ttotal(0.75>Ttotal.LocalFractionalIncome & Ttotal.LocalFractionalIncome>=0.5,:);
+highLFI = Ttotal(y(4)>Ttotal.LocalProbChoice & Ttotal.LocalProbChoice>=y(3),:);
 
-mediumLFI = Ttotal(0.5>Ttotal.LocalFractionalIncome & Ttotal.LocalFractionalIncome>=0.25,:);
+mediumLFI = Ttotal(y(3)>Ttotal.LocalProbChoice & Ttotal.LocalProbChoice>=y(2),:);
 
-lowLFI = Ttotal(0.25>Ttotal.LocalFractionalIncome & Ttotal.LocalFractionalIncome>=0,:);
+lowLFI = Ttotal(y(2)>Ttotal.LocalProbChoice & Ttotal.LocalProbChoice>=y(1),:);
 
 %%
 %select ceilLFI and average 
+%Include only the relevant sensors. 
+%Get sensors for each sensor group:
+sensR = {'MRC13','MRC14','MRC15','MRC16','MRC22','MRC23'...
+         'MRC24','MRC31','MRC41','MRF64','MRF65','MRF63'...
+         'MRF54','MRF55','MRF56','MRF66','MRF46'};
+sensL = {'MLC13','MLC14','MLC15','MLC16','MLC22','MLC23'...
+         'MLC24','MLC31','MLC41','MLF64','MLF65','MLF63'...
+         'MLF54','MLF55','MLF56','MLF66','MLF46'};
+resp=load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/AWi/20151007/resp/AWi_d01_250_type1event2_totalpow_freq16.mat');
+stim=load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/AWi/20151007/baseline/AWi_d01_250_type1event2_totalpow_freq16.mat');
+cue=load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/AWi/20151007/cue/AWi_d01_250_type1event2_totalpow_freq16.mat');
 
 
-cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/trialsLowFreq/baselinedStim')
+[~,idxR]=intersect(resp.freq.grad.label,sensR);
+[~,idxL]=intersect(resp.freq.grad.label,sensL);
+idxLR = [idxL idxR];
 
-session = ceilLFI.ID(1,:);
+%Preallocate fields
+avgAFreq.low    = [];
+avgAFreq.medium = [];
+avgAFreq.high   = [];
+avgAFreq.ceil   = [];
 
-session = sprintf('%s*Left.mat',session);
+fnames = fieldnames(avgAFreq);
 
-session = dir(data);
+for LFIbins = 1:length(fnames)
+    
+    %Select trial based on local fractional income from time-frequency data.
+    switch LFIbins
+        case 1            
+            [ BP ] = selectLFI( lowLFI,Ttotal, idxLR);
+        case 2
+            [ BP ] = selectLFI( mediumLFI,Ttotal, idxLR);           
+        case 3
+            [ BP ] = selectLFI( highLFI,Ttotal, idxLR);            
+        case 4            
+            [ BP ] = selectLFI( ceilLFI,Ttotal, idxLR);
+    end
+    
+    
+    %Average BP in correct order
+    avgFreq = squeeze(nanmean(nanmean(BP,4)));  
+    avgAFreq.(fnames{LFIbins}) = avgFreq;
+    mes = sprintf('Finished averaging for the binned group: %s',fnames{LFIbins});
+    disp(mes)
+    
+end
 
-f = load(session.name);
 
-%this needs to be matched up with the equivalent table.
-f.trialinfo
+%plot(avgFreq)
 
-ID = ceilLFI.ID;
-ID = cellstr(ID);
-
-cmID = strncmp(ID,'AWi',3);
-
-posID = find(cmID == 1);
-
-trials = ceilLFI.trialN(posID);
+%Currently only plotting one type of buttonpresses. 
+%shadedErrorBar(1:141,nanmean(avgFreq,2)',nanstd(avgFreq')./sqrt(size(avgFreq,2)),'g')
 
 
-f.powspctrm(trials,:,:,:)
-%It is the trials if they were in order which they arent. They are sorted
-%based on the same button press. 
-trials
 
 %%
-%select trials
-ID = Ttotal.ID;
-ID = cellstr(ID);
+%Plot all LFIs
+
+figure(1),clf
+hold on; 
+l = shadedErrorBar(1:141,nanmean(avgAFreq.low,2)',nanstd(avgAFreq.low')./sqrt(size(avgAFreq.low,2)),'g',1);
+m = shadedErrorBar(1:141,nanmean(avgAFreq.medium,2)',nanstd(avgAFreq.medium')./sqrt(size(avgAFreq.medium,2)),'k',1);
+h = shadedErrorBar(1:141,nanmean(avgAFreq.high,2)',nanstd(avgAFreq.high')./sqrt(size(avgAFreq.high,2)),'r',1);
+c = shadedErrorBar(1:141,nanmean(avgAFreq.ceil,2)',nanstd(avgAFreq.ceil')./sqrt(size(avgAFreq.ceil,2)),'b',1);
+%ylim([-20 10])
+xlim([30 141])
+ylabel('% change to baseline')
+xlabel('Time (s) relative to response')
+title('Beta suppression binned by LFI (1 parameter)')
+set(gca, 'XTick',[1:10:141])
+set(gca, 'XTickLabel',time(1:10:141))
+
+legend([l.mainLine m.mainLine h.mainLine c.mainLine],'Low:       0.26-0.32','Medium: 0.32-0.46','High:      0.46-0.60','Ceiling:  0.60-0.73')
+
+%%
+
+%regular plot
+figure(2),clf
+hold on 
+plot(nanmean(avgAFreq.low,2)','LineWidth',2)
+plot(nanmean(avgAFreq.medium,2)','LineWidth',2)
+plot(nanmean(avgAFreq.high,2)','LineWidth',2)
+plot(nanmean(avgAFreq.ceil,2)','LineWidth',2)
+
+indT = find(time==0.7);
+set(gca, 'XTick',[1:10:length(time)])
+set(gca, 'XTickLabel',time(1:10:length(time)))
+xlim([0 indT])
+legend Low Medium High Ceiling 
+title('Contra vs. ipsi lateralization binned by probability of choice')
+
+ylabel('% change to baseline')
+xlabel('Time (s) relative to cue')
+
+%%
+%Load and plot all lines seperately for each lock type. 
+
+stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/respavgAFreqSTIMLOCKED.mat');
+respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/respavgAFreq2.mat');
+cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/respavgAFreqCUELOCKED.mat');
 
 
-cmID = strncmp(ID,'DLa',3);
+%Load one instance of each type for information such as time. 
+resp =load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/AWi/20151007/resp/AWi_d01_250_type1event2_totalpow_freq16.mat');
+stim =load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/AWi/20151007/baseline/AWi_d01_250_type1event2_totalpow_freq16.mat');
+cue  =load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/AWi/20151007/cue/AWi_d01_250_type1event2_totalpow_freq16.mat');
 
-pos = find(cmID == 1);
+%time=cue.freq.time;
+%%
+%The time periods of interest
 
-t = Ttotal(pos,:);
 
-sum(t.resp_type==21)
+stimStart =31;
+stimStop  =100;
+respStart =40;
+respStop  =92;
+cueStart  =10;
+cueStop   =65;
 
-sum(t.resp_type==20)
 
-%Trialinfo contains the information of the atually TF data. 
-trialinfo
+%%
+%regular plot
+
+%set the ylimit for all plots.
+setY = [-9 3];
+
+figure(3),clf
+title('Contra vs. ipsi lateralization binned by probability of choice')
+
+subplot(1,3,1)
+hold on 
+plot(nanmean(stimL.avgAFreq.low,2)','LineWidth',2)
+plot(nanmean(stimL.avgAFreq.medium,2)','LineWidth',2)
+plot(nanmean(stimL.avgAFreq.high,2)','LineWidth',2)
+plot(nanmean(stimL.avgAFreq.ceil,2)','LineWidth',2)
+time=stim.freq.time;
+indT = find(time==0);
+set(gca, 'XTick',[stimStart:10:stimStop])
+set(gca, 'XTickLabel',time(stimStart:10:stimStop))
+xlim([stimStart stimStop])
+ylim(setY)
+legend Low Medium High Ceiling 
+
+ylabel('% change to baseline')
+xlabel('Time (s) relative to stimulus')
+
+
+%regular plot
+subplot(1,3,2)
+hold on 
+plot(nanmean(cueL.avgAFreq.low,2)','LineWidth',2)
+plot(nanmean(cueL.avgAFreq.medium,2)','LineWidth',2)
+plot(nanmean(cueL.avgAFreq.high,2)','LineWidth',2)
+plot(nanmean(cueL.avgAFreq.ceil,2)','LineWidth',2)
+time=cue.freq.time;
+indT = find(time==0);
+set(gca, 'XTick',[(cueStart:10:cueStop)+1])
+set(gca, 'XTickLabel',time((cueStart:10:cueStop)+1))
+xlim([cueStart cueStop])
+ylim(setY)
+
+legend Low Medium High Ceiling 
+
+ylabel('% change to baseline')
+xlabel('Time (s) relative to cue')
+
+
+%regular plot
+subplot(1,3,3)
+hold on 
+plot(nanmean(respL.avgAFreq.low,2)','LineWidth',2)
+plot(nanmean(respL.avgAFreq.medium,2)','LineWidth',2)
+plot(nanmean(respL.avgAFreq.high,2)','LineWidth',2)
+plot(nanmean(respL.avgAFreq.ceil,2)','LineWidth',2)
+time=resp.freq.time;
+indT = find(time==0);
+set(gca, 'XTick',[respStart:10:respStop])
+set(gca, 'XTickLabel',time(respStart:10:respStop))
+xlim([respStart respStop])
+ylim(setY)
+
+legend Low Medium High Ceiling 
+
+ylabel('% change to baseline')
+xlabel('Time (s) relative to resp')
+
+%%
+%Plot timecourses in one plot.
+
+
+timeX = [stim.freq.time(stimStart:stimStop) cue.freq.time(cueStart:cueStop) resp.freq.time(respStart:respStop)];
+x = 1:length(timeX);
+
+low     = [nanmean(stimL.avgAFreq.low(stimStart:stimStop,:),2)', nanmean(cueL.avgAFreq.low(cueStart:cueStop,:),2)',nanmean(respL.avgAFreq.low(respStart:respStop,:),2)'];
+medium  = [nanmean(stimL.avgAFreq.medium(stimStart:stimStop,:),2)', nanmean(cueL.avgAFreq.medium(cueStart:cueStop,:),2)',nanmean(respL.avgAFreq.medium(respStart:respStop,:),2)'];
+high    = [nanmean(stimL.avgAFreq.high(stimStart:stimStop,:),2)', nanmean(cueL.avgAFreq.high(cueStart:cueStop,:),2)',nanmean(respL.avgAFreq.high(respStart:respStop,:),2)'];
+ceil    = [nanmean(stimL.avgAFreq.ceil(stimStart:stimStop,:),2)', nanmean(cueL.avgAFreq.ceil(cueStart:cueStop,:),2)',nanmean(respL.avgAFreq.ceil(respStart:respStop,:),2)'];
+
+figure(4),clf
+
+subplot(2,1,1)
+title('Contra vs. Ipsi lateralisation: stim / cue / response-locked')
+
+hold on 
+plot(ceil,'LineWidth',2)
+plot(high,'LineWidth',2)
+plot(medium,'LineWidth',2)
+plot(low,'LineWidth',2)
+
+time=resp.freq.time;
+indT = find(time==0);
+
+           
+        indX = find(timeX==0);
+        %indX+5
+        %indX-5
+        
+        indX = [indX (indX-10) (indX+10) indX(1)+20 indX(1)+30 indX(1)+40 indX(1)+50 indX(2)-20 indX(2)-30 indX(3)-20 indX(3)-30];
+        indX = sort(indX);
+        set(gca,'YDir','normal')
+        set(gca,'XTick',[x(indX)])
+        set(gca,'XTickLabel',timeX(indX))
+%set(gca, 'XTick',[respStart:10:respStop])
+%set(gca, 'XTickLabel',time(respStart:10:respStop))
+%xlim([respStart respStop])
+%ylim(setY)
+ylim(setY)
+       line([x(stimStop-stimStart)+2 x(stimStop-stimStart)+2],get(gca,'Ylim'),'Color',[0 0 0],'LineWidth',10)
+        line([(x(stimStop-stimStart)+2)+(cueStop-cueStart) (x(stimStop-stimStart)+2)+(cueStop-cueStart)],get(gca,'Ylim'),'Color',[0 0 0],'LineWidth',10)
+
+
+legend Ceiling High Medium Low 
+
+%ylabel('% change to baseline')
+
+%%
+%Calulate response time distribution
+
+%To go cue
+respDis = Ttotal.resp_sample-Ttotal.goQ_sample;
+histfit(respDis(respDis>1)./1200,[],'gamma')
+title('Response time (s) from cue')
+%print('ResponseFromCue','-depsc2') %epsc2
+
+%To simulus onset
+respDis = Ttotal.resp_sample-Ttotal.stim_onset;
+histfit(respDis(respDis>1)./1200,[],'gamma')
+title('Response time (s) from stimulus onset')
+%print('ResponseFromStim','-depsc2') %epsc2
+
+
+%General stimulus presentation length to go q
+
+respDis = Ttotal.goQ_sample-Ttotal.stim_onset;
+histfit(respDis(respDis>1)./1200,[],'gamma')
+title('Time (s) from simulus onset to go cue')
+%print('StimOnsetToGoCue','-depsc2') %epsc2
+
+%%
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
+print('betaProbChoiceCUELOCKED','-depsc2') %epsc2
+
+

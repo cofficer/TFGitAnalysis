@@ -9,10 +9,10 @@ function [ conTrials ] = concatenateTrials( cfg1 )
 
 switch cfg1.preprocFreq 
     case 'freq' 
-        path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/low/%s/baseline/',cfg1.session);
+         path            = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/%s/baseline/',cfg1.session);
         cd(path)
         %Store name of block file. 
-        load_dir  = dir('*.mat');%Think its better to baseline on everything.
+        load_dir  = dir('*260*.mat');%Think its better to baseline on everything.
         
         
         
