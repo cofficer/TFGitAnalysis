@@ -11,6 +11,8 @@ function [ T ] = tableTrialinfo( pathA )
 load(pathA);
 
 
+
+
 %take the old trialinfo that contains all of the trials that were presented
 trialinfo = freq.cfg.previous.previous.previous.previous.previous.previous.previous.previous.trl;
 

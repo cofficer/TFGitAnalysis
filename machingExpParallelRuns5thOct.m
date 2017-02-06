@@ -165,8 +165,8 @@ for iana=1:length(runcfg.freq.analysistype) %high low
     switch runcfg.freq.compile
         
         case 'local'
-            MatchingExp_freqanalysis(cfg1{3}, cfg2{3}, inputfile{3}, outputfile{3})
-            %cellfun(@MatchingExp_freqanalysis, cfg1, cfg2, inputfile, outputfile);
+            %MatchingExp_freqanalysis(cfg1{3}, cfg2{3}, inputfile{3}, outputfile{3})
+            cellfun(@MatchingExp_freqanalysis, cfg1, cfg2, inputfile, outputfile);
         case 'no'
             nnodes = 1;%64; % how many licenses?
             stack = 1;%round(length(cfg1)/nnodes);

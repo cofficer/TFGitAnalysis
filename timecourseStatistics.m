@@ -1,14 +1,15 @@
 
 %statistics on time course data. 
-
+%use old matlab81
 addpath(genpath('/mnt/homes/home024/chrisgahn/fieldtrip-20130305'))
+ft_defaults
 
 %%
 clear
 %load time courses
-stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStimlowLS.mat');
-respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResplowLS.mat');
-cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCuelowLS.mat');
+stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowLS.mat');
+respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PlowLS.mat');
+cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PlowLS.mat');
 
 
 %Becuase I need a frequency structure. 
@@ -29,7 +30,7 @@ cfg.statistic = 'ft_statfun_depsamplesT'; %ask thomas
 cfg.clusteralpha = 0.05; 
 cfg.clusterstatistic = 'maxsum'; %default
 cfg.method = 'montecarlo';
-cfg.numrandomization = 3000;
+cfg.numrandomization = 10000;
 
 design(1,:) = [1:size(low,1) 1:size(low,1)];
 design(2,:) = [ones(1,size(low,1)) ones(1,size(low,1))*2];

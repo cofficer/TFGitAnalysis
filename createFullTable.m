@@ -2,21 +2,30 @@
 
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel')
 
-
-load('fullTabe4thOct.mat')
-load('allFracIncome.mat')
-load('AllprobChoice2.mat')
+load('fullTable24Nov-2.mat')
+%load('fullTable28hOct.mat')
+%load('allFracIncome.mat')
+load('AllprobChoice3.mat')
 
 %%
-%loop participants to create a table based on trialinfos
+%loop participants to create a table based on trialinfos, this cell is
+%saved in fullTabe4thOct.mat
 
-[PLA,ATM] = loadSessions;
+bhpath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior/';
 
+
+%Getting the names of the mat files that store behavioral data.
+setting.numParticipants = 31;
+setting.bhpath          = bhpath;
+
+[PLA,ATM] = loadSessions(setting);
+PLA(20)=[];
+PLA(23)=[];
 
 folder = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/';
 
 for nPart = 1:length(PLA)
-    
+    nPart
     
     folderP = sprintf('%s%s/',folder,PLA{nPart}(1:3));
     
@@ -74,22 +83,24 @@ LocalProbChoice = zeros(1,length(Ttotal.cue_trigger));
 
 correct=1;
 
-%skip JRu, part 20, and MGo 24
+%skip JRu, part 20, and MGo 24, should already not be there in probchoice3
 lenParts = 1:length(AllprobChoice.order);
-lenParts(20)=[]; 
-lenParts(23)=[];
+%The two participants MGo and JRu are already skipped.
+%lenParts(20)=[]; 
+%lenParts(23)=[];
 
 
 %Loop over participants.
-for nPart = lenParts
+for nPart = 1:length(AllprobChoice.order);%1:length(AllprobChoice.order);
 
- %Find the position of the current participant  
- if nPart ==22
+ %Find the position of the current participant, but its not LME.   
+ if nPart ==21
      cmpID=strncmp('LME',ID,3);
  else
      cmpID=strncmp(AllprobChoice.order{nPart}(1:3),ID,3);
  end
-     [posID,~] = find(cmpID==1);
+ 
+[posID,~] = find(cmpID==1);
 
 %TF trialinfo
 ta = Ttotal(posID,:);
@@ -103,25 +114,28 @@ behavChoices = AllprobChoice.(AllprobChoice.order{nPart}(1:3));
 behavChoices = behavChoices(:,7);
 behavChoices = behavChoices(behavChoices>0);
 
-%Change left to 1 and right to 2. 
+%Get all choices from the participant specific table. 20+ means real
+%response
 TFChoices     = ta.resp_type(ta.resp_type>19);
 
 %1 is horizontal choice, 2 is vertical choice
-indL = find(TFChoices==21);
-TFChoices(indL) = 1;
-indL = find(TFChoices==23);
-TFChoices(indL) = 1;
-indR = find(TFChoices==20);
-TFChoices(indR) = 2;
-indR = find(TFChoices==22);
-TFChoices(indR) = 2;
+%Removal of left/right info, retaining hor/ver
+indH = find(TFChoices==21);
+TFChoices(indH) = 1;
+indH = find(TFChoices==23);
+TFChoices(indH) = 1;
+indV = find(TFChoices==20);
+TFChoices(indV) = 2;
+indV = find(TFChoices==22);
+TFChoices(indV) = 2;
+% 
 % 
 % figure(1),clf
 % hold on;
 % plot(TFChoices-0.5,'r')
 % plot(behavChoices,'k')
 % ylim([-2 3])
-% pause
+%pause
 %Storing the length of trial, which is not relevant.
 tableT = length(posID);
 modelT =length(AllprobChoice.LFI{nPart});
@@ -129,7 +143,8 @@ modelT =length(AllprobChoice.LFI{nPart});
 %subtract the number of incorrect buttonpresses from the number of trials.
 tableT = tableT-sum(Ttotal.resp_type(posID)<20);
 
-%Find the position of all the button presses for current participant.
+%Find the position of all the button presses for current participant. Both
+%correct p and incorrect pN
 [p,a]  =find(Ttotal.resp_type(posID)>=20);
 [pN,a] =find(Ttotal.resp_type(posID)<20);
 
@@ -153,7 +168,7 @@ else
         %Extend TFChoices so that it is the same length as all behav choices.
         
         if strcmp(AllprobChoice.order{nPart}(1:3),'JHa');
-        pad0 = zeros(1,ta.trialN(1)+16)';
+            pad0 = zeros(1,ta.trialN(1)+16)';
         else
             pad0 = zeros(1,ta.trialN(1)-1)';
         end
@@ -201,6 +216,89 @@ else
         LocalProbChoice(posID(p))     = localFI(TFChoices>0);
         LocalProbChoice(posID(pN))    = NaN;
         
+    elseif strcmp(AllprobChoice.order{nPart}(1:3),'BFu'); %Only for participant HEn
+        
+        %[pks,loc] = findpeaks(ta.trialN');
+        
+        %calculate number of missing trials. 
+        pad0 = zeros(1,length(behavChoices)-length(TFChoices));
+        
+        %Insert dummy trials between actual trials. Hardcoded/22nov '16.
+        TFChoices=[TFChoices(1:285)' pad0 TFChoices(286:end)']';
+        
+        %Store all LFIs
+        localFI = AllprobChoice.LFI{nPart}';
+        
+        %Exctract only the lfi where the two choice sets overlap.
+        localFI(TFChoices==0) = NaN;
+        
+        %Now add the relevant fractional income to the full vector
+        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        LocalProbChoice(posID(pN))    = NaN;
+        
+    elseif strcmp(AllprobChoice.order{nPart}(1:3),'DWe'); %Only for participant HEn
+        
+        [pks,loc] = findpeaks(ta.trialN');
+        
+        %calculate number of missing trials.
+        pad0 = zeros(1,length(behavChoices)-length(TFChoices));
+        
+        %Insert dummy trials between actual trials. Hardcoded/22nov '16.
+        TFChoices=[pad0 TFChoices']';
+        
+        %Store all LFIs
+        localFI = AllprobChoice.LFI{nPart}';
+        
+        %Exctract only the lfi where the two choice sets overlap.
+        localFI(TFChoices==0) = NaN;
+        
+        %Make the hole of DWe NaNs
+        %Now add the relevant fractional income to the full vector
+        LocalProbChoice(posID(p))     = NaN;%localFI(TFChoices>0);
+        LocalProbChoice(posID(pN))    = NaN;
+        
+   elseif strcmp(AllprobChoice.order{nPart}(1:3),'HRi'); %Only for participant HEn
+        
+        [pks,loc] = findpeaks(ta.trialN');
+        
+        %calculate number of missing trials.
+        pad0 = zeros(1,length(behavChoices)-length(TFChoices));
+        
+        %Insert dummy trials between actual trials. Hardcoded/22nov '16.
+        TFChoices=[TFChoices(1:396)' pad0 TFChoices(397:end)']';
+        
+        %Store all LFIs
+        localFI = AllprobChoice.LFI{nPart}';
+        
+        %Exctract only the lfi where the two choice sets overlap.
+        localFI(TFChoices==0) = NaN;
+        
+        %Make the hole of DWe NaNs
+        %Now add the relevant fractional income to the full vector
+        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        LocalProbChoice(posID(pN))    = NaN;
+        
+        
+   elseif strcmp(AllprobChoice.order{nPart}(1:3),'LMe'); %Only for participant HEn
+        
+        %[pks,loc] = findpeaks(ta.trialN');
+        
+        %calculate number of missing trials.
+        pad0 = zeros(1,length(behavChoices)-length(TFChoices));
+        
+        %Insert dummy trials between actual trials. Hardcoded/22nov '16.
+        TFChoices=[TFChoices(1:209)' pad0 TFChoices(210:end)']';
+        
+        %Store all LFIs
+        localFI = AllprobChoice.LFI{nPart}';
+        
+        %Exctract only the lfi where the two choice sets overlap.
+        localFI(TFChoices==0) = NaN;
+        
+        %Make the hole of DWe NaNs
+        %Now add the relevant fractional income to the full vector
+        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        LocalProbChoice(posID(pN))    = NaN;
         
     else
         %Extend TFChoices so that it is the same length as all behav choices.
@@ -238,6 +336,8 @@ end
 % plot(behavChoices,'k')
 % ylim([-2 3])
 % pause
+
+
 end
 
 Ttotal.LocalProbChoice = LocalProbChoice';

@@ -29,9 +29,10 @@ runcfg.batchlists = {
 %    %'batchSurpriseMatchingexp_TLa_170815' #Incomplete sessions. No batch.
  %        'batchSurpriseMatchingexp_MGo_150815' %Succes4, (maybe few files)#Missing triggers??
  %    %'batchSurpriseMatchingexp_JNi_250815' #Incomplete sessions. No batch.
- %       'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
+ 
  %'batchSurpriseMatchingexp_DJu_091015' #Incomplete sessions. No batch.
 
+%          'batchSurpriseMatchingexp_JRu_190815' %Succes3 #Missing triggers placebo
 %          'batchSurpriseMatchingexp_MAm_250815' %Success4- The third dataset first trial % has negative samplestart. First two datasets preprocessed. 
 %          'batchSurpriseMatchingexp_MAb_160815' %5thOCT, success5?? Can't even read event #Missing triggers placebo
 %          'batchSurpriseMatchingexp_HRi_160815' %Succes3 Only missing one block...#Missing triggers placebo
@@ -42,7 +43,7 @@ runcfg.batchlists = {
 %          'batchSurpriseMatchingexp_BPe_260815' %# Succes3 - Missing triggers both sessions Missing two blocks
 %          'batchSurpriseMatchingexp_NSh_250815' %#Success4.Might re freq%Supposed to be%   %not sure25??? Excluded because of noise in data. 
 %          'batchSurpriseMatchingexp_JRi_280815'  %Success4 %#.
-%          'batchSurpriseMatchingexp_LMe_260815' %Success4, but not much recorded. 4 blocks. #Missing triggers. Missing ETtrigger from event
+          'batchSurpriseMatchingexp_LMe_260815' %Success4, but not much recorded. 4 blocks. #Missing triggers. Missing ETtrigger from event
 %          'batchSurpriseMatchingexp_HEn_280815' %Succes4 % restarted the task. 
 %          'batchSurpriseMatchingexp_ROr_270815' %#Success4, but high blink rate.
 %          'batchSurpriseMatchingexp_DWe_031015' %#Success2, (corrected 17nov)
@@ -57,7 +58,7 @@ runcfg.batchlists = {
 %          'batchSurpriseMatchingexp_JHo_041015' %#Success4
 %          'batchSurpriseMatchingexp_FRa_071015' %Skipping first dataset- Error last datast.  
 %          'batchSurpriseMatchingexp_JFo_071015' %Success4
-          'batchSurpriseMatchingexp_AWi_071015' %Success4
+%          'batchSurpriseMatchingexp_AWi_071015' %Success4
 %          'batchSurpriseMatchingexp_JHa_101015' %Succes4 JHa and JHa2, strange. 
 %          'batchSurpriseMatchingexp_LJa_061015' %Success4
 %          'batchSurpriseMatchingexp_AMe_081015' %Success4
@@ -105,10 +106,10 @@ runcfg.batchlists = {
 };
 
 runcfg.trigger = {
-%         'resp'
-%         'cue'
-         'stim'
-%         'baseline'
+         'resp'
+%           'cue'
+%           'stim'
+%           'baseline'
 
         };
 
@@ -136,7 +137,7 @@ disp(runcfg.preproc.parallel); disp(runcfg.batchlists); disp(runcfg);
 
 warning off
 % 
- MIBexp_preproc_peersetup
+MIBexp_preproc_peersetup
 
 % MIBexp_plotpie_artifacts
 

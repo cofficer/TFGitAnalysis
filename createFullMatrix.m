@@ -89,7 +89,7 @@ for LR = 1:2%2 %change back to 1:2, this is only while saving the data. LR butto
 end
 % end
 %Need to save avgFreq somehow here.
-saveFile = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/avgLowFreq/baselinedResp/%s_%s',cfg1.session(1:3),cfg1.session(5:end));
+saveFile = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/avgLowFreq/baselinedCue/%s_%s',cfg1.session(1:3),cfg1.session(5:end));
 save(saveFile,'partMatrix')
 
 fprintf('\n\n\n\n-------Matrix containing the chosen participants has been created------\n\n\n\n-');

@@ -17,47 +17,48 @@ ft_defaults
 %Placebo
 runcfg.partlist = {
 % %                  %%%             269 channels
-%                              'AWi/20151007'
-%                              'SBa/20151006'
-%                             'JHo/20151004'
-%                              'JFo/20151007'
-%                             'AMe/20151008'
-%                             'SKo/20151011'
-%                           'JBo/20151011'
-%                           'DWe/20151003'
-%                           'FSr/20151003'
-%                           'JNe/20151004'
-%                            'RWi/20151003'
-%                            'HJu/20151004'
-%                            'LJa/20151006'
-%                            ' AMe_20151008'
-%                             'BFu/20151010'
-%                            'EIv/20151003'
-%                            'JHa/20151010'
-%                            'FRa/20151007' 
-%   %%%%%%%                         268 channels
-%   %                         'MGo/20150815'
-%                            'JRi/20150828'
-%                             'HRi/20150816'
-%                              'AZi/20150818' 
-%                           'MTo/20150825'
-%                           'DLa/20150826'
-%                           'BPe/20150826'
-%                           'ROr/20150827'
-%                          'HEn/20150828'
-%                           'MSo/20150820'
-%                           'NSh/20150825'
-%%                           'JRu/20150819'
-%                           'LMe/20150826'
+                           'AWi/20151007'
+                             'SBa/20151006'
+                            'JHo/20151004'
+                             'JFo/20151007'
+  
+                            'SKo/20151011'
+                         'JBo/20151011'
+                          'DWe/20151003'
+                         'FSr/20151003'
+                         'JNe/20151004'
+                           'RWi/20151003'
+                           'HJu/20151004'
+                           'LJa/20151006'
+                            'AMe_20151008'
+                            'BFu/20151010'
+                            'EIv/20151003'
+                           'JHa/20151010'
+                           'FRa/20151007' 
+  %%%%%%%                         268 channels
+  %                         'MGo/20150815' %ignore bad behavior
+                           'JRi/20150828'
+                            'HRi/20150816'
+                             'AZi/20150818' 
+                          'MTo/20150825'
+                          'DLa/20150826'
+                           'BPe/20150826'
+                          'ROr/20150827'
+                         'HEn/20150828'
+                          'MSo/20150820'
+                          'NSh/20150825'
+%                          'JRu/20150819' %Ignore bad behavor
+                          'LMe/20150826'
+                          'MAb/20150816'
 %Check out MAm                        'MAm/20150825' %Avoid for behavior analysis
-%                              'MAb/20150816'
+                              
   }; 
                       
                       
 runcfg.baseline.compile         = 'no';      %No    local                        
-runcfg.baseline.parallel        = 'torque';      %Torque local?
-runcfg.baseline.timreq          = 500; % 
-runcfg.dataAnalysisType         = 'selectLFI'; %Behavior or MEG or selectLFI
+runcfg.baseline.parallel        = 'torque';      %torque local?
+runcfg.baseline.timreq          = 800; % 
+runcfg.dataAnalysisType         = 'behavior'; %behavior or MEG or selectLFI
 
 
 cfg1 = {};                      
@@ -69,21 +70,38 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
     cd(bhpath)
     
     %Getting the names of the mat files that store behavioral data.
-    [ PLA,ATM ] = loadSessions();
+    setting.numParticipants = 31;
+    setting.bhpath          = bhpath;
+    [ PLA,ATM ] = loadSessions(setting);
     
+    participantPath = dir('*mat');
     
     for ipart = 1:length(runcfg.partlist)
         
-        cfg1{ipart}.tau          = linspace(0.01,20,100);
-        cfg1{ipart}.beta         = linspace(0.01,3,100);
+        cfg1{ipart}.tau          = linspace(1,20,100);
+        cfg1{ipart}.beta         = linspace(0.1,2,100);
+        cfg1{ipart}.ls           = linspace(0,1,100);
+        %what does simulate do?
+        cfg1{ipart}.simulate     = 0;
+        cfg1{ipart}.numparameter    = '3';
+        cfg1{ipart}.drugEffect   = 1; %1 if order of intervention, 0 if session order
+        cfg1{ipart}.simulateLoseSwitch   = 0; %1 of simulate lose-switch heuristic
         cfg1{ipart}.runs         = 1;
+        cfg1{ipart}.currPart     = ipart; 
         cfg1{ipart}.session      = runcfg.partlist{ipart};
-        cfg1{ipart}.ATMpath  = sprintf('%s%s',bhpath,ATM{ipart});
-        cfg1{ipart}.PLApath  = sprintf('%s%s',bhpath,PLA{ipart});
+        %Decide how if the paths should be ordered as indiceted ATM/PLA. Then 1 
+        if cfg1{ipart}.drugEffect == 1
+            cfg1{ipart}.ATMpath  = sprintf('%s%s',bhpath,ATM{ipart});
+            cfg1{ipart}.PLApath  = sprintf('%s%s',bhpath,PLA{ipart});
+        else
+            cfg1{ipart}.ATMpath                = strcat(bhpath,participantPath(ipart*2).name);
+            cfg1{ipart}.PLApath                = strcat(bhpath,participantPath(ipart*2-1).name);
+        end
+        cfg1{ipart}.numParticiants = setting.numParticipants;
+        cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/%s.mat'...
+            ,cfg1{ipart}.session(1:3));
         
         
-        outputfile{ipart} = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/results/%s.mat'...
-                                   ,cfg1{ipart}.session(1:3));
         
     end
 elseif strcmp(runcfg.dataAnalysisType,'MEG')
@@ -99,9 +117,9 @@ elseif strcmp(runcfg.dataAnalysisType,'MEG')
         cfg1{ipart}.megsenspath  = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/MEGsensors.mat';
         cfg1{ipart}.preprocFreq  = 'freq'; %concatenate TF or preproc trials
         
-        cfg1{ipart}.stimResp     = 'resp'; %Get response or stimulus locked data, or cue locked.
+        cfg1{ipart}.stimResp     = 'cue'; %Get response or stimulus locked data, or cue locked.
         cfg1{ipart}.lowhigh      = 'low';  %low or high frequencies
-        outputfile{ipart}.path   = sprintf ('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/trialsLowFreq/baselinedResp/%s.mat'...
+        outputfile{ipart}.path   = sprintf ('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/trialsLowFreq/baselinedCue/%s.mat'...
             ,strrep(runcfg.partlist{ipart},'/','_') );
         
         
@@ -172,12 +190,12 @@ switch runcfg.dataAnalysisType
         switch runcfg.baseline.compile
             
             case 'local'
-                Model_performance(cfg1{1},outputfile{1})
+                parameterFitting_Tor(cfg1{1})
                 %cellfun(@Model_performance, cfg1, outputfile);
             case 'no'
                 nnodes = 1;%64; % how many licenses?
                 stack = 1;%round(length(cfg1)/nnodes);
-                qsubcellfun(@Model_performance, cfg1, outputfile, 'compile', 'no', ...
+                qsubcellfun(@parameterFitting_Tor, cfg1, 'compile', 'no', ...
                     'memreq', 10*1024^3, 'timreq', runcfg.baseline.timreq*60, 'stack', stack, 'StopOnError', false, 'backend', runcfg.baseline.parallel);
             case 'yes'
                 compiledfun = qsubcompile(@Model_performance, 'toolbox', {'signal', 'stats'});
@@ -190,7 +208,7 @@ switch runcfg.dataAnalysisType
         switch runcfg.baseline.compile
             
             case 'local'
-                selectLFI_Tor( cfg1{1} )
+                cellfun(@selectLFI_Tor, cfg1)
                 %Model_performance(cfg1{1},outputfile{1})
                 %cellfun(@Model_performance, cfg1, outputfile);
             case 'no'

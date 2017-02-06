@@ -1,7 +1,10 @@
 function selectLFI_Tor( cfg1 )
 
 %loading in the total table
-load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/fullTabeProbC.mat')
+load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/fullTable24Nov-2wPC.mat')
+
+disp(cfg1.participant)
+disp(cfg1.event)
 
 %Get all probchoice 
 LFIs  = Ttotal.LocalProbChoice(~isnan(Ttotal.LocalProbChoice'));
@@ -60,7 +63,20 @@ for sideBP = 1:2
     
     %participant table: 
     Tpart = Ttotal(posID,:);
-
+    
+    %Remove trials with too short or long response time for respons-locked
+    if strcmp(cfg1.event, 'Resp')
+    
+        RT      = ((Tpart.resp_sample-Tpart.goQ_sample)/500); 
+        
+        shortRT = RT<0.2;
+        longRT  = RT>3;
+        
+        Tpart = Tpart((shortRT+longRT)==0,:);
+    end
+    
+    
+    %Find the trials with the lowest and highest PB
     y=quantile(Tpart.LocalProbChoice,[0 0.4 0.6 1]);
 
     %Select the trial in the proper qunatile of prob choice.
@@ -119,7 +135,7 @@ for sideBP = 1:2
     
     outfile = sprintf('%s_probChoice_%d_BP%d_%s.mat',session.name(1:3),PBlevel,sideBP,cfg1.event);
     
-    cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short')
+    cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param3/')
     
     %decide on folder and filenames. 
     save(outfile,'BP')
