@@ -1,7 +1,7 @@
 function selectLFI_Tor( cfg1 )
 
-%loading in the total table
-load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/fullTable24Nov-2wPC.mat')
+%loading in the total table, changed from 24thNov-2wPC
+load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/fullTable7thfebPC.mat')
 
 disp(cfg1.participant)
 disp(cfg1.event)

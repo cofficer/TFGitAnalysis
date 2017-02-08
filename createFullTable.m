@@ -5,7 +5,7 @@ cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel')
 load('fullTable24Nov-2.mat')
 %load('fullTable28hOct.mat')
 %load('allFracIncome.mat')
-load('AllprobChoice3.mat')
+load('AllprobChoice3-0702-17.mat')
 
 %%
 %loop participants to create a table based on trialinfos, this cell is
@@ -15,12 +15,11 @@ bhpath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior/';
 
 
 %Getting the names of the mat files that store behavioral data.
-setting.numParticipants = 31;
+setting.numParticipants = 29;
 setting.bhpath          = bhpath;
 
 [PLA,ATM] = loadSessions(setting);
-PLA(20)=[];
-PLA(23)=[];
+
 
 folder = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/';
 

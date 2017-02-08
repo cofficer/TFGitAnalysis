@@ -9,11 +9,11 @@ function  createContraVSipsi(~ )
 % stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/respavgAFreqSTIMLOCKED.mat');
 % respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/respavgAFreq2.mat');
 % cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/respavgAFreqCUELOCKED.mat');
-% 
-% 
-% stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3P.mat');
-% respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3P.mat');
-% cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3P.mat');
+% % 
+
+stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3P.mat');
+respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3P.mat');
+cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3P.mat');
 
 
 stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowLS.mat');

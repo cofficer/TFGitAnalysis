@@ -7,8 +7,8 @@
 %addpath
 warning off
 addpath(genpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis'))
-addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20160601/')
-addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20160601/qsub')
+addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20170124/')
+addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20170124/qsub')
 ft_defaults
 
 
@@ -17,39 +17,39 @@ ft_defaults
 %Placebo
 runcfg.partlist = {
 % %                  %%%             269 channels
-                           'AWi/20151007'
-                             'SBa/20151006'
-                            'JHo/20151004'
-                             'JFo/20151007'
-  
-                            'SKo/20151011'
-                         'JBo/20151011'
-                          'DWe/20151003'
-                         'FSr/20151003'
-                         'JNe/20151004'
-                           'RWi/20151003'
-                           'HJu/20151004'
-                           'LJa/20151006'
-                            'AMe_20151008'
-                            'BFu/20151010'
-                            'EIv/20151003'
-                           'JHa/20151010'
-                           'FRa/20151007' 
-  %%%%%%%                         268 channels
-  %                         'MGo/20150815' %ignore bad behavior
-                           'JRi/20150828'
-                            'HRi/20150816'
-                             'AZi/20150818' 
-                          'MTo/20150825'
-                          'DLa/20150826'
-                           'BPe/20150826'
-                          'ROr/20150827'
-                         'HEn/20150828'
-                          'MSo/20150820'
-                          'NSh/20150825'
-%                          'JRu/20150819' %Ignore bad behavor
-                          'LMe/20150826'
-                          'MAb/20150816'
+%                            'AWi/20151007'
+                              'SBa/20151006'
+%                             'JHo/20151004'
+%                              'JFo/20151007'
+%   
+%                             'SKo/20151011'
+%                          'JBo/20151011'
+%                           'DWe/20151003'
+%                          'FSr/20151003'
+                          'JNe/20151004'
+%                            'RWi/20151003'
+%                            'HJu/20151004'
+%                            'LJa/20151006'
+%                              'AMe_20151008'
+%                             'BFu/20151010'
+                             'EIv/20151003'
+%                            'JHa/20151010'
+                            'FRa/20151007' 
+% %   %%%%%%%                         268 channels
+%   %                         'MGo/20150815' %ignore bad behavior
+%                            'JRi/20150828'
+%                             'HRi/20150816'
+%                              'AZi/20150818' 
+%                           'MTo/20150825'
+%                           'DLa/20150826'
+%                            'BPe/20150826'
+                           'ROr/20150827'
+%                          'HEn/20150828'
+                           'MSo/20150820'
+%                           'NSh/20150825'
+% %                          'JRu/20150819' %Ignore bad behavor
+%                           'LMe/20150826'
+%                           'MAb/20150816'
 %Check out MAm                        'MAm/20150825' %Avoid for behavior analysis
                               
   }; 
@@ -70,13 +70,28 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
     cd(bhpath)
     
     %Getting the names of the mat files that store behavioral data.
-    setting.numParticipants = 31;
+    setting.numParticipants = 29;
     setting.bhpath          = bhpath;
     [ PLA,ATM ] = loadSessions(setting);
     
     participantPath = dir('*mat');
     
+
+    
     for ipart = 1:length(runcfg.partlist)
+        
+        
+        %Get the index of the current specified participant from runcfg to
+        %PLA.
+        defPart = runcfg.partlist{ipart};
+      
+        strcmp(defPart(1:3),cell2mat(PLA))
+        
+        PLAshort = cellfun(@(x) x(1:3),PLA,'UniformOutput',false);
+        
+        indxPLA=strcmp(defPart(1:3),PLAshort);
+        
+        
         
         cfg1{ipart}.tau          = linspace(1,20,100);
         cfg1{ipart}.beta         = linspace(0.1,2,100);
@@ -88,11 +103,11 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
         cfg1{ipart}.simulateLoseSwitch   = 0; %1 of simulate lose-switch heuristic
         cfg1{ipart}.runs         = 1;
         cfg1{ipart}.currPart     = ipart; 
-        cfg1{ipart}.session      = runcfg.partlist{ipart};
+        cfg1{ipart}.session      = PLA{indxPLA};
         %Decide how if the paths should be ordered as indiceted ATM/PLA. Then 1 
         if cfg1{ipart}.drugEffect == 1
-            cfg1{ipart}.ATMpath  = sprintf('%s%s',bhpath,ATM{ipart});
-            cfg1{ipart}.PLApath  = sprintf('%s%s',bhpath,PLA{ipart});
+            cfg1{ipart}.ATMpath  = sprintf('%s%s',bhpath,ATM{indxPLA});
+            cfg1{ipart}.PLApath  = sprintf('%s%s',bhpath,PLA{indxPLA});
         else
             cfg1{ipart}.ATMpath                = strcat(bhpath,participantPath(ipart*2).name);
             cfg1{ipart}.PLApath                = strcat(bhpath,participantPath(ipart*2-1).name);

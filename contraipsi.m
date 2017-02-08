@@ -19,7 +19,7 @@ BPallResp = NaN(33,31,15,2); %high prob choice
 % BPallCue4 = zeros(33,141,29); %ceiling prob choice
 
 %decide if timecourses should be split according to lose-switch rate.
-sortLS = 1;
+sortLS = 0;
 
 if sortLS == 1
     load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/lowswitchID.mat');
@@ -41,7 +41,7 @@ for ievent = 1:2
     if sortLS == 1
         
         allcue = {cueN.name};
-        highS = cellfun(@(n) n(1:3),highswitchID,'UniformOutput',0);
+        highS = cellfun(@(n) n(1:3),lowswitchID,'UniformOutput',0);
         cue = cellfun(@(n) n(1:3),allcue,'UniformOutput',0);
         cueN = cueN(ismember(cue,highS));
         stimN = stimN(ismember(cue,highS));
@@ -133,9 +133,9 @@ BPallStim = squeeze(nanmean(BPallStim(10:end,:,:,:),1));
 BPallResp = squeeze(nanmean(BPallResp(10:end,:,:,:),1));
 
 
-save('timecourseCue3PhighLS.mat','BPallCue')
-save('timecourseStim3PhighLS.mat','BPallStim')
-save('timecourseResp3PhighLS.mat','BPallResp')
+save('timecourseCue3P.mat','BPallCue')
+save('timecourseStim3P.mat','BPallStim')
+save('timecourseResp3P.mat','BPallResp')
 
 
 

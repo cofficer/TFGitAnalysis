@@ -5,8 +5,8 @@ clear ;
 
 %cd('/home/chrisgahn/Documents/MATLAB/code/batch')
 addpath(genpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/'))
-addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20160601/')
-addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20160601/qsub')
+addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20170124/')
+addpath('/mnt/homes/home024/chrisgahn/Documents/MATLAB/fieldtrip-20170124/qsub')
 ft_defaults
 cd('/mnt/homes/home024/meindertsmat/data/Matching/MEG/raw/')
 %Peters home directory
