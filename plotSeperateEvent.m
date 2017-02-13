@@ -4,9 +4,9 @@ function  plotSeperateEvent( ~ )
 setY = [-14 3];
 
 %load time courses
-stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PhighLS.mat');
-respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PhighLS.mat');
-cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PhighLS.mat');
+stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowLS.mat');
+respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PlowLS.mat');
+cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3P.mat');
 
 %get time information
 resp =load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/AWi/20151007/resp/AWi_d01_250_type1event2_totalpow_freq16.mat');

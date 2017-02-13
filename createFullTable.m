@@ -5,7 +5,7 @@ cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel')
 load('fullTable24Nov-2.mat')
 %load('fullTable28hOct.mat')
 %load('allFracIncome.mat')
-load('AllprobChoice3-0702-17.mat')
+load('AllprobChoice3-1002-17.mat')
 
 %%
 %loop participants to create a table based on trialinfos, this cell is

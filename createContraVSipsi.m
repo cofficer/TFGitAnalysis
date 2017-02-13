@@ -69,6 +69,7 @@ sigClusterC(inNaN) = NaN;
 %set the ylimit for all plots.
 setY = [-14 3];
 
+
 timeX = [stim.freq.time(stimStart:stimStop) cue.freq.time(cueStart:cueStop) resp.freq.time(respStart:respStop)];
 x = 1:length(timeX);
 % 
@@ -123,7 +124,7 @@ line([x(stimStop-stimStart)+2 x(stimStop-stimStart)+2],get(gca,'Ylim'),'Color',[
 line([(x(stimStop-stimStart)+2)+(cueStop-cueStart) (x(stimStop-stimStart)+2)+(cueStop-cueStart)],get(gca,'Ylim'),'Color',[0 0 0],'LineWidth',10)
 
 %plot the sig. cluster
-plot(1:length(sigClusterC),sigClusterC,'-','LineWidth',4)
+%plot(1:length(sigClusterC),sigClusterC,'-','LineWidth',4)
 
 legend high Low 
 
