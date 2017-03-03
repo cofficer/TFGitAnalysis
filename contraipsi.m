@@ -5,13 +5,11 @@
 %Script or creating the timecourses that will later make it into final
 %plots.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clear
-cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param3/')
+
 %%
 %Put together first by event and then by LFI level.
-
 %loop over all event types
-
+clear;
 
 BPallCue  = NaN(33,21,15,2); %low prob choice
 BPallStim = NaN(33,21,15,2); %medium prob choice
@@ -22,9 +20,19 @@ BPallResp = NaN(33,31,15,2); %high prob choice
 sortLS = 1;
 
 if sortLS == 1
-    load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/lowswitchID.mat');
-    load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/highswitchID.mat');
+    %The old IDs
+    %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/lowswitchID.mat');
+    %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/highswitchID.mat');
+    %The new IDs
+    %[ lowswitchID,highswitchID ] = groupLoseSwitchHeuristic;
+    %IDs based on tau parameter
+    %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/lowTauFitsID.mat');
+    %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/highTauFitsID.mat');
+        %IDs based on performance
+    %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/perfLowID.mat');
+    load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/perfHighID.mat');
 end
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param3/')
 
 
 for ievent = 1:2
@@ -42,7 +50,7 @@ for ievent = 1:2
     if sortLS == 1
         
         allcue = {cueN.name};
-        highS = cellfun(@(n) n(1:3),highswitchID,'UniformOutput',0);
+        highS = cellfun(@(n) n(1:3),perfHighID,'UniformOutput',0);
         cue = cellfun(@(n) n(1:3),allcue,'UniformOutput',0);
         cueN = cueN(ismember(cue,highS));
         stimN = stimN(ismember(cue,highS));
@@ -123,7 +131,8 @@ for ievent = 1:2
     
 end
 %%
-%save the time courses
+%save the time courses, change the names of the mat files according to low
+%high are all participants. 
 %
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short')
 
@@ -134,9 +143,9 @@ BPallStim = squeeze(nanmean(BPallStim(10:end,:,:,:),1));
 BPallResp = squeeze(nanmean(BPallResp(10:end,:,:,:),1));
 
 
-save('timecourseCue3PhighLS.mat','BPallCue')
-save('timecourseStim3PhighLS.mat','BPallStim')
-save('timecourseResp3PhighLS.mat','BPallResp')
+save('timecourseCue3PhighPerf20thfeb.mat','BPallCue')
+save('timecourseStim3PhighPerf20thfeb.mat','BPallStim')
+save('timecourseResp3PhighPerf20thfeb.mat','BPallResp')
 
 
 

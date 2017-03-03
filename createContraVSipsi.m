@@ -11,22 +11,32 @@ function  createContraVSipsi(~ )
 % cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/respavgAFreqCUELOCKED.mat');
 % % 
 
-stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3P.mat');
-respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3P.mat');
-cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3P.mat');
+%define the participant grouping
+whichParts = 'all';
 
+switch whichParts
+    case 'all'
+        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3P.mat');
+        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3P.mat');
+        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3P.mat');
+        %load statstics
+        load('statisticsPermutation20thfeb.mat')
+        
+    case 'low'
+        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowLS.mat');
+        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PlowLS.mat');
+        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PlowLS.mat');
+        %load statstics
+        load('statisticsPermutationLOWls20thfeb.mat')
+        
+    case 'high'
+        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PhighLS.mat');
+        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PhighLS.mat');
+        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PhighLS.mat');
+        %load statstics
+        load('statisticsPermutationHIGHls20thfeb.mat')
+end
 
-stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowLS.mat');
-respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PlowLS.mat');
-cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PlowLS.mat');
-
-
-stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PhighLS.mat');
-respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PhighLS.mat');
-cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PhighLS.mat');
-
-%load statstics
-load('statisticsPermutationLOWls.mat')
 
 %Load one instance of each type for information such as time. 
 resp =load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/AWi/20151007/resp/AWi_d01_250_type1event2_totalpow_freq16.mat');
@@ -57,11 +67,13 @@ cueStart  =1;
 cueStop   =12;
 
 
-sigClusterC = ([ones(1,length(stimStart:stimStop)) statC.prob(cueStart:cueStop) ones(1,length(respStart:respStop))]<1)*-6;
 
-inNaN = find(sigClusterC==0);
 
-sigClusterC(inNaN) = NaN;
+sigCluster = ([statS.prob(stimStart:stimStop) statC.prob(cueStart:cueStop) statR.prob(respStart:respStop)]<1)*-6;
+
+inNaN = find(sigCluster==0);
+
+sigCluster(inNaN) = NaN;
 
 %%
 %regular plot
@@ -86,11 +98,11 @@ medium  = [nanmean(stimL.BPallStim(stimStart:stimStop,:,2),2)', nanmean(cueL.BPa
 %ceil    = [nanmean(stimL.BPallStim(stimStart:stimStop,:,4),2)', nanmean(cueL.BPallCue(cueStart:cueStop,:,4),2)',nanmean(respL.BPallResp(respStart:respStop,:,4),2)'];
 
 
-figure(4),clf
+%figure(4),clf
 
-%subplot(2,1,1)
+subplot(3,1,3)
 %title('Contra vs. Ipsi lateralisation: stim / cue / response-locked')
-title('Low beta lateralisation: stim / cue / response-locked')
+title('All beta lateralisation: stim / cue / response-locked')
 
 hold on
 %plot(ceil,'LineWidth',2)
@@ -124,7 +136,7 @@ line([x(stimStop-stimStart)+2 x(stimStop-stimStart)+2],get(gca,'Ylim'),'Color',[
 line([(x(stimStop-stimStart)+2)+(cueStop-cueStart) (x(stimStop-stimStart)+2)+(cueStop-cueStart)],get(gca,'Ylim'),'Color',[0 0 0],'LineWidth',10)
 
 %plot the sig. cluster
-%plot(1:length(sigClusterC),sigClusterC,'-','LineWidth',4)
+plot(1:length(sigCluster),sigCluster,'-','LineWidth',4)
 
 legend high Low 
 

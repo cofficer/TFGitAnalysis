@@ -1,15 +1,16 @@
 
 %statistics on time course data. 
 %use old matlab81
+warning off
 addpath(genpath('/mnt/homes/home024/chrisgahn/fieldtrip-20130305'))
 ft_defaults
 
 %%
 clear
-%load time courses
-stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowLS.mat');
-respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PlowLS.mat');
-cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PlowLS.mat');
+%load time coursesm change the load file manually low high or all(nothing).
+stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PhighPerf20thfeb.mat');
+respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PhighPerf20thfeb.mat');
+cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PhighPerf20thfeb.mat');
 
 
 %Becuase I need a frequency structure. 

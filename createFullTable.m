@@ -2,14 +2,17 @@
 
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel')
 
+%If you load a full table then no reason run the 2nd cell.
 load('fullTable24Nov-2.mat')
 %load('fullTable28hOct.mat')
 %load('allFracIncome.mat')
-load('AllprobChoice3-1002-17.mat')
+%load('AllprobChoice3-1002-17.mat')
+load('AllprobChoice2-2702-17.mat')
+
 
 %%
 %loop participants to create a table based on trialinfos, this cell is
-%saved in fullTabe4thOct.mat
+%
 
 bhpath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior/';
 

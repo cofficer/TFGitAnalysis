@@ -55,10 +55,10 @@ runcfg.partlist = {
     };
                       
                       
-runcfg.baseline.compile         = 'no';      %No    local                        
-runcfg.baseline.parallel        = 'torque';      %torque local?
-runcfg.baseline.timreq          = 800; % 
-runcfg.dataAnalysisType         = 'selectLFI'; %behavior or MEG or selectLFI
+runcfg.baseline.compile         = 'local';      %No    local                        
+runcfg.baseline.parallel        = 'local';      %torque local?
+runcfg.baseline.timreq          = 2000; % number of minutes. 
+runcfg.dataAnalysisType         = 'behavior'; %behavior or MEG or selectLFI
 
 
 cfg1 = {};                      
@@ -85,7 +85,7 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
         %PLA.
         defPart = runcfg.partlist{ipart};
       
-        strcmp(defPart(1:3),cell2mat(PLA))
+   
         
         PLAshort = cellfun(@(x) x(1:3),PLA,'UniformOutput',false);
         
@@ -93,12 +93,14 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
         
         
         
-        cfg1{ipart}.tau          = linspace(1,20,100);
-        cfg1{ipart}.beta         = linspace(0.1,2,100);
-        cfg1{ipart}.ls           = linspace(0,1,100);
-        %what does simulate do?
-        cfg1{ipart}.simulate     = 0;
-        cfg1{ipart}.numparameter    = '3';
+        cfg1{ipart}.tau          = linspace(1,20,10);
+        cfg1{ipart}.beta         = linspace(0.1,2,10);
+        cfg1{ipart}.ls           = linspace(0,1,10);
+        %what does simulate do? Simalate model choices.
+        cfg1{ipart}.simulate     = 1;
+        %Define the number of parameter pairs to output.
+        cfg1{ipart}.bestfits     = 30; 
+        cfg1{ipart}.numparameter = '3';
         cfg1{ipart}.drugEffect   = 1; %1 if order of intervention, 0 if session order
         cfg1{ipart}.simulateLoseSwitch   = 0; %1 of simulate lose-switch heuristic
         cfg1{ipart}.runs         = 1;
@@ -113,7 +115,7 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
             cfg1{ipart}.PLApath                = strcat(bhpath,participantPath(ipart*2-1).name);
         end
         cfg1{ipart}.numParticiants = setting.numParticipants;
-        cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/%s.mat'...
+        cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/%s.mat'...
             ,cfg1{ipart}.session(1:3));
         
         
@@ -242,56 +244,56 @@ switch runcfg.dataAnalysisType
 end
 %%
 %Load all the participants for response
-cd ('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/baselinedResp');
-
-
-baselined       = dir('*mat');
-
-%Store the first powspctrm
-load(baselined(1).name)
-
-fullMatrixR.powsptrcm = zeros([length(baselined) size(partMatrix.powsptrcm)]);
-fullMatrixR.powsptrcm(1,:,:,:,:) = partMatrix.powsptrcm;
-
-
-%Loop and load all powspctrm data into fullMatrix
-for iparticipants = 2:length(baselined)
-
-load(baselined(iparticipants).name)
-
-fullMatrixR.powsptrcm(iparticipants,:,:,:,:) = partMatrix.powsptrcm;
-
-end
-
-disp('Finished storing all participants in one 5-D matrix')
-
-
-%Load all the participants for stimulus
-cd ('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/baselinedStim');
-
-
-baselined       = dir('*mat');
-
-%Store the first powspctrm
-load(baselined(1).name)
-
-fullMatrixS.powsptrcm = zeros([length(baselined) size(partMatrix.powsptrcm)]);
-fullMatrixS.powsptrcm(1,:,:,:,:) = partMatrix.powsptrcm;
-
-
-%Loop and load all powspctrm data into fullMatrix
-for iparticipants = 2:length(baselined)
-
-load(baselined(iparticipants).name)
-
-fullMatrixS.powsptrcm(iparticipants,:,:,:,:) = partMatrix.powsptrcm;
-
-end
-
-disp('Finished storing all participants in one 5-D matrix')
-
-
-
+% cd ('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/baselinedResp');
+% 
+% 
+% baselined       = dir('*mat');
+% 
+% %Store the first powspctrm
+% load(baselined(1).name)
+% 
+% fullMatrixR.powsptrcm = zeros([length(baselined) size(partMatrix.powsptrcm)]);
+% fullMatrixR.powsptrcm(1,:,:,:,:) = partMatrix.powsptrcm;
+% 
+% 
+% %Loop and load all powspctrm data into fullMatrix
+% for iparticipants = 2:length(baselined)
+% 
+% load(baselined(iparticipants).name)
+% 
+% fullMatrixR.powsptrcm(iparticipants,:,:,:,:) = partMatrix.powsptrcm;
+% 
+% end
+% 
+% disp('Finished storing all participants in one 5-D matrix')
+% 
+% 
+% %Load all the participants for stimulus
+% cd ('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/avgLowFreq/baselinedStim');
+% 
+% 
+% baselined       = dir('*mat');
+% 
+% %Store the first powspctrm
+% load(baselined(1).name)
+% 
+% fullMatrixS.powsptrcm = zeros([length(baselined) size(partMatrix.powsptrcm)]);
+% fullMatrixS.powsptrcm(1,:,:,:,:) = partMatrix.powsptrcm;
+% 
+% 
+% %Loop and load all powspctrm data into fullMatrix
+% for iparticipants = 2:length(baselined)
+% 
+% load(baselined(iparticipants).name)
+% 
+% fullMatrixS.powsptrcm(iparticipants,:,:,:,:) = partMatrix.powsptrcm;
+% 
+% end
+% 
+% disp('Finished storing all participants in one 5-D matrix')
+% 
+% 
+% 
 
 
 
