@@ -8,9 +8,12 @@ ft_defaults
 %%
 clear
 %load time coursesm change the load file manually low high or all(nothing).
-stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PhighPerf20thfeb.mat');
-respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PhighPerf20thfeb.mat');
-cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PhighPerf20thfeb.mat');
+param = '1';
+lfiPC = '';
+
+stimL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim%sP%s12-Mar-2017.mat',param,lfiPC));
+respL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp%sP%s12-Mar-2017.mat',param,lfiPC));
+cueL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue%sP%s12-Mar-2017.mat',param,lfiPC));
 
 
 %Becuase I need a frequency structure. 
@@ -141,5 +144,16 @@ statS.prob
 statC.prob
 
 statR.prob
+
+
+
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis')
+strDate = '12-Mar-2017';
+strStat  = sprintf('statPermutations%sP-%s%s.mat',param,lfiPC,strDate);
+
+save(strStat,'statS','statC','statR')
+
+
+
 
 

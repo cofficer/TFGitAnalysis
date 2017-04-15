@@ -7,70 +7,77 @@ load('fullTable24Nov-2.mat')
 %load('fullTable28hOct.mat')
 %load('allFracIncome.mat')
 %load('AllprobChoice3-1002-17.mat')
-load('AllprobChoice2-2702-17.mat')
+load('AllprobChoice2-1203-17.mat')
 
 
 %%
 %loop participants to create a table based on trialinfos, this cell is
 %
 
-bhpath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior/';
+%Can usually skip this part since the general table has already been
+%created. 
+creaTable = 0;
 
-
-%Getting the names of the mat files that store behavioral data.
-setting.numParticipants = 29;
-setting.bhpath          = bhpath;
-
-[PLA,ATM] = loadSessions(setting);
-
-
-folder = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/';
-
-for nPart = 1:length(PLA)
-    nPart
+if creaTable
     
-    folderP = sprintf('%s%s/',folder,PLA{nPart}(1:3));
+    bhpath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior/';
     
     
-    cd(folderP)
+    %Getting the names of the mat files that store behavioral data.
+    setting.numParticipants = 29;
+    setting.bhpath          = bhpath;
     
-    %name of the date folder inside of each participant. 
-    aD=dir;
-    aD=aD(3).name;
-    
-    folderP = sprintf('%s%s/resp',folderP,aD);
-    
-    cd(folderP)
-    
-    sessions = dir('*260_type1event1*.mat');
+    [PLA,ATM] = loadSessions(setting);
     
     
-    for blocks = 1:length(sessions)
+    folder = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/';
+    
+    for nPart = 1:length(PLA)
+        nPart
         
-        pathA = sessions(blocks).name;
+        folderP = sprintf('%s%s/',folder,PLA{nPart}(1:3));
         
-        [ T ] = tableTrialinfo( pathA );
         
-        if blocks == 1
-            TAll = T;
-        else
-            TAll = [TAll;T];
+        cd(folderP)
+        
+        %name of the date folder inside of each participant.
+        aD=dir;
+        aD=aD(3).name;
+        
+        folderP = sprintf('%s%s/resp',folderP,aD);
+        
+        cd(folderP)
+        
+        sessions = dir('*260_type1event1*.mat');
+        
+        
+        for blocks = 1:length(sessions)
+            
+            pathA = sessions(blocks).name;
+            
+            [ T ] = tableTrialinfo( pathA );
+            
+            if blocks == 1
+                TAll = T;
+            else
+                TAll = [TAll;T];
+            end
+            
         end
         
+        %Add column with the total trials of one session
+        totalTrials  = 1:length(TAll.cue_trigger);
+        TAll.totalTrials = totalTrials';
+        
+        if nPart == 1
+            Ttotal = TAll;
+        else
+            Ttotal = [Ttotal;TAll];
+        end
+        
+        
+        
     end
-    
-    %Add column with the total trials of one session
-    totalTrials  = 1:length(TAll.cue_trigger);
-    TAll.totalTrials = totalTrials';
-    
-    if nPart == 1
-        Ttotal = TAll;
-    else
-        Ttotal = [Ttotal;TAll];
-    end
-        
-        
-        
 end
 
 %%
@@ -82,6 +89,14 @@ ID = cellstr(ID);
 
 %Store all lfi value to be inserted
 LocalProbChoice = zeros(1,length(Ttotal.cue_trigger));
+%Make one for each LFI and PC
+LocalFract1 = zeros(1,length(Ttotal.cue_trigger));
+LocalFract2 = zeros(1,length(Ttotal.cue_trigger));
+LocalFract3 = zeros(1,length(Ttotal.cue_trigger));
+
+ProbChoice2 = zeros(1,length(Ttotal.cue_trigger));
+ProbChoice3 = zeros(1,length(Ttotal.cue_trigger));
+
 
 correct=1;
 
@@ -93,7 +108,7 @@ lenParts = 1:length(AllprobChoice.order);
 
 
 %Loop over participants.
-for nPart = 1:length(AllprobChoice.order);%1:length(AllprobChoice.order);
+for nPart = 1:length(AllprobChoice.order)%1:length(AllprobChoice.order);
 
  %Find the position of the current participant, but its not LME.   
  if nPart ==21
@@ -140,7 +155,7 @@ TFChoices(indV) = 2;
 %pause
 %Storing the length of trial, which is not relevant.
 tableT = length(posID);
-modelT =length(AllprobChoice.LFI{nPart});
+modelT =length(AllprobChoice.PC3{nPart});
 
 %subtract the number of incorrect buttonpresses from the number of trials.
 tableT = tableT-sum(Ttotal.resp_type(posID)<20);
@@ -157,9 +172,24 @@ if tableT == modelT
     sprintf('Correct trials for: %s',AllprobChoice.order{nPart}(1:3))
     correct=correct+1;
     
-    %insert LFI
-    LocalProbChoice(posID(p))     = AllprobChoice.LFI{nPart}';
+    %insert LFI and PC
+    LocalProbChoice(posID(p))     = AllprobChoice.PC3{nPart}'; %Redundant soon .
     LocalProbChoice(posID(pN))    = NaN;
+    
+    %New measuremets of LFI and PC
+    LocalFract1(posID(p))     = AllprobChoice.LFI1{nPart}';
+    LocalFract1(posID(pN))    = NaN;
+    LocalFract2(posID(p))     = AllprobChoice.LFI2{nPart}';
+    LocalFract2(posID(pN))    = NaN;
+    LocalFract3(posID(p))     = AllprobChoice.LFI3{nPart}';
+    LocalFract3(posID(pN))    = NaN;
+    
+    ProbChoice2(posID(p))     = AllprobChoice.PC2{nPart}';
+    ProbChoice2(posID(pN))    = NaN;
+    ProbChoice3(posID(p))     = AllprobChoice.PC3{nPart}';
+    ProbChoice3(posID(pN))    = NaN;
+    
+    
     
 else
     sprintf('Wrong number of trials for: %s, modelT=%d, tableT=%d',...
@@ -186,15 +216,42 @@ else
             TFChoices = [pad0;TFChoices(1:loc);pad1;TFChoices(loc+1:end)];
             
             %Store all LFIs
-            localFI = AllprobChoice.LFI{nPart}';
+            %localFI = AllprobChoice.LFI{nPart}';
+            %Add all the alternative PC.
+            LF1 = AllprobChoice.LFI1{nPart}';
+            LF2 = AllprobChoice.LFI2{nPart}';
+            LF3 = AllprobChoice.LFI3{nPart}';
+            PC2 = AllprobChoice.PC2{nPart}';
+            PC3 = AllprobChoice.PC3{nPart}';
             
             %Exctract only the lfi where the two choice sets overlap.
-            localFI(TFChoices==0) = NaN;
+            %localFI(TFChoices==0) = NaN;
+            
+            %Add all the alternative PC.
+            LF1(TFChoices==0) = NaN;
+            LF2(TFChoices==0) = NaN;
+            LF3(TFChoices==0) = NaN;
+            PC2(TFChoices==0) = NaN;
+            PC3(TFChoices==0) = NaN;
             
             %Now add the relevant fractional income to the full vector
-            LocalProbChoice(posID(p))     = localFI(TFChoices>0);
-            LocalProbChoice(posID(pN))    = NaN;
-
+            %LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+            %LocalProbChoice(posID(pN))    = NaN;
+            
+            
+            %New measuremets of LFI and PC
+            LocalFract1(posID(p))     = LF1(TFChoices>0);
+            LocalFract1(posID(pN))    = NaN;
+            LocalFract2(posID(p))     = LF2(TFChoices>0);
+            LocalFract2(posID(pN))    = NaN;
+            LocalFract3(posID(p))     = LF3(TFChoices>0);
+            LocalFract3(posID(pN))    = NaN;
+            
+            ProbChoice2(posID(p))     = PC2(TFChoices>0);
+            ProbChoice2(posID(pN))    = NaN;
+            ProbChoice3(posID(p))     = PC3(TFChoices>0);
+            ProbChoice3(posID(pN))    = NaN;
+            
             
         else
             
@@ -209,14 +266,45 @@ else
         TFChoices=[TFChoices(1:loc);pad0;TFChoices(loc+1:end)];
         
         %Store all LFIs
-        localFI = AllprobChoice.LFI{nPart}';
+        %localFI = AllprobChoice.LFI{nPart}';
+        %Add all the alternative PC.
+        LF1 = AllprobChoice.LFI1{nPart}';
+        LF2 = AllprobChoice.LFI2{nPart}';
+        LF3 = AllprobChoice.LFI3{nPart}';
+        PC2 = AllprobChoice.PC2{nPart}';
+        PC3 = AllprobChoice.PC3{nPart}';
         
         %Exctract only the lfi where the two choice sets overlap.
-        localFI(TFChoices==0) = NaN;
+        %localFI(TFChoices==0) = NaN;
+        
+        %Add all the alternative PC.
+        LF1(TFChoices==0) = NaN;
+        LF2(TFChoices==0) = NaN;
+        LF3(TFChoices==0) = NaN;
+        PC2(TFChoices==0) = NaN;
+        PC3(TFChoices==0) = NaN;
         
         %Now add the relevant fractional income to the full vector
-        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
-        LocalProbChoice(posID(pN))    = NaN;
+        %LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        %LocalProbChoice(posID(pN))    = NaN;
+        
+        
+        %New measuremets of LFI and PC
+        LocalFract1(posID(p))     = LF1(TFChoices>0);
+        LocalFract1(posID(pN))    = NaN;
+        LocalFract2(posID(p))     = LF2(TFChoices>0);
+        LocalFract2(posID(pN))    = NaN;
+        LocalFract3(posID(p))     = LF3(TFChoices>0);
+        LocalFract3(posID(pN))    = NaN;
+        
+        ProbChoice2(posID(p))     = PC2(TFChoices>0);
+        ProbChoice2(posID(pN))    = NaN;
+        ProbChoice3(posID(p))     = PC3(TFChoices>0);
+        ProbChoice3(posID(pN))    = NaN;
+        
+        
+        
+        
         
     elseif strcmp(AllprobChoice.order{nPart}(1:3),'BFu'); %Only for participant HEn
         
@@ -229,14 +317,41 @@ else
         TFChoices=[TFChoices(1:285)' pad0 TFChoices(286:end)']';
         
         %Store all LFIs
-        localFI = AllprobChoice.LFI{nPart}';
+        %localFI = AllprobChoice.LFI{nPart}';
+        %Add all the alternative PC.
+        LF1 = AllprobChoice.LFI1{nPart}';
+        LF2 = AllprobChoice.LFI2{nPart}';
+        LF3 = AllprobChoice.LFI3{nPart}';
+        PC2 = AllprobChoice.PC2{nPart}';
+        PC3 = AllprobChoice.PC3{nPart}';
         
         %Exctract only the lfi where the two choice sets overlap.
-        localFI(TFChoices==0) = NaN;
+        %localFI(TFChoices==0) = NaN;
+        
+        %Add all the alternative PC.
+        LF1(TFChoices==0) = NaN;
+        LF2(TFChoices==0) = NaN;
+        LF3(TFChoices==0) = NaN;
+        PC2(TFChoices==0) = NaN;
+        PC3(TFChoices==0) = NaN;
         
         %Now add the relevant fractional income to the full vector
-        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
-        LocalProbChoice(posID(pN))    = NaN;
+        %LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        %LocalProbChoice(posID(pN))    = NaN;
+        
+        
+        %New measuremets of LFI and PC
+        LocalFract1(posID(p))     = LF1(TFChoices>0);
+        LocalFract1(posID(pN))    = NaN;
+        LocalFract2(posID(p))     = LF2(TFChoices>0);
+        LocalFract2(posID(pN))    = NaN;
+        LocalFract3(posID(p))     = LF3(TFChoices>0);
+        LocalFract3(posID(pN))    = NaN;
+        
+        ProbChoice2(posID(p))     = PC2(TFChoices>0);
+        ProbChoice2(posID(pN))    = NaN;
+        ProbChoice3(posID(p))     = PC3(TFChoices>0);
+        ProbChoice3(posID(pN))    = NaN;
         
     elseif strcmp(AllprobChoice.order{nPart}(1:3),'DWe'); %Only for participant HEn
         
@@ -249,15 +364,42 @@ else
         TFChoices=[pad0 TFChoices']';
         
         %Store all LFIs
-        localFI = AllprobChoice.LFI{nPart}';
+        %localFI = AllprobChoice.LFI{nPart}';
+        %Add all the alternative PC.
+        LF1 = AllprobChoice.LFI1{nPart}';
+        LF2 = AllprobChoice.LFI2{nPart}';
+        LF3 = AllprobChoice.LFI3{nPart}';
+        PC2 = AllprobChoice.PC2{nPart}';
+        PC3 = AllprobChoice.PC3{nPart}';
         
+        %Not sure why whole of DWe is NaN
         %Exctract only the lfi where the two choice sets overlap.
-        localFI(TFChoices==0) = NaN;
+        %localFI(TFChoices==0) = NaN;
         
-        %Make the hole of DWe NaNs
+        %Add all the alternative PC.
+        LF1(TFChoices==0) = NaN;
+        LF2(TFChoices==0) = NaN;
+        LF3(TFChoices==0) = NaN;
+        PC2(TFChoices==0) = NaN;
+        PC3(TFChoices==0) = NaN;
+        
         %Now add the relevant fractional income to the full vector
-        LocalProbChoice(posID(p))     = NaN;%localFI(TFChoices>0);
-        LocalProbChoice(posID(pN))    = NaN;
+        %LocalProbChoice(posID(p))     = NaN;
+        %LocalProbChoice(posID(pN))    = NaN;
+        
+        
+        %New measuremets of LFI and PC
+        LocalFract1(posID(p))     = NaN;
+        LocalFract1(posID(pN))    = NaN;
+        LocalFract2(posID(p))     = NaN;
+        LocalFract2(posID(pN))    = NaN;
+        LocalFract3(posID(p))     = NaN;
+        LocalFract3(posID(pN))    = NaN;
+        
+        ProbChoice2(posID(p))     = NaN;
+        ProbChoice2(posID(pN))    = NaN;
+        ProbChoice3(posID(p))     = NaN;
+        ProbChoice3(posID(pN))    = NaN;
         
    elseif strcmp(AllprobChoice.order{nPart}(1:3),'HRi'); %Only for participant HEn
         
@@ -270,15 +412,41 @@ else
         TFChoices=[TFChoices(1:396)' pad0 TFChoices(397:end)']';
         
         %Store all LFIs
-        localFI = AllprobChoice.LFI{nPart}';
+        %localFI = AllprobChoice.LFI{nPart}';
+        %Add all the alternative PC.
+        LF1 = AllprobChoice.LFI1{nPart}';
+        LF2 = AllprobChoice.LFI2{nPart}';
+        LF3 = AllprobChoice.LFI3{nPart}';
+        PC2 = AllprobChoice.PC2{nPart}';
+        PC3 = AllprobChoice.PC3{nPart}';
         
         %Exctract only the lfi where the two choice sets overlap.
-        localFI(TFChoices==0) = NaN;
+        %localFI(TFChoices==0) = NaN;
         
-        %Make the hole of DWe NaNs
+        %Add all the alternative PC.
+        LF1(TFChoices==0) = NaN;
+        LF2(TFChoices==0) = NaN;
+        LF3(TFChoices==0) = NaN;
+        PC2(TFChoices==0) = NaN;
+        PC3(TFChoices==0) = NaN;
+        
         %Now add the relevant fractional income to the full vector
-        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
-        LocalProbChoice(posID(pN))    = NaN;
+        %LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        %LocalProbChoice(posID(pN))    = NaN;
+        
+        
+        %New measuremets of LFI and PC
+        LocalFract1(posID(p))     = LF1(TFChoices>0);
+        LocalFract1(posID(pN))    = NaN;
+        LocalFract2(posID(p))     = LF2(TFChoices>0);
+        LocalFract2(posID(pN))    = NaN;
+        LocalFract3(posID(p))     = LF3(TFChoices>0);
+        LocalFract3(posID(pN))    = NaN;
+        
+        ProbChoice2(posID(p))     = PC2(TFChoices>0);
+        ProbChoice2(posID(pN))    = NaN;
+        ProbChoice3(posID(p))     = PC3(TFChoices>0);
+        ProbChoice3(posID(pN))    = NaN;
         
         
    elseif strcmp(AllprobChoice.order{nPart}(1:3),'LMe'); %Only for participant HEn
@@ -292,15 +460,41 @@ else
         TFChoices=[TFChoices(1:209)' pad0 TFChoices(210:end)']';
         
         %Store all LFIs
-        localFI = AllprobChoice.LFI{nPart}';
+        %localFI = AllprobChoice.LFI{nPart}';
+        %Add all the alternative PC.
+        LF1 = AllprobChoice.LFI1{nPart}';
+        LF2 = AllprobChoice.LFI2{nPart}';
+        LF3 = AllprobChoice.LFI3{nPart}';
+        PC2 = AllprobChoice.PC2{nPart}';
+        PC3 = AllprobChoice.PC3{nPart}';
         
         %Exctract only the lfi where the two choice sets overlap.
-        localFI(TFChoices==0) = NaN;
+        %localFI(TFChoices==0) = NaN;
         
-        %Make the hole of DWe NaNs
+        %Add all the alternative PC.
+        LF1(TFChoices==0) = NaN;
+        LF2(TFChoices==0) = NaN;
+        LF3(TFChoices==0) = NaN;
+        PC2(TFChoices==0) = NaN;
+        PC3(TFChoices==0) = NaN;
+        
         %Now add the relevant fractional income to the full vector
-        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
-        LocalProbChoice(posID(pN))    = NaN;
+        %LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        %LocalProbChoice(posID(pN))    = NaN;
+        
+        
+        %New measuremets of LFI and PC
+        LocalFract1(posID(p))     = LF1(TFChoices>0);
+        LocalFract1(posID(pN))    = NaN;
+        LocalFract2(posID(p))     = LF2(TFChoices>0);
+        LocalFract2(posID(pN))    = NaN;
+        LocalFract3(posID(p))     = LF3(TFChoices>0);
+        LocalFract3(posID(pN))    = NaN;
+        
+        ProbChoice2(posID(p))     = PC2(TFChoices>0);
+        ProbChoice2(posID(pN))    = NaN;
+        ProbChoice3(posID(p))     = PC3(TFChoices>0);
+        ProbChoice3(posID(pN))    = NaN;
         
     else
         %Extend TFChoices so that it is the same length as all behav choices.
@@ -308,15 +502,40 @@ else
         
         
         %Store all LFIs
-        localFI = AllprobChoice.LFI{nPart}';
+        %Add all the alternative PC.
+        LF1 = AllprobChoice.LFI1{nPart}';
+        LF2 = AllprobChoice.LFI2{nPart}';
+        LF3 = AllprobChoice.LFI3{nPart}';
+        PC2 = AllprobChoice.PC2{nPart}';
+        PC3 = AllprobChoice.PC3{nPart}';
         
         %Exctract only the lfi where the two choice sets overlap.
-        localFI(TFChoices==0) = NaN;
+        %localFI(TFChoices==0) = NaN;
         
-        %localFI has all the relevant values
+        %Add all the alternative PC.
+        LF1(TFChoices==0) = NaN;
+        LF2(TFChoices==0) = NaN;
+        LF3(TFChoices==0) = NaN;
+        PC2(TFChoices==0) = NaN;
+        PC3(TFChoices==0) = NaN;
         
-        LocalProbChoice(posID(p))     = localFI(TFChoices>0);
-        LocalProbChoice(posID(pN))    = NaN;
+        %Now add the relevant fractional income to the full vector
+        %LocalProbChoice(posID(p))     = localFI(TFChoices>0);
+        %LocalProbChoice(posID(pN))    = NaN;
+        
+        
+        %New measuremets of LFI and PC
+        LocalFract1(posID(p))     = LF1(TFChoices>0);
+        LocalFract1(posID(pN))    = NaN;
+        LocalFract2(posID(p))     = LF2(TFChoices>0);
+        LocalFract2(posID(pN))    = NaN;
+        LocalFract3(posID(p))     = LF3(TFChoices>0);
+        LocalFract3(posID(pN))    = NaN;
+        
+        ProbChoice2(posID(p))     = PC2(TFChoices>0);
+        ProbChoice2(posID(pN))    = NaN;
+        ProbChoice3(posID(p))     = PC3(TFChoices>0);
+        ProbChoice3(posID(pN))    = NaN;
 
         
         
@@ -342,12 +561,23 @@ end
 
 end
 
-Ttotal.LocalProbChoice = LocalProbChoice';
+%Ttotal.LocalProbChoice = LocalProbChoice';
+Ttotal.LocalFract1     = LocalFract1';
+Ttotal.LocalFract2     = LocalFract2';
+Ttotal.LocalFract3     = LocalFract3';
+Ttotal.ProbChoice2     = ProbChoice2';
+Ttotal.ProbChoice3     = ProbChoice3';
+        
 
 
 %Issue with LME session. 
-a=find(Ttotal.LocalProbChoice==0);
-Ttotal.LocalProbChoice(a,:) = NaN;
+a=find(Ttotal.LocalFract1==0);
+%Ttotal.LocalProbChoice(a,:) = NaN;
+Ttotal.LocalFract1(a,:) = NaN;
+Ttotal.LocalFract2(a,:) = NaN;
+Ttotal.LocalFract3(a,:) = NaN;
+Ttotal.ProbChoice2(a,:) = NaN;
+Ttotal.ProbChoice3(a,:) = NaN;
 
 
 
@@ -355,7 +585,7 @@ Ttotal.LocalProbChoice(a,:) = NaN;
 %Find out the different local fractional income bins from table
 %Start finding equal bin of LFI
 
-LFIs  = Ttotal.LocalProbChoice(~isnan(Ttotal.LocalProbChoice'));
+LFIs  = Ttotal.LocalFract1(~isnan(Ttotal.LocalFract1'));
 
 histfit(LFIs) %plots the distribution of local fractional incomes
 
@@ -363,13 +593,13 @@ histfit(LFIs) %plots the distribution of local fractional incomes
 y=quantile(LFIs,[0 0.25 0.5 0.75 1]);
 
 
-ceilLFI = Ttotal(Ttotal.LocalProbChoice>=y(4),:);
+ceilLFI = Ttotal(Ttotal.LocalFract1>=y(4),:);
 
-highLFI = Ttotal(y(4)>Ttotal.LocalProbChoice & Ttotal.LocalProbChoice>=y(3),:);
+highLFI = Ttotal(y(4)>Ttotal.LocalFract1 & Ttotal.LocalFract1>=y(3),:);
 
-mediumLFI = Ttotal(y(3)>Ttotal.LocalProbChoice & Ttotal.LocalProbChoice>=y(2),:);
+mediumLFI = Ttotal(y(3)>Ttotal.LocalFract1 & Ttotal.LocalFract1>=y(2),:);
 
-lowLFI = Ttotal(y(2)>Ttotal.LocalProbChoice & Ttotal.LocalProbChoice>=y(1),:);
+lowLFI = Ttotal(y(2)>Ttotal.LocalFract1 & Ttotal.LocalFract1>=y(1),:);
 
 %%
 %select ceilLFI and average 

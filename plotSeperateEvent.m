@@ -5,30 +5,36 @@ clear
 setY = [-14 3];
 
 %define the participant grouping
-whichParts = 'low';
+whichParts = 'high'; %low not optimal param fits, high optimal param fits
+param = '1';
+hori=3; %0 or 3 for plot location
+
+lfiPC=''; % set to "" if 1 param.
 
 switch whichParts
     %Change manually between ls and tau groupings.
     case 'all'
-        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowLS20thfeb.mat');
-        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PlowLS20thfeb.mat');
-        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PlowLS20thfeb.mat');
+        stimL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim%sP%s12-Mar-2017.mat',param,lfiPC));
+        respL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp%sP%s12-Mar-2017.mat',param,lfiPC));
+        cueL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue%sP%s12-Mar-2017.mat',param,lfiPC));
         %load statstics
-        load('statisticsPermutation20thfeb2.mat')
+        load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/statPermutations%sP-%s12-Mar-2017.mat',param,lfiPC))
         
     case 'low'
-        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PlowPerf20thfeb.mat');
-        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PlowPerf20thfeb.mat');
-        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PlowPerf20thfeb.mat');
+        stimL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim%sP%s12-Mar-2017NOTOPTIM.mat',param,lfiPC));
+        respL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp%sP%s12-Mar-2017NOTOPTIM.mat',param,lfiPC));
+        cueL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue%sP%s12-Mar-2017NOTOPTIM.mat',param,lfiPC));
         %load statstics
-        load('statisticsPermutationLOWperformance.mat')
+        load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/statPermutations%sP-%s12-Mar-2017.mat',param,lfiPC))
+        
         
     case 'high'
-        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3PhighPerf20thfeb.mat');
-        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3PhighPerf20thfeb.mat');
-        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3PhighPerf20thfeb.mat');
+        stimL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim%sP%s12-Mar-2017OPTIM.mat',param,lfiPC));
+        respL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp%sP%s12-Mar-2017OPTIM.mat',param,lfiPC));
+        cueL = load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue%sP%s12-Mar-2017OPTIM.mat',param,lfiPC));
         %load statstics
-        load('statisticsPermutationHIGHperformance.mat')
+        load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/statPermutations%sP-%s12-Mar-2017.mat',param,lfiPC))
+        
 end
 %get time information
 resp =load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/low/AWi/20151007/resp/AWi_d01_250_type1event2_totalpow_freq16.mat');
@@ -61,8 +67,8 @@ indX4= find(timeX==0.3);
 indX =sort([indX indX2 indX3 indX4 ]);
 
 
-figure(1),clf
-subplot(1,3,1)
+figure(1)
+subplot(2,3,1+hori)
 hold on;
 
 plot(low)
@@ -89,7 +95,7 @@ indX4= find(timeX==0.3);
 indX =sort([indX indX2 indX3 indX4 ]);
 
 
-subplot(1,3,2)
+subplot(2,3,2+hori)
 hold on;
 
 plot(low)
@@ -116,7 +122,7 @@ indX4= find(timeX==0.3);
 indX =sort([indX indX2 indX3 indX4 ]);
 
 
-subplot(1,3,3)
+subplot(2,3,3+hori)
 hold on;
 
 plot(low)

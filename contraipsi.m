@@ -1,7 +1,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Collect all the files into plots for time course.
-%
+%Create the timecourses to plot locked to different events
 %Script or creating the timecourses that will later make it into final
 %plots.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,6 +10,8 @@
 %Put together first by event and then by LFI level.
 %loop over all event types
 clear;
+param = '1';
+lfiPC = '';
 
 BPallCue  = NaN(33,21,15,2); %low prob choice
 BPallStim = NaN(33,21,15,2); %medium prob choice
@@ -17,9 +19,9 @@ BPallResp = NaN(33,31,15,2); %high prob choice
 % BPallCue4 = zeros(33,141,29); %ceiling prob choice
 
 %decide if timecourses should be split according to lose-switch rate.
-sortLS = 1;
+sortPart = 1;
 
-if sortLS == 1
+if sortPart == 1
     %The old IDs
     %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/lowswitchID.mat');
     %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/highswitchID.mat');
@@ -30,9 +32,13 @@ if sortLS == 1
     %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/highTauFitsID.mat');
         %IDs based on performance
     %load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/perfLowID.mat');
-    load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/perfHighID.mat');
+    load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/perfOptimID1param.mat');
 end
-cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param3/')
+
+
+
+inputPath=sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param%s/%s',param,lfiPC);
+cd(inputPath)
 
 
 for ievent = 1:2
@@ -47,10 +53,10 @@ for ievent = 1:2
     
     %replace all of the sessions with the sessions defined according to
     %low or high switch lose rate.
-    if sortLS == 1
+    if sortPart == 1
         
         allcue = {cueN.name};
-        highS = cellfun(@(n) n(1:3),perfHighID,'UniformOutput',0);
+        highS = cellfun(@(n) n(1:3),partNotOptim,'UniformOutput',0);
         cue = cellfun(@(n) n(1:3),allcue,'UniformOutput',0);
         cueN = cueN(ismember(cue,highS));
         stimN = stimN(ismember(cue,highS));
@@ -142,10 +148,16 @@ BPallStim = squeeze(nanmean(BPallStim(10:end,:,:,:),1));
 
 BPallResp = squeeze(nanmean(BPallResp(10:end,:,:,:),1));
 
+strDate = '12-Mar-2017';
+strCue  = sprintf('timecourseCue%sP%s%sNOTOPTIM.mat',param,lfiPC,strDate);
+strStim = sprintf('timecourseStim%sP%s%sNOTOPTIM.mat',param,lfiPC,strDate);
+strResp = sprintf('timecourseResp%sP%s%sNOTOPTIM.mat',param,lfiPC,strDate);
 
-save('timecourseCue3PhighPerf20thfeb.mat','BPallCue')
-save('timecourseStim3PhighPerf20thfeb.mat','BPallStim')
-save('timecourseResp3PhighPerf20thfeb.mat','BPallResp')
+
+save(strCue,'BPallCue')
+save(strStim,'BPallStim')
+save(strResp,'BPallResp')
+
 
 
 

@@ -16,9 +16,9 @@ whichParts = 'all';
 
 switch whichParts
     case 'all'
-        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim3P.mat');
-        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp3P.mat');
-        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue3P.mat');
+        stimL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseStim2P12-Mar-2017.mat');
+        respL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseResp2P12-Mar-2017.mat');
+        cueL = load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/short/timecourseCue2P12-Mar-2017.mat');
         %load statstics
         load('statisticsPermutation20thfeb.mat')
         
@@ -100,7 +100,7 @@ medium  = [nanmean(stimL.BPallStim(stimStart:stimStop,:,2),2)', nanmean(cueL.BPa
 
 %figure(4),clf
 
-subplot(3,1,3)
+%subplot(3,1,3)
 %title('Contra vs. Ipsi lateralisation: stim / cue / response-locked')
 title('All beta lateralisation: stim / cue / response-locked')
 

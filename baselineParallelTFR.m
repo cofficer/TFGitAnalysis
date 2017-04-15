@@ -55,10 +55,10 @@ runcfg.partlist = {
     };
                       
                       
-runcfg.baseline.compile         = 'no';      %No    local                        
-runcfg.baseline.parallel        = 'torque';      %torque local?
+runcfg.baseline.compile         = 'local';      %No    local                        
+runcfg.baseline.parallel        = 'local';      %torque local?
 runcfg.baseline.timreq          = 2000; % number of minutes. 
-runcfg.dataAnalysisType         = 'parameterOptimize'; %behavior or MEG or selectLFI or parameterOptimize
+runcfg.dataAnalysisType         = 'behavior'; %behavior or MEG or selectLFI or parameterOptimize
 
 
 cfg1 = {};                      
@@ -89,12 +89,14 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
         indxPLA=strcmp(defPart(1:3),PLAshort);
 
         %what does simulate do? Simalate model choices.
-        cfg1{ipart}.simulate     = 0;
-        cfg1{ipart}.modelchoices = 0; %Ignores the maximum likelihood estimation if 1. Yes if recover??
-        cfg1{ipart}.test         = 0;%Deceide to run one cfg or more.
+        cfg1{ipart}.simulate     = 1;
+        %Simulate task structure
+        cfg1{ipart}.sim_task     = 1;
+        cfg1{ipart}.modelchoices = 1; %Ignores the maximum likelihood estimation if 1. Yes if recover??
+        cfg1{ipart}.test         = 1;%Deceide to run one cfg or more.
         cfg1{ipart}.recover      = 0; %Recover parameter fits of already simulated sessions.
-        cfg1{ipart}.perfsim      = 0; %Simulate optimal parameter for highest performance.
-        cfg1{ipart}.runs         = 1;
+        cfg1{ipart}.perfsim      = 1; %Simulate optimal parameter for highest performance.
+        cfg1{ipart}.runs         = 2;
         cfg1{ipart}.numparameter = '1';
         %Create the cfg for job submit.
         if cfg1{ipart}.modelchoices && ~cfg1{ipart}.perfsim
@@ -109,8 +111,20 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
              cfg1{ipart}.tau         = logspace(0,3,cfg1{ipart}.runs);%1 + (300-1).*rand(1,cfg1{ipart}.runs);
             %Randomly draw beta value from logspace distribution
             rpos                     = randi(length(betalogspace),1,cfg1{ipart}.runs);
-            cfg1{ipart}.beta         = ones(1,cfg1{ipart}.runs)*0.05;%betalogspace(rpos);%0.1 + (5-0.1).*rand(1,cfg1{ipart}.runs);
-            cfg1{ipart}.ls           = zeros(1,cfg1{ipart}.runs);%rand(1,cfg1{ipart}.runs);
+            noise=0.1;
+            lsrate=1;
+            cfg1{ipart}.beta         = ones(1,cfg1{ipart}.runs)*noise;%betalogspace(rpos);%0.1 + (5-0.1).*rand(1,cfg1{ipart}.runs);
+            cfg1{ipart}.ls           = ones(1,cfg1{ipart}.runs)*lsrate;%rand(1,cfg1{ipart}.runs);
+            
+            noisestr=num2str(noise);
+            noiseInd=find(noisestr=='.');
+            noisestr=noisestr(noiseInd+1:end);
+            
+            lsstr=num2str(lsrate);
+            if ~lsrate
+                lsInd=find(lsstr=='.');
+                lsstr=lsstr(lsInd+1:end);
+            end
         else
             if cfg1{ipart}.numparameter=='3'
                 cfg1{ipart}.tau          = linspace(1,20,30);
@@ -157,10 +171,10 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
         %end
         cfg1{ipart}.numParticiants = setting.numParticipants;
         
-        if cfg1{ipart}.numparameter =='2'
+        if cfg1{ipart}.numparameter =='2' && ~cfg1{ipart}.perfsim
             cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/2params/%s.mat'...
                     ,cfg1{ipart}.path(1:3));
-        elseif cfg1{ipart}.numparameter =='1'
+        elseif cfg1{ipart}.numparameter =='1' && ~cfg1{ipart}.perfsim
             cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/1params/%s.mat'...
                     ,cfg1{ipart}.path(1:3));
         else
@@ -170,7 +184,7 @@ if strcmp(runcfg.dataAnalysisType,'behavior')
             elseif cfg1{ipart}.recover
                 cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/roughfit/%s.mat',PLA{indxPLA}(1:3));
             elseif cfg1{ipart}.perfsim
-                cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/performance/%s.mat',PLA{indxPLA}(1:3));
+                cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/performance/param%s/%s%s%s.mat',cfg1{1}.numparameter,PLA{indxPLA}(1:3),noisestr,lsstr);
             elseif cfg1{ipart}.simulate==0
                 cfg1{ipart}.outputfile     = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/%s.mat'...
                     ,cfg1{ipart}.path(1:3));
@@ -299,10 +313,13 @@ elseif strcmp(runcfg.dataAnalysisType,'selectLFI')
             for ilevel = 1:2
                 for ievent = 1:3
                     cfg1{njobs}.participant = runcfg.partlist{ipart}(1:3);
-                    cfg1{njobs}.PBlevel = 1;
+                    %cfg1{njobs}.PBlevel = 1;
                     cfg1{njobs}.idxLR = idxLR;
                     cfg1{njobs}.PBlevel =  ilevel;
+                    cfg1{njobs}.numparameter='3';
+                    cfg1{njobs}.typeLFI=2; %1 mean LFI, 2 mean PC
                     cfg1{njobs}.event  = events{ievent};
+                    cfg1{njobs}.test=1;
                     njobs = njobs + 1;
                 end
                 
@@ -379,7 +396,11 @@ switch runcfg.dataAnalysisType
         switch runcfg.baseline.compile
             
             case 'local'
-                cellfun(@selectLFI_Tor, cfg1)
+                if cfg1{1}.test==1
+                    selectLFI_Tor(cfg1{30})
+                else
+                    cellfun(@selectLFI_Tor, cfg1)
+                end
                 %Model_performance(cfg1{1},outputfile{1})
                 %cellfun(@Model_performance, cfg1, outputfile);
             case 'no'

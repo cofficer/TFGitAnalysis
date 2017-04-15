@@ -4,14 +4,15 @@ function selectLFI_Tor( cfg1 )
 
 
 %loading in the total table, changed from 24thNov-2wPC
-load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/fullTable10thfebPC.mat')
+load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/fullTable1203-5PC.mat')
 
 disp(cfg1.participant)
 disp(cfg1.event)
 
-%Get all probchoice 
-LFIs  = Ttotal.LocalProbChoice(~isnan(Ttotal.LocalProbChoice'));
 
+
+    
+    
 %divide the data in 4 equal parts, median-split. 
 %y=quantile(LFIs,[0 0.4 0.6 1]);
 
@@ -67,6 +68,25 @@ for sideBP = 1:2
     %participant table: 
     Tpart = Ttotal(posID,:);
     
+    %Get all probchoice
+    if cfg1.numparameter=='1'
+        LFIs  = Tpart.LocalFract1;
+    elseif cfg1.numparameter=='2'
+        if cfg1.typeLFI==1
+            LFIs  = Tpart.LocalFract2;
+        else
+            LFIs  = Tpart.ProbChoice2;
+        end
+    elseif cfg1.numparameter=='3'
+        if cfg1.typeLFI==1
+            LFIs  = Tpart.LocalFract3;
+        else
+            LFIs  = Tpart.ProbChoice3;
+        end
+    end
+    
+    
+    
     %Remove trials with too short or long response time for respons-locked
     if strcmp(cfg1.event, 'Resp')
     
@@ -76,17 +96,18 @@ for sideBP = 1:2
         longRT  = RT>3;
         
         Tpart = Tpart((shortRT+longRT)==0,:);
+        LFIs  = LFIs((shortRT+longRT)==0,:);
     end
     
     
     %Find the trials with the lowest and highest PB
-    y=quantile(Tpart.LocalProbChoice,[0 0.4 0.6 1]);
+    y=quantile(LFIs,[0 0.4 0.6 1]);
 
     %Select the trial in the proper qunatile of prob choice.
     if     PBlevel == 1
-        LFI = Tpart(y(2)>Tpart.LocalProbChoice & Tpart.LocalProbChoice>=y(1),:);
+        LFI = Tpart(y(2)>LFIs & LFIs>=y(1),:);
     elseif PBlevel == 2
-        LFI = Tpart(y(4)>Tpart.LocalProbChoice & Tpart.LocalProbChoice>=y(3),:);
+        LFI = Tpart(y(4)>LFIs & LFIs>=y(3),:);
     end
     
     %Store the trial numbers.
@@ -138,9 +159,12 @@ for sideBP = 1:2
     
     outfile = sprintf('%s_probChoice_%d_BP%d_%s.mat',session.name(1:3),PBlevel,sideBP,cfg1.event);
     
-    cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param3/')
-    
-    %decide on folder and filenames. 
+    if cfg1.typeLFI == 1
+        cd(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param%s/',cfg1.numparameter))
+    else
+        cd(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/freq/contraipsi/short/param%s/PC/',cfg1.numparameter))
+    end
+    %decide on folder and filenames.
     save(outfile,'BP')
     
 end

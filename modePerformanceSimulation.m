@@ -2,43 +2,98 @@ function [ output_args ] = modePerformanceSimulation( input_args )
 %Compute which parameters give the best performance given the simulations.
 %I should actually instead simulate millions of trials, which should be
 %relatively easy considering how fast it is.
+%%
+clear
+
+numParam='1'; % only 1 or 3, for 3 with ls level='' is the same as 2
+
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/performance')
+subj = dir('*.mat');
 
 
-
-simPath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/';
+simPath = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/performance/param%s/',numParam);
 
 
 cd(simPath)
 
-subj = dir('*.mat');
+noiselevel={''};%,'1','2','3'};%So far '' is 0.05, 1 is 0.1, 2 is 0.2
+lslevel = {''};%,'6','9','1'};%3 6 9 1
+% 
+figure(1),clf
+hold on
+set(gca,'XScale','log','XGrid','on','YGrid','off')
 
-
-for isub = 1:length(subj)
-
-    load(subj(isub).name)
-    
-    for irun = 1:cfg1.runs
-    
-    %Raw peformance, not relative to the available rewards, should be 0.8
-    %max
-    %though.
-    performance(isub,irun) = (sum(rewardStreamAll(:,irun))/size(rewardStreamAll,1))/0.8;
-    
-    beta(isub,irun)=cfg1.beta(irun);
-    tau(isub,irun)=cfg1.tau(irun);
-    ls(isub,irun)=cfg1.ls(irun);
-    
-    
+for ils = 1:length(lslevel)
+    for inoise=1:length(noiselevel)
+%         subjCurr = sprintf('%s%s%s.mat',subj(isub).name,noiselevel{inoise},lslevel{ils});
+        
+        for isub = 1:length(subj)
+            
+            load(sprintf('%s%s%s.mat',subj(isub).name(1:3),noiselevel{inoise},lslevel{ils}))
+            
+            for irun = 1:cfg1.runs
+                
+                %Raw peformance, not relative to the available rewards, should be 0.8
+                %max
+                %though.
+                performance(isub,irun) = (sum(rewardStreamAll(:,irun))/size(rewardStreamAll,1))/0.8;
+                
+                beta(isub,irun)=cfg1.beta(irun);
+                tau(isub,irun)=cfg1.tau(irun);
+                ls(isub,irun)=cfg1.ls(irun);
+                
+                
+            end
+            
+        end
+        
+        %Find the position highest performers and check their parameters.
+        
+        
+        
+        %semilogx(tau(1,:),perfs)
+        perfs(inoise,:) = mean(performance,1);
     end
+    %perfs(5,:) = mean(performance,1);
+end
+%
+title('Optimal tau level for performance')
+xlabel('Tau parameter values in log')
+ylabel('Model performance')
+ylim([0.5 0.8])
 
+colormag=[255,153,204;255,102,178;255,51,153;255,0,127]./255;
+colorpup=[204,153,255;178,102,255;153,51,255;127,0,255]./255;
+colorgre=[153,255,153;102,255,102;51,255,51;0,255,0]./255;
+colorbro=[255,204,153;255,178,102;255,153,51;255,128,0]./255;
+
+colorall=[colorbro;colorbro];
+colorall=[colormag;colorbro];
+%colorall='k';
+for iplot=1:1%size(perfs,1)
+    
+   semilogx(tau(1,:),perfs(iplot,:),'color',colorall(4,:)) 
+  
+    
 end
 
-%Find the position highest performers and check their parameters. 
+
+%%
+semilogx(tau(1,:),perfs(1,:),'color','k') 
+
+%plot participant behavior 1st , 2P M beta 0.3, 
+s=scatter(end1taufit',performance(1:2:end),'filled')
+s.MarkerEdgeColor='black';%colorall(4,:)
+s.MarkerFaceColor='black';%colorall(4,:)
+
+%%
 
 betas=beta(:);
 taus =tau(:);
 lss  =ls(:);
 perfs = mean(performance,1);
+
+
 poshighPerf = perfs>0.72;
 
 
@@ -60,10 +115,12 @@ plot(lss(poshighPerf))
 %plot performance in relation to different parameters
 figure(4),clf
 a=scatter(taus,perfs,'filled')
-semilogx(tau(:,1:10:end),performance(:,1:10:end))
+semilogx(tau(1,:),perfs)
+ylim([0.5 0.8])
 title('Optimal tau level for performance')
 xlabel('Tau parameter values in log')
 ylabel('Model performance')
+hold on
 a.MarkerEdgeColor='blue';
 a.MarkerFaceColor='blue';
 hold on
