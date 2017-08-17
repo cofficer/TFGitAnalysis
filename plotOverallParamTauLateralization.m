@@ -77,6 +77,9 @@ scatter((corr_taufit),(respBeta)')
 %Also correlate the ls parameter with beta lateralization.
 %Also remove the one participant
 colrs = cbrewer('qual','Set2',8);
+
+corr_lsfitAll=[];
+respBetaAll=[];
 for alltimes = 1:31
     
     corr_lsfit=newlsfit(newtaufit<19);
@@ -92,8 +95,17 @@ for alltimes = 1:31
     [aresp(alltimes),bresp(alltimes)]=corr((corr_lsfit)',(respBeta)');
     
     
+    corr_lsfitAll(alltimes,:) =corr_lsfit';
+    respBetaAll(alltimes,:) = respBeta';
+    %permtest
+    [pvalRu(alltimes),corr_obsRu(alltimes),crit_corrRu(alltimes,1:2),est_alphaRu(alltimes)]=mult_comp_perm_corr(corr_lsfit',respBeta',1000,0,0.05,'linear',1);
+
 end
 
+[pvalR,corr_obsR,crit_corrR,est_alphaR]=mult_comp_perm_corr(corr_lsfitAll',respBetaAll',5000,0,0.05,'linear',1);
+
+corr_lsfitAll=[];
+respBetaAll=[];
 for alltimes = 1:21
     
     corr_lsfit=newlsfit(newtaufit<19);
@@ -108,9 +120,17 @@ for alltimes = 1:21
     
     [acue(alltimes),bcue(alltimes)]=corr((corr_lsfit)',(respBeta)');
     
-    
+    corr_lsfitAll(alltimes,:) =corr_lsfit';
+    respBetaAll(alltimes,:) = respBeta';
+    %permtest
+    [pvalCu(alltimes),corr_obsCu(alltimes),crit_corrCu(alltimes,1:2),est_alphaCu(alltimes)]=mult_comp_perm_corr(corr_lsfit',respBeta',1000,0,0.05,'linear',1);
+
 end
 
+[pvalC,corr_obsC,crit_corrC,est_alphaC]=mult_comp_perm_corr(corr_lsfitAll',respBetaAll',5000,0,0.05,'linear',1);
+
+corr_lsfitAll=[];
+respBetaAll=[];
 for alltimes = 1:21
     
     corr_lsfit=newlsfit(newtaufit<19);
@@ -125,25 +145,36 @@ for alltimes = 1:21
     
     [astim(alltimes),bstim(alltimes)]=corr((corr_lsfit)',(respBeta)');
     
-    
+    corr_lsfitAll(alltimes,:) =corr_lsfit';
+    res.4023    0.4pBetaAll(alltimes,:) = respBeta';
+    %permtest
+    [pvalSu(alltimes),corr_obsSu(alltimes),crit_corrSu(alltimes,1:2),est_alphaSu(alltimes)]=mult_comp_perm_corr(corr_lsfit',respBeta',1000,0,0.05,'linear',1);
 end
+
+[pvalS,corr_obsS,crit_corrS,est_alphaS]=mult_comp_perm_corr(corr_lsfitAll',respBetaAll',5000,0,0.05,'linear',1);
+
 
 %plot the correlation timecourse.
 %plot(timeX,b)
 
+%Make a function with permutes the assignment of beta lat, to participants.
+%permuteCorrelation(corr_lsfit,respBeta);
 
+%%
 figure(1),clf
 subplot(1,3,1)
 hold on;
 setY=[-0.8 0.8];
-plot(stim.freq.time,astim,'color',colrs(1,:))
+plot(stim.freq.time,corr_obsS,'color',colrs(1,:),'LineWidth',6)
+line([stim.freq.time],[ 0 *ones(1,length(stim.freq.time))],'color','k','LineStyle','--')
+
 ylabel('Correlation coefficient')
 xlabel('Time(s)')
 % set(gca,'XTick',[x(indX)])
 % set(gca,'XTickLabel',timeX(indX))
 ylim(setY)
 % set(gca,'Position',[0.1 0.15 0.2 0.75])
-set(gca,'Position',[0.1 0.15 0.25 0.75])
+set(gca,'Position',[0.1 0.15 0.25 0.75],'fontsize',14)
 % legend([h1.mainLine,h2.mainLine,sigc],'Low','High','Sig.')
 title('Stimulus-locked')
 %line([stim.freq.time],[ 0.05 *ones(1,length(stim.freq.time))],'color','r')
@@ -151,13 +182,19 @@ title('Stimulus-locked')
 sigplace =nan(1,length(stim.freq.time));
 sigplace(bstim<0.05) = 0.05;
 
-line([stim.freq.time],[ sigplace],'color','k')
+%line([stim.freq.time],[ sigplace],'color','k')
 
+% harea = area(stim.freq.time,repmat(crit_corrS(1),1,length(stim.freq.time)));
+% set(harea,'FaceColor','m')
+% alpha(0.2)
+% harea = area(stim.freq.time,repmat(crit_corrS(2),1,length(stim.freq.time)));
+% set(harea,'FaceColor','m')
+% alpha(0.2)
 
 subplot(1,3,2)
 hold on;
 
-plot(cue.freq.time,acue)
+plot(cue.freq.time,corr_obsC,'LineWidth',6)
 
 % set(gca,'XTick',[x(indX)])
 % set(gca,'XTickLabel',timeX(indX))
@@ -167,31 +204,54 @@ set(gca,'Ycolor','W')
 
 %legend([h1.mainLine,h2.mainLine,sigc],'Low','High','Sig.')
 title('Cue-locked')
-set(gca,'Position',[0.35 0.15 0.30 0.75])%[0.1 0.15 0.3 0.75]
+set(gca,'Position',[0.35 0.15 0.30 0.75],'fontsize',14)%[0.1 0.15 0.3 0.75]
 
 sigplace =nan(1,length(cue.freq.time));
 sigplace(bcue<0.05) = 0.05;
 
-line([cue.freq.time],[ sigplace],'color','k')
+%line([cue.freq.time],[ sigplace],'color','k')
 %line([cue.freq.time],[ 0.05 *ones(1,length(cue.freq.time))],'color','r')
+line([cue.freq.time],[ 0 *ones(1,length(cue.freq.time))],'color','k','LineStyle','--')
+
+harea = area(cue.freq.time(corr_obsC<crit_corrC(1)),corr_obsC(corr_obsC<crit_corrC(1)));
+set(harea,'FaceColor','k')
+alpha(0.2)
+% harea = area(cue.freq.time,repmat(crit_corrC(2),1,length(cue.freq.time)));
+% set(harea,'FaceColor','m')
+% alpha(0.2)
+
 
 subplot(1,3,3)
 hold on;
-plot(resp.freq.time,aresp,'color',colrs(1,:))
+plot(resp.freq.time,corr_obsR,'color',colrs(1,:),'LineWidth',6)
+line([resp.freq.time],[ 0 *ones(1,length(resp.freq.time))],'color','k','LineStyle','--')
+
 %line([resp.freq.time],[ 0.05 *ones(1,length(resp.freq.time))],'color','r')
 sigplace =nan(1,length(resp.freq.time));
 sigplace(bresp<0.05) = 0.05;
 
-line([resp.freq.time],[ sigplace],'color','k')
+%line([resp.freq.time],[ sigplace],'color','k')
+harea = area(resp.freq.time(corr_obsR<crit_corrR(1)),corr_obsR(corr_obsR<crit_corrR(1)));
+set(harea,'FaceColor','k')
+alpha(0.2)
+% harea = area(resp.freq.time,repmat(crit_corrR(2),1,length(resp.freq.time)));
+% set(harea,'FaceColor','m')
+% alpha(0.2)
+
 ylim(setY)
 %legend([h1.mainLine,h2.mainLine,sigc],'Low','High','Sig.')
 title('Response-locked')
 set(gca,'Ytick',[])
 set(gca,'Ycolor','W')
-set(gca,'Position',[0.65 0.15 0.30 0.75])
+set(gca,'Position',[0.65 0.15 0.30 0.75],'fontsize',14)
 
 legend Timecourse Sig.
-%saveas(gca,'timecourseCorrelationLSbetalat.png')
+%saveas(gca,'timecourseCorrelationLSbetalatERRORbars.png')
+
+%%
+%Try the gramm plot 
+
+
 %%
 %Save figur
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
@@ -319,7 +379,7 @@ xlabel('Lose switch parameter')
 ylabel('Beta lateralization')
 title('Entire stim timecourse')
 
-saveas(gca,'wholetimecourseStimLS4P.png')
+%saveas(gca,'wholetimecourseStimLS4P.png')
 
 
 %Look at correlation with performance.
