@@ -146,7 +146,7 @@ for alltimes = 1:21
     [astim(alltimes),bstim(alltimes)]=corr((corr_lsfit)',(respBeta)');
     
     corr_lsfitAll(alltimes,:) =corr_lsfit';
-    res.4023    0.4pBetaAll(alltimes,:) = respBeta';
+    respBetaAll(alltimes,:) = respBeta';
     %permtest
     [pvalSu(alltimes),corr_obsSu(alltimes),crit_corrSu(alltimes,1:2),est_alphaSu(alltimes)]=mult_comp_perm_corr(corr_lsfit',respBeta',1000,0,0.05,'linear',1);
 end
