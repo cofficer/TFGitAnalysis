@@ -18,7 +18,7 @@ cd(simPath)
 
 noiselevel={''};%,'1','2','3'};%So far '' is 0.05, 1 is 0.1, 2 is 0.2
 lslevel = {''};%,'6','9','1'};%3 6 9 1
-% 
+%
 figure(1),clf
 hold on
 set(gca,'XScale','log','XGrid','on','YGrid','off')
@@ -26,31 +26,32 @@ set(gca,'XScale','log','XGrid','on','YGrid','off')
 for ils = 1:length(lslevel)
     for inoise=1:length(noiselevel)
 %         subjCurr = sprintf('%s%s%s.mat',subj(isub).name,noiselevel{inoise},lslevel{ils});
-        
+
         for isub = 1:length(subj)
-            
-            load(sprintf('%s%s%s.mat',subj(isub).name(1:3),noiselevel{inoise},lslevel{ils}))
-            
+            nowRun = sprintf('%s%s%s.mat',subj(isub).name(1:3),noiselevel{inoise},lslevel{ils});
+            disp(nowRun)
+            load(nowRun)
+
             for irun = 1:cfg1.runs
-                
+
                 %Raw peformance, not relative to the available rewards, should be 0.8
                 %max
                 %though.
                 performance(isub,irun) = (sum(rewardStreamAll(:,irun))/size(rewardStreamAll,1))/0.8;
-                
+
                 beta(isub,irun)=cfg1.beta(irun);
                 tau(isub,irun)=cfg1.tau(irun);
                 ls(isub,irun)=cfg1.ls(irun);
-                
-                
+
+
             end
-            
+
         end
-        
+
         %Find the position highest performers and check their parameters.
-        
-        
-        
+
+
+
         %semilogx(tau(1,:),perfs)
         perfs(inoise,:) = mean(performance,1);
     end
@@ -71,17 +72,43 @@ colorall=[colorbro;colorbro];
 colorall=[colormag;colorbro];
 %colorall='k';
 for iplot=1:1%size(perfs,1)
-    
-   semilogx(tau(1,:),perfs(iplot,:),'color',colorall(4,:)) 
-  
-    
+
+   semilogx(tau(1,:),perfs(iplot,:),'color',colorall(4,:))
+
+
 end
 
 
-%%
-semilogx(tau(1,:),perfs(1,:),'color','k') 
+%
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
 
-%plot participant behavior 1st , 2P M beta 0.3, 
+figure(1),clf
+clear g
+g=gramm('x',[(tau(1,:)),(tau(1,:)),(tau(1,:))],'y',[param1perform,param2perform,param3perform],...
+'color',[ones(1,length(tau(1,:))),ones(1,length(tau(1,:)))*2,ones(1,length(tau(1,:)))*3]');
+
+g.geom_line()
+% g.stat_summary('sem')
+g.set_names('column','Origin','x','Tau value','y','Performance','color','#');
+g.set_text_options('base_size',15)
+g.set_title('Model simulations')
+g.draw();
+g.facet_axes_handles.XScale='log';
+
+%name files
+formatOut = 'yyyy-mm-dd';
+todaystr = datestr(now,formatOut);
+namefigure = sprintf('performanceSim_Par2');%fractionTrialsRemaining
+filetype    = 'svg';
+figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype)  %2012-06-28 idyllwild library - sd - exterior massing model 04.skp
+
+g.export('file_name',figurename,'file_type',filetype)
+
+
+%%
+semilogx(tau(1,:),perfs(1,:),'color','k')
+
+%plot participant behavior 1st , 2P M beta 0.3,
 s=scatter(end1taufit',performance(1:2:end),'filled')
 s.MarkerEdgeColor='black';%colorall(4,:)
 s.MarkerFaceColor='black';%colorall(4,:)
@@ -148,4 +175,3 @@ hist(performance(:))
 
 
 end
-
