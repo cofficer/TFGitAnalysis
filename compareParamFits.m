@@ -117,8 +117,7 @@ for isubtmp = 1:length(subj)
     isub=isubtmp;
     if strcmp(subj(isub).name,'BPe.mat')
       continue
-    elseif strcmp(subj(isub).name,'AWi.mat')
-      isub=isubtmp-1;
+
     else
 
         %for each simulation per participant
@@ -161,14 +160,14 @@ end
 %%
 %Plot simulated participants and recovered parameters, lose switch
 figure(1),clf
-s=scatter(startls(:),endlsfit(:),'filled');
+s=scatter(startls(1,:),endlsfit(1,:),'filled');
 s.MarkerEdgeColor='black';
 s.MarkerFaceColor='black';
 title('Heuristic - lose-switch win-stay')
 xlabel('Simulated parameter')
 ylabel('Recovered parameter')
 
-
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
 %name files
 formatOut = 'yyyy-mm-dd';
 todaystr = datestr(now,formatOut);

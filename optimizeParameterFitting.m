@@ -16,6 +16,7 @@ opts = optimset('Display','off','TolX',1e-15,'TolFun',1e-15,'MaxIter',cfg1.iter,
 
 %Loop over all the simulations per sessions if modelchoices.
 for irun = 1:cfg1.runs
+  %  tauA(irun) = paramFits(irun).taufits(1);
 
     if cfg1.modelchoices
         load(cfg1.path)
@@ -34,9 +35,9 @@ for irun = 1:cfg1.runs
         end
     end
 
-    a(:,1)=paramFits.betafits;
-    a(:,2)=paramFits.taufits;
-    a(:,3)=paramFits.lsfits;
+    a(:,1)=paramFits(irun).betafits;
+    a(:,2)=paramFits(irun).taufits;
+    a(:,3)=paramFits(irun).lsfits;
 
 
     for iparampairs = 1:length(paramFits.betafits)
