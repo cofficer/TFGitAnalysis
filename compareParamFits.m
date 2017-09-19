@@ -13,61 +13,61 @@ subj   = dir('*mat');
 
 
 for isub = 1:length(subj)
-    
+
     optim = load(sprintf('%s%s1.mat',optimPath,subj(isub).name(1:3)));
     rough = load(sprintf('%s%s',roughPath,subj(isub).name));
     p100  = load(sprintf('%s%s',param100path,subj(isub).name));
-    
-    
+
+
     %Find the lowest MLE parameter pair
     for istart = 1:30
         %newtaufit(isub,istart) = optim.optimizedFits(istart).xbest(2);
         MLE (istart)   = optim.optimizedFits(istart).MLE ;
-        
+
         %newbetafit(isub,istart) = optim.optimizedFits(istart).xbest(1);
-        
+
         %newlsfit(isub,istart) = optim.optimizedFits(istart).xbest(3);
-        
+
     end
-    
+
     [v,pos]=min(MLE);
     %if there is more than one minimum value, pick the first one.
     if length(pos)>1
         pos=pos(1);
     end
-    
+
     roughtaufit(isub) = rough.paramFits.taufits(1);
     oldtaufit(isub) = p100.paramFits.tauPLAfits;
     newtaufit(isub) = optim.optimizedFits(pos).xbest(2); %2tau, 1beta, 3ls.
-    
+
     roughbetafit(isub) = rough.paramFits.betafits(1);
     oldbetafit(isub) = p100.paramFits.betaPLAfits;
     newbetafit(isub) = optim.optimizedFits(pos).xbest(1); %2tau, 1beta, 3ls.
-    
+
     roughlsfit(isub) = rough.paramFits.lsfits(1);
     oldlsfit(isub) = p100.paramFits.lsPLAfits;
     newlsfit(isub) = optim.optimizedFits(pos).xbest(3); %2tau, 1beta, 3ls.
-    
-    
+
+
 end
 
 %%
 %Check the difference in fits of all the starting points.
 
 for isub = 1:length(subj)
-    
+
     optim = load(sprintf('%s%s',optimPath,subj(isub).name));
-    
+
     for istart = 1:30
         newtaufit(isub,istart) = optim.optimizedFits(istart).xbest(2);
         MLE (isub,istart)   = optim.optimizedFits(istart).MLE ;
-        
+
         newbetafit(isub,istart) = optim.optimizedFits(istart).xbest(1);
-        
+
         newlsfit(isub,istart) = optim.optimizedFits(istart).xbest(3);
-        
+
     end
-    
+
     [v,pos]=min(MLE(isub,:));
     posAll(isub)=pos;
 end
@@ -112,46 +112,49 @@ subj   = dir('*mat');
 
 
 %Loop over all subjects.
-for isub = 1:length(subj)
-%     
-    if subj(isub).name=='BPe.mat'
-        aa=1;
+for isubtmp = 1:length(subj)
+%
+    isub=isubtmp;
+    if strcmp(subj(isub).name,'BPe.mat')
+      continue
+    elseif strcmp(subj(isub).name,'AWi.mat')
+      isub=isubtmp-1;
     else
-        
+
         %for each simulation per participant
         for isims =1:10
             endfits = load(sprintf('%s%s%i.mat',optimFits,subj(isub).name(1:3),isims));
-            
+
             for istart = 1:30
-                
+
                 MLE (isub,istart)   = endfits.optimizedFits(istart).MLE ;
-                
-                
+
+
             end
             %position of best fit out of 30 parameter starting points
             [v,pos]=min(MLE);
-            
+
             %if there is more than one minimum value, pick the first one.
             if length(pos)>1
                 pos=pos(1);
             end
             endtaufit(isub,isims) = endfits.optimizedFits(pos).xbest(2);
-            
+
             endbetafit(isub,isims) = endfits.optimizedFits(pos).xbest(1);
-            
+
             endlsfit(isub,isims) = endfits.optimizedFits(pos).xbest(3);
-            
+
         end
-        
-        
-        
+
+
+
         %Store the original randomized parameter used for model simulation.
         startfit          = load(sprintf('%s%s',inputpar,subj(isub).name));
         startbeta(isub,:) = startfit.cfg1.beta;
         starttau(isub,:)  = startfit.cfg1.tau;
         startls(isub,:)   = startfit.cfg1.ls;
     end
-    
+
 end
 
 
@@ -166,6 +169,15 @@ xlabel('Simulated parameter')
 ylabel('Recovered parameter')
 
 
+%name files
+formatOut = 'yyyy-mm-dd';
+todaystr = datestr(now,formatOut);
+namefigure = sprintf('recovered_parameter');%fractionTrialsRemaining
+filetype    = 'png';
+figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype)  %2012-06-28 idyllwild library - sd - exterior massing model 04.skp
+
+
+saveas(gca,figurename,'png')
 
 %Beta parameter
 figure(2),clf
@@ -199,7 +211,7 @@ scatter(staus(startbeta(:)>2),etaus(startbeta(:)>2))
 plot(startbeta(:))
 
 %%
-%Look at parameter fits for the rough fits for the 2 parameter mode. 
+%Look at parameter fits for the rough fits for the 2 parameter mode.
 
 par2path =  '/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/2params/';
 
@@ -210,27 +222,27 @@ subj   = dir('*mat');
 
 
 for isub = 1:length(subj)
-    
+
     par2 = load(sprintf('%s%s.mat',par2path,subj(isub).name(1:3)));
-    
-    
+
+
     %Find the lowest MLE parameter pair
     for istart = 1:100
         newtaufit(isub,istart) = par2.paramFits.taufits(istart);
-        
+
         newbetafit(isub,istart) = par2.paramFits.betafits(istart);
-        
 
 
-        
+
+
     end
-    
-    
-    
+
+
+
 end
 
 %%
-%Load optimized paramfits for 2 parameter model. 
+%Load optimized paramfits for 2 parameter model.
 
 inputpar  = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/2params/optimized/';
 
@@ -242,45 +254,45 @@ subj   = dir('*mat');
 
 %Loop over all subjects.
 for isub = 1:length(subj)
-%     
+%
     if subj(isub).name=='BPr1.mat'
         aa=1;
     else
-        
+
         %for each simulation per participant
         for isims =1:1
             endfits = load(sprintf('%s%s%i.mat',inputpar,subj(isub).name(1:3),isims));
-            
+
             for istart = 1:30
-                
+
                 MLE (isub,istart)   = endfits.optimizedFits(istart).MLE ;
-                
-                
+
+
             end
             %position of best fit out of 30 parameter starting points
             [v,pos]=min(MLE);
-            
+
             %if there is more than one minimum value, pick the first one.
             if length(pos)>1
                 pos=pos(1);
             end
             endtaufit(isub,isims) = endfits.optimizedFits(pos).xbest(2);
-            
+
             endbetafit(isub,isims) = endfits.optimizedFits(pos).xbest(1);
-            
+
           %  endlsfit(isub,isims) = endfits.optimizedFits(pos).xbest(3);
-            
+
         end
-        
-        
-        
+
+
+
         %Store the original randomized parameter used for model simulation.
         %startfit          = load(sprintf('%s%s',inputpar,subj(isub).name));
         %startbeta(isub,:) = startfit.cfg1.beta;
         %starttau(isub,:)  = startfit.cfg1.tau;
         %startls(isub,:)   = startfit.cfg1.ls;
     end
-    
+
 end
 
 %%
@@ -327,45 +339,43 @@ subj   = dir('*mat');
 
 %Loop over all subjects.
 for isub = 1:length(subj)
-%     
+%
     if subj(isub).name=='BPr1.mat'
         aa=1;
     else
-        
+
         %for each simulation per participant
         for isims =1:1
             endfits = load(sprintf('%s%s%i.mat',inputpar,subj(isub).name(1:3),isims));
-            
+
             for istart = 1:30
-                
+
                 MLE (isub,istart)   = endfits.optimizedFits(istart).MLE ;
-                
-                
+
+
             end
             %position of best fit out of 30 parameter starting points
             [v,pos]=min(MLE);
-            
+
             %if there is more than one minimum value, pick the first one.
             if length(pos)>1
                 pos=pos(1);
             end
             end1taufit(isub,isims) = endfits.optimizedFits(pos).xbest(1);
-            
+
             %endbetafit(isub,isims) = endfits.optimizedFits(pos).xbest(1);
-            
+
           %  endlsfit(isub,isims) = endfits.optimizedFits(pos).xbest(3);
-            
+
         end
-        
-        
-        
+
+
+
         %Store the original randomized parameter used for model simulation.
         %startfit          = load(sprintf('%s%s',inputpar,subj(isub).name));
         %startbeta(isub,:) = startfit.cfg1.beta;
         %starttau(isub,:)  = startfit.cfg1.tau;
         %startls(isub,:)   = startfit.cfg1.ls;
     end
-    
+
 end
-
-
