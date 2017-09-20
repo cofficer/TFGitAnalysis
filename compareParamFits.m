@@ -102,7 +102,7 @@ scatter(newlsfit,roughlsfit)
 %of these simulations
 
 optimFits = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/optimized/';
-
+roughPath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/roughfit/';
 inputpar  = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/';
 
 
@@ -110,19 +110,31 @@ inputpar  = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchin
 cd(inputpar)
 subj   = dir('*mat');
 
-
+isub=0;
 %Loop over all subjects.
 for isubtmp = 1:length(subj)
-%
-    isub=isubtmp;
-    if strcmp(subj(isub).name,'BPe.mat')
-      continue
+  %
 
-    else
+  if strcmp(subj(isubtmp).name,'BPe.mat')
+    continue
+  elseif strcmp(subj(isubtmp).name,'RWi.mat')
+    continue
+  elseif strcmp(subj(isubtmp).name,'BFu.mat')
+    continue
+  else
+      isub=isub+1;
+
+
+      %Store the roughfit found with grid search.
+      roughfit= load(sprintf('%s%s.mat',roughPath,subj(isubtmp).name(1:3)));
 
         %for each simulation per participant
         for isims =1:10
-            endfits = load(sprintf('%s%s%i.mat',optimFits,subj(isub).name(1:3),isims));
+
+            endfits = load(sprintf('%s%s%i.mat',optimFits,subj(isubtmp).name(1:3),isims));
+            roughbeta(isub,isims)=mean(roughfit.paramFits(isims).betafits);
+            roughtau(isub,isims)=mean(roughfit.paramFits(isims).taufits);
+            roughls(isub,isims)=mean(roughfit.paramFits(isims).lsfits);
 
             for istart = 1:30
 
@@ -145,10 +157,8 @@ for isubtmp = 1:length(subj)
 
         end
 
-
-
         %Store the original randomized parameter used for model simulation.
-        startfit          = load(sprintf('%s%s',inputpar,subj(isub).name));
+        startfit          = load(sprintf('%s%s',inputpar,subj(isubtmp).name));
         startbeta(isub,:) = startfit.cfg1.beta;
         starttau(isub,:)  = startfit.cfg1.tau;
         startls(isub,:)   = startfit.cfg1.ls;
@@ -160,7 +170,7 @@ end
 %%
 %Plot simulated participants and recovered parameters, lose switch
 figure(1),clf
-s=scatter(startls(:,1),endlsfit(:,1),'filled');
+s=scatter(startls(:),roughls(:),'filled');
 s.MarkerEdgeColor='black';
 s.MarkerFaceColor='black';
 title('Heuristic - lose-switch win-stay')
@@ -180,7 +190,7 @@ saveas(gca,figurename,'png')
 
 %Beta parameter
 figure(2),clf
-s=scatter(log(startbeta(:)),log(endbetafit(:)),'black');
+s=scatter(log(startbeta(:)),log(roughbeta(:)),'black');
 s.MarkerEdgeColor='black';
 s.MarkerFaceColor='black';
 title('Beta - noise of value on choice')
@@ -190,7 +200,7 @@ ylabel('log(Recovered parameter)')
 
 %Tau parameter
 figure(3),clf
-s=scatter(starttau(:),endtaufit(:),'filled');
+s=scatter(starttau(:),roughtau(:),'filled');
 s.MarkerEdgeColor='black';
 s.MarkerFaceColor='black';
 title('Tau - leak of value integration')
