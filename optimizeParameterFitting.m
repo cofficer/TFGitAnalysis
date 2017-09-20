@@ -21,7 +21,7 @@ for irun = 1:orig_cfg1.runs
     if cfg1.modelchoices
         load(cfg1.path)
         %For each simulation parameter pair, use that as starting point.
-        paramFits=paramFits;
+        paramFits=paramFits(irun);
         cfg1.runs=irun;
     else
         if cfg1.numparameter =='2'
