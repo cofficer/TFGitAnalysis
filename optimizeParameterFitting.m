@@ -35,12 +35,12 @@ for irun = 1:orig_cfg1.runs
         end
     end
 
-    a(:,1)=paramFits(irun).betafits;
-    a(:,2)=paramFits(irun).taufits;
-    a(:,3)=paramFits(irun).lsfits;
+    a(:,1)=paramFits.betafits;
+    a(:,2)=paramFits.taufits;
+    a(:,3)=paramFits.lsfits;
 
 
-    for iparampairs = 1:length(paramFits.betafits)
+    for iparampairs = 1:1%length(paramFits.betafits)
 
         if cfg1.numparameter =='2'
                     [xbest,fx,exitflag,output] = fminsearchbnd(['handle_fmin_parameterfits'],...
