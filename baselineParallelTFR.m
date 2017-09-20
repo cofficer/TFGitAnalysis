@@ -240,7 +240,7 @@ elseif strcmp(runcfg.dataAnalysisType,'parameterOptimize')
         cfg1{ipart}.numparameter = '3';
         cfg1{ipart}.drugEffect   = 1; %1 if order of intervention, 0 if session order
         cfg1{ipart}.simulateLoseSwitch   = 0; %1 of simulate lose-switch heuristic
-        cfg1{ipart}.runs         = 1;%Same number of run as simualtions per session
+        cfg1{ipart}.runs         = 10;%Same number of run as simualtions per session
         cfg1{ipart}.currPart     = ipart;
         if cfg1{ipart}.modelchoices
             cfg1{ipart}.session      = sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/simulated/roughfit/%s.mat',PLA{indxPLA}(1:3));
