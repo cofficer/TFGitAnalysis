@@ -12,12 +12,12 @@ opts = optimset('Display','off','TolX',1e-15,'TolFun',1e-15,'MaxIter',cfg1.iter,
 
 
 
-
+orig_cfg1 = cfg1;
 
 %Loop over all the simulations per sessions if modelchoices.
-for irun = 1:cfg1.runs
+for irun = 1:orig_cfg1.runs
   %  tauA(irun) = paramFits(irun).taufits(1);
-
+    disp(irun)
     if cfg1.modelchoices
         load(cfg1.path)
         %For each simulation parameter pair, use that as starting point.

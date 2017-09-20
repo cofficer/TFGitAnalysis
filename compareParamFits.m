@@ -160,7 +160,7 @@ end
 %%
 %Plot simulated participants and recovered parameters, lose switch
 figure(1),clf
-s=scatter(startls(1,:),endlsfit(1,:),'filled');
+s=scatter(startls(:,1),endlsfit(:,1),'filled');
 s.MarkerEdgeColor='black';
 s.MarkerFaceColor='black';
 title('Heuristic - lose-switch win-stay')
