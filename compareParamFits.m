@@ -169,6 +169,53 @@ end
 
 %%
 %Plot simulated participants and recovered parameters, lose switch
+
+%High noise levels
+avg_noise=mean(startbeta(:));
+y = quantile(startbeta(:),[0.1 0.9]);
+hig_noise_ind=startbeta(:)>y(end);
+col_ind=repmat(1:25,[10,1])';
+ab=[1:25].*ones(1,10)';
+
+
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
+%Plot simulated parameter recovery
+figure(1),clf
+clear g
+g(1,1)=gramm('x',startls(:),'y',endlsfit(:),'color',col_ind(:),'subset',col_ind(:));
+g(1,1).geom_point();
+g(1,1).stat_glm();
+g(1,1).set_names('column','Origin','x','Real value','y','Rough fit','color','#');
+g(1,1).set_text_options('base_size',15);
+g(1,1).set_title('Heuristic');
+
+g(1,2)=gramm('x',log(startbeta(:)),'y',log(endbetafit(:)),'color',col_ind(:),'subset',col_ind(:));
+g(1,2).geom_point();
+g(1,2).stat_glm();
+g(1,2).set_names('column','Origin','x','Real value','y','Rough fit','color','#');
+g(1,2).set_text_options('base_size',15);
+g(1,2).set_title('Noise');
+
+g(2,1)=gramm('x',starttau(:),'y',endtaufit(:),'color',col_ind(:),'subset',col_ind(:));
+g(2,1).geom_point();
+g(2,1).stat_glm();
+g(2,1).set_names('column','Origin','x','Real value','y','Rough fit','color','#');
+g(2,1).set_text_options('base_size',15);
+g(2,1).set_title('Reward');
+
+g.draw();
+
+%name files
+formatOut = 'yyyy-mm-dd';
+todaystr = datestr(now,formatOut);
+namefigure = sprintf('parameter_recovery_optimizedtest');%fractionTrialsRemaining
+filetype    = 'svg';
+figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype);  %2012-06-28 idyllwild library - sd - exterior massing model 04.skp
+
+g.export('file_name',figurename,'file_type',filetype);
+
+
+
 figure(1),clf
 s=scatter(startls(:),roughls(:),'filled');
 s.MarkerEdgeColor='black';

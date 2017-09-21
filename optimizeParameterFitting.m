@@ -19,6 +19,7 @@ for irun = 1:orig_cfg1.runs
   %  tauA(irun) = paramFits(irun).taufits(1);
     disp(irun)
     if orig_cfg1.modelchoices
+        %Loads 10 different paramFits for each time iteration.
         load(orig_cfg1.path)
         %For each simulation parameter pair, use that as starting point.
         %paramFits=paramFits(irun);
@@ -40,7 +41,7 @@ for irun = 1:orig_cfg1.runs
     a(:,3)=paramFits(irun).lsfits;
 
 
-    for iparampairs = 1:length(paramFits(irun).betafits)
+    for iparampairs = 1:1%length(paramFits(irun).betafits)
 
         if cfg1.numparameter =='2'
                     [xbest,fx,exitflag,output] = fminsearchbnd(['handle_fmin_parameterfits'],...

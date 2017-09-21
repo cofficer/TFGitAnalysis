@@ -49,7 +49,7 @@ cd(bhpath);
 
 %Only take the first choicestream for now.
 if cfg1.modelchoices
-    cfg1.runs = 1; %I think only 1 run is necessary inside the optimization. 
+    %cfg1.runs = 1; %I think only 1 run is necessary inside the optimization. 
     choiceStreamAll=choiceStreamAll(:,cfg1.runs)';
     allMLE         =squeeze(allMLE(:,1,1,cfg1.runs));
 end
