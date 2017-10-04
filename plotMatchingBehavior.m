@@ -32,21 +32,21 @@ load('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/
 plotOptim = 0;
 if plotOptim
     %PLA=partOptim;
-    
+
     PLAshort        = cellfun(@(n) n(1:3),PLA,'UniformOutput',false);
     partOptimshort  = cellfun(@(n) n(1:3),partOptim,'UniformOutput',false);
-    
+
     %Identify the index of participants that have optimal fits to get their
     %full behavioral file names.
     indxOptim = ismember(PLAshort,partOptimshort);
-    
+
     PLA=PLA(~indxOptim);
-    
-    
+
+
 else
-    
+
     %PLA=[PLA,ATM];
-    
+
 end
 
 %Iterate each block calculated
@@ -59,17 +59,17 @@ allhorizontalsR = 0;
 
 for sess =1:length(PLA) %minus 2 just so that there it fills out subplots.
     %Load the results per participant
-    
+
     load(PLA{sess})
     %participantPath = PLA{participant};
-    
+
     %load(ATM{participant})
     %participantPath = ATM{participant};
     %participant = participant+1;
-    
-    
+
+
     [choiceStreamAll,rewardStreamAll] = global_matchingK(results);
-    
+
     if ~oneFig
     subplot(8,8,sess)
     end
@@ -78,44 +78,44 @@ for sess =1:length(PLA) %minus 2 just so that there it fills out subplots.
     rewarDelivered = 0;
     allpropCV=0;
     allpropRV=0;
-    
-    
+
+
     %Store the order of rewards
     if length(results.probHor)<10
         orderRew(sess,:) = [results.probHor,nan(1,10-length(results.probHor))];
     else
         orderRew(sess,:) = results.probHor(1:10);
     end
-    
+
     %Variables for storing all the block for one session
     curentPartRV=[];
     curentPartCV=[];
-    
+
     line([-3 3],[-3 3],'color','r')
-    
-    
+
+
     for ib = 1:results.nblocks
-        
-        
-             
-        %Starting point is 0. 
+
+
+
+        %Starting point is 0.
         countBlocks = countBlocks+1;
-        
+
         %Find the distribution of rewards throughou all sessions.
         rewardprob(countBlocks) = results.blocks{ib}.probHor;
-   
-        
-        %Remove all trails with no resp etc. 
+
+
+        %Remove all trails with no resp etc.
         validTrials=results.blocks{ib}.trlinfo(:,7)~=0;
-        
+
         %Calculate the rewards recieved.
         rewarDelivered = rewarDelivered +...
             sum(results.blocks{ib}.newrewardHor(validTrials)) +...
             sum(results.blocks{ib}.newrewardVer(validTrials));
-        
+
         rewardAvailableH(countBlocks) = sum(results.blocks{ib}.newrewardHor);
         rewardAvailableV(countBlocks) = sum(results.blocks{ib}.newrewardVer);
-        
+
         %All collected rewards
         allR=(results.blocks{ib}.trlinfo(:,8));
         allR=allR(validTrials);
@@ -126,16 +126,16 @@ for sess =1:length(PLA) %minus 2 just so that there it fills out subplots.
         allRV=allR(logical(allCV));
         %All horizontl rewards
         allRVH = allR(logical(~allCV));
-        
+
         %Proportion of verticl choices
         propCV(countBlocks)=sum(allCV)/sum(~allCV);%length(allCV);
-        
+
         allverticals   =[allverticals,allCV'];
         allhorizontals =[allhorizontals,~allCV'];
-        
+
           allverticalsR   =[allverticalsR,allRV'];
         allhorizontalsR =[allhorizontalsR,allRVH'];
-        
+
 %         if propCV(countBlocks) > 20
 %             %disp(countBlocks)
 %             disp(PLA{sess})
@@ -147,50 +147,50 @@ for sess =1:length(PLA) %minus 2 just so that there it fills out subplots.
 
         %Proportion vertical rewards
         propRV(countBlocks)=sum(allRV)/sum(allRVH);
-        
+
         %All reward recieved from vertical choice
         %Proportion vertical choice == proportion vertical reward.
-        
+
         %plot(propRV,propCV,'.','color','k','markers',15)
-        
-        
+
+
         %allpropCV=allpropCV+propCV;
         %allpropRV=allpropRV+propRV;
-        
+
 %         if propRV>1
 %             disp(PLA{sess})
 %             disp(sess)
 %             disp(ib)
-%             
+%
 %         end
-        
-      
-        
+
+
+
     if ~oneFig
      plot(log(sum(allRV)/sum(allRVH)),log(sum(allCV)/sum(~allCV)),'.','color','k','markers',15)
-     
-     %Store all the current block for the session. 
+
+     %Store all the current block for the session.
      curentPartRV=[curentPartRV,sum(allRV)/sum(allRVH)];
      curentPartCV=[curentPartCV,(sum(allCV)/sum(~allCV))];
-    
-    end
-        
 
     end
-    
+
+
+    end
+
     if ~oneFig
         title(PLA{sess}(1:3))
         %add best fit line
         total   = isfinite(log(curentPartRV))+isfinite(log(curentPartCV));
         idx     = (total==2);
-        
+
         p       = polyfit((log(curentPartRV(idx))),(log(curentPartCV(idx))),1);
         f       = polyval(p,(log(curentPartRV(idx))));
         bestfit=plot((log(curentPartRV(idx))),f,'-k');
         legend(bestfit,['Slope = ',num2str(p(1),3),'; bias = ', num2str(p(2),3)])
-        
+
         sessionBestFits(sess,:)=p;
-        
+
     end
     %plot(allpropCV/ib,allpropRV/ib,'.','color','k','markers',15)
     rewgot(sess)=sum(rewardStreamAll)/rewarDelivered;
@@ -199,6 +199,40 @@ for sess =1:length(PLA) %minus 2 just so that there it fills out subplots.
     %     disp(rewarDelivered)
     %     disp(sum(rewardStreamAll))
 end
+
+%Remove infinite numbers.
+ind_infC = find(isinf(log(propCV)));
+ind_infR = find(isinf(log(propRV)));
+all_infind = unique([ind_infR,ind_infC])
+propCV(all_infind)=[];
+propRV(all_infind)=[];
+
+
+%New way of saving Figure using gramm
+clear g;close all
+g=gramm('x',log(propCV),'y',log(propRV));
+g.geom_point();
+g.stat_glm();
+g.geom_abline()
+g.set_names('column','Origin','x','Choice ratio','y','Reward ratio','color','#');
+g.set_text_options('base_size',20);
+g.set_color_options('chroma',0,'lightness',20)
+%g.set_title('');
+g.draw();
+
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
+%Name of figure
+filetyp='svg';
+%name filess
+formatOut = 'yyyy-mm-dd';
+todaystr = datestr(now,formatOut);
+namefigure = sprintf('overall-probability-matching');%fractionTrialsRemaining
+filetype    = 'svg';
+figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype);
+g.export('file_name',figurename,'file_type',filetype);
+
+
+
 if oneFig
     plot(log(propRV),log(propCV),'.','color','k','markers',15)
     %title('Probability matching for all blocks','FontSize',20)
@@ -215,7 +249,7 @@ end
 if oneFig
     total   = isfinite(log(propRV))+isfinite(log(propCV));
     idx     = (total==2);
-    
+
     p       = polyfit((log(propRV(idx))),(log(propCV(idx))),1);
     f       = polyval(p,(log(propRV(idx))));
     plot((log(propRV(idx))),f,'--k')
@@ -223,29 +257,29 @@ if oneFig
     total2   = isfinite((propRV))+isfinite((propCV));
     idx2     = (total2==2);
     p2      = polyfit((propRV(idx2)),(propCV(idx2)),1);
-    
+
     %From baum 1974,
-    
+
     bias  = sum(allverticals)/(sum(allhorizontals)+sum(allverticals));%mean(propCV(isfinite(propCV))); %bias for vertical target
-    
+
     b1b2log = log(sum(allverticals)/sum(allhorizontals));%smean(log(propCV(isfinite(log(propCV)))));
-    
+
     r1r2log = log(sum(allverticalsR)/sum(allhorizontalsR));%mean(log(propRV(isfinite(log(propRV)))));
-    
+
     slope = (b1b2log/r1r2log)-(log(bias)/r1r2log);
-    
+
     f2 = polyval([exp(slope) bias],(log(propRV(idx))));
     %plot((log(propRV(idx))),f2,'--b')
 end
 
 %%
-%Create a bar plot of the distribution of reward probabilities. 
+%Create a bar plot of the distribution of reward probabilities.
 possibleRew = unique(rewardprob);
 
 for ipR = 1:length(possibleRew)
-    
+
     totalPR(ipR) = sum(rewardprob==possibleRew(ipR));
-    
+
 end
 
 %plotting reward distribution bar plot
@@ -275,42 +309,42 @@ s.MarkerFaceColor='black';
 % PLAsess        = cellfun(@str2num,PLAsess,'UniformOutput',true);
 % % PLAsess        = cellfun(@(n) n(9),PLA,'UniformOutput',false);
 % PLAsess        = cellfun(@str2num,PLAsess,'UniformOutput',true);
-% 
+%
 % PLAonly=PLAsess(1:length(sessionBestFits)/2) ;
 % ATMonly=PLAsess(length(sessionBestFits)/2+1:end) ;
-% 
+%
 % first  = find(PLAsess(1:length(sessionBestFits)/2)==1);
-% 
+%
 % second = find(PLAsess(length(sessionBestFits)/2+1:end)==2);
-% 
+%
 % wrongOrder1=sessionBestFits(1:length(sessionBestFits)/2,1);
 % wrongOrder2=sessionBestFits(length(sessionBestFits)/2+1:end,1);
-% 
+%
 % allwrongs = [wrongOrder1,wrongOrder2];
-% 
+%
 % allwrongs(second,:)=fliplr(allwrongs(second,:));
-% 
+%
 % correctOrder = allwrongs;
-% 
-% 
+%
+%
 
 % PLAonly=PLAsess(1:length(sessionBestFits)/2) ;
 % ATMonly=PLAsess(length(sessionBestFits)/2+1:end) ;
-% 
+%
 % first  = find(PLAsess(1:length(sessionBestFits)/2)==1);
-% 
+%
 % second = find(PLAsess(length(sessionBestFits)/2+1:end)==2);
-% 
+%
 % wrongOrder1=sessionBestFits(1:length(sessionBestFits)/2,1);
 % wrongOrder2=sessionBestFits(length(sessionBestFits)/2+1:end,1);
-% 
+%
 % allwrongs = [wrongOrder1,wrongOrder2];
-% 
+%
 % allwrongs(second,:)=fliplr(allwrongs(second,:));
-% 
+%
 % correctOrder = allwrongs;
-% 
-% 
+%
+%
 %plot([correctOrder(:,1),correctOrder(:,2)]','color','k')
 
 
@@ -333,4 +367,3 @@ end
 
 
 end
-

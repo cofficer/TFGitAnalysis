@@ -115,13 +115,13 @@ isub=0;
 for isubtmp = 1:length(subj)
   %
 
-  if strcmp(subj(isubtmp).name,'BPe.mat')
-    continue
-  elseif strcmp(subj(isubtmp).name,'RWi.mat')
-    continue
-  elseif strcmp(subj(isubtmp).name,'BFu.mat')
-    continue
-  else
+  % if strcmp(subj(isubtmp).name,'BPe.mat')
+  %   continue
+  % %elseif strcmp(subj(isubtmp).name,'RWi.mat')
+  % %  parnum(isub+1) = isubtmp;
+  % elseif strcmp(subj(isubtmp).name,'BFu.mat')
+  %   continue
+  % else
       isub=isub+1;
 
 
@@ -136,7 +136,7 @@ for isubtmp = 1:length(subj)
             roughtau(isub,isims)=mean(roughfit.paramFits(isims).taufits);
             roughls(isub,isims)=mean(roughfit.paramFits(isims).lsfits);
 
-            for istart = 1:30
+            for istart = 1:1%30
 
                 MLE (isub,istart)   = endfits.optimizedFits(istart).MLE ;
 
@@ -149,11 +149,11 @@ for isubtmp = 1:length(subj)
             if length(pos)>1
                 pos=pos(1);
             end
-            endtaufit(isub,isims) = endfits.optimizedFits(pos).xbest(2);
+            endtaufit(isub,isims) = endfits.optimizedFits.xbest(2);
 
-            endbetafit(isub,isims) = endfits.optimizedFits(pos).xbest(1);
+            endbetafit(isub,isims) = endfits.optimizedFits.xbest(1);
 
-            endlsfit(isub,isims) = endfits.optimizedFits(pos).xbest(3);
+            endlsfit(isub,isims) = endfits.optimizedFits.xbest(3);
 
         end
 
@@ -162,7 +162,7 @@ for isubtmp = 1:length(subj)
         startbeta(isub,:) = startfit.cfg1.beta;
         starttau(isub,:)  = startfit.cfg1.tau;
         startls(isub,:)   = startfit.cfg1.ls;
-    end
+    %end
 
 end
 
@@ -175,31 +175,46 @@ avg_noise=mean(startbeta(:));
 y = quantile(startbeta(:),[0.1 0.9]);
 hig_noise_ind=startbeta(:)>y(end);
 col_ind=repmat(1:25,[10,1])';
-ab=[1:25].*ones(1,10)';
+%ab=[1:25].*ones(1,10)';
 
+%Group data wrt tau, beta and heuristic
+tau1dim = endtaufit(:);
+tau_max = tau1dim>18;
+
+beta1dim = endbetafit(:);
+beta_min = beta1dim<0.00151;
+
+ls1dim = endlsfit(:);
+ls_min = ls1dim>0.5;
+
+%Get a rank of the different lsfits, low to high
+[~, ~, ranking] = unique(endlsfit(:));
+% [~, idx_s] = sort(endlsfit(:));
+% mean_ranks = accumarray(idx_u(:), idx_s(idx_s), [], @mean);
+% ranking = mean_ranks(idx_u);
 
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
 %Plot simulated parameter recovery
 figure(1),clf
 clear g
-g(1,1)=gramm('x',startls(:),'y',endlsfit(:),'color',col_ind(:),'subset',col_ind(:));
+g(1,1)=gramm('x',startls(:),'y',endlsfit(:))%,'color',ranking);
 g(1,1).geom_point();
-g(1,1).stat_glm();
-g(1,1).set_names('column','Origin','x','Real value','y','Rough fit','color','#');
+%g(1,1).stat_glm();
+  g(1,1).set_names('column','Origin','x','Real value','y','Opim fit','color','#');
 g(1,1).set_text_options('base_size',15);
 g(1,1).set_title('Heuristic');
 
-g(1,2)=gramm('x',log(startbeta(:)),'y',log(endbetafit(:)),'color',col_ind(:),'subset',col_ind(:));
+g(1,2)=gramm('x',log(startbeta(:)),'y',log(endbetafit(:)))%,'color',ranking);,'color',ranking);
 g(1,2).geom_point();
-g(1,2).stat_glm();
-g(1,2).set_names('column','Origin','x','Real value','y','Rough fit','color','#');
+%g(1,2).stat_glm();
+g(1,2).set_names('column','Origin','x','Real value','y','Optim fit','color','#');
 g(1,2).set_text_options('base_size',15);
 g(1,2).set_title('Noise');
 
-g(2,1)=gramm('x',starttau(:),'y',endtaufit(:),'color',col_ind(:),'subset',col_ind(:));
+g(2,1)=gramm('x',starttau(:),'y',endtaufit(:))%,'color',ranking);,'color',ranking);
 g(2,1).geom_point();
-g(2,1).stat_glm();
-g(2,1).set_names('column','Origin','x','Real value','y','Rough fit','color','#');
+%g(2,1).stat_glm();
+g(2,1).set_names('column','Origin','x','Real value','y','Optim fit','color','#');
 g(2,1).set_text_options('base_size',15);
 g(2,1).set_title('Reward');
 
@@ -208,7 +223,7 @@ g.draw();
 %name files
 formatOut = 'yyyy-mm-dd';
 todaystr = datestr(now,formatOut);
-namefigure = sprintf('parameter_recovery_optimizedtest');%fractionTrialsRemaining
+namefigure = sprintf('parameter_recovery_optimized');%fractionTrialsRemaining
 filetype    = 'svg';
 figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype);  %2012-06-28 idyllwild library - sd - exterior massing model 04.skp
 

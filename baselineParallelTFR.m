@@ -57,7 +57,7 @@ runcfg.partlist = {
 
 
 runcfg.baseline.compile         = 'no';      %No    local
-runcfg.baseline.parallel        = 'torque';      %torque local?
+runcfg.baseline.parallel        = 'local';      %torque local?
 runcfg.baseline.timreq          = 2000; % number of minutes.
 runcfg.dataAnalysisType         = 'parameterOptimize'; %behavior or MEG or selectLFI or parameterOptimize
 
@@ -381,8 +381,8 @@ switch runcfg.dataAnalysisType
         switch runcfg.baseline.compile
 
             case 'local'
-                optimizeParameterFitting(cfg1{1})
-                %cellfun(@Model_performance, cfg1, outputfile);
+                %optimizeParameterFitting(cfg1{1})
+                cellfun(@optimizeParameterFitting, cfg1)%, outputfile);
             case 'no'
                 nnodes = 1;%64; % how many licenses?
                 stack = 1;%round(length(cfg1)/nnodes);
